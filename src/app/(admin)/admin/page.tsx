@@ -54,14 +54,7 @@ export default async function AdminDashboardPage() {
   return (
     <AdminShell title="Dashboard" unreadLeads={data.unreadLeads}>
       {/* Metric cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gap: 20,
-          marginBottom: 40,
-        }}
-      >
+      <div className="hmg-admin-metrics" style={{ marginBottom: 40 }}>
         {metrics.map((m) => (
           <div
             key={m.label}

@@ -352,7 +352,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function Grid2({ children }: { children: React.ReactNode }) {
-  return <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>{children}</div>;
+  return <div className="hmg-form-grid">{children}</div>;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {

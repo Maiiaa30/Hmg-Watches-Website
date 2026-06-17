@@ -329,6 +329,28 @@ button { font-family: inherit; }
 /* ---- Admin shell responsiveness ---- */
 .hmg-admin-backdrop { display: none; }
 .hmg-admin-hamburger { display: none; }
+
+/* Admin list cards (responsive tables) */
+.hmg-admin-cardlist { display: flex; flex-direction: column; gap: 10px; }
+.hmg-watch-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+.hmg-admin-metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+@media (max-width: 1000px) { .hmg-admin-metrics { grid-template-columns: repeat(3, 1fr); } }
+.hmg-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 680px) { .hmg-form-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .hmg-watch-card { align-items: flex-start; }
+  .hmg-watch-meta { width: 100%; justify-content: space-between; }
+  .hmg-watch-actions { width: 100%; }
+  .hmg-admin-metrics { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
 @media (max-width: 900px) {
   .hmg-admin-sidebar {
     position: fixed !important;

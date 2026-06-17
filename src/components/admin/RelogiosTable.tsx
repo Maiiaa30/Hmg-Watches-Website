@@ -141,31 +141,9 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
 
       {error && <p style={{ color: "var(--hmg-down)", fontSize: 14, margin: 0 }}>{error}</p>}
 
-      <div style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 6, overflow: "hidden" }}>
-        {/* Header */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "52px 2fr 1fr 110px 110px 300px",
-            padding: "14px 22px",
-            borderBottom: "1px solid var(--border-subtle)",
-            background: "var(--bg-page-alt)",
-            fontSize: 11,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "var(--text-tertiary)",
-          }}
-        >
-          <div />
-          <div>Relógio</div>
-          <div>Referência</div>
-          <div style={{ textAlign: "right" }}>Preço</div>
-          <div style={{ textAlign: "center" }}>Estado</div>
-          <div style={{ textAlign: "right" }}>Ações</div>
-        </div>
-
+      <div className="hmg-admin-cardlist">
         {filtered.length === 0 && (
-          <div style={{ padding: "60px 24px", textAlign: "center", color: "var(--text-tertiary)", fontSize: 14 }}>
+          <div style={{ padding: "48px 24px", textAlign: "center", color: "var(--text-tertiary)", fontSize: 14, background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 8 }}>
             Nenhum relógio nesta vista.
           </div>
         )}
@@ -173,26 +151,23 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
         {filtered.map((w) => (
           <div
             key={w.id}
+            className="hmg-watch-card"
             style={{
-              display: "grid",
-              gridTemplateColumns: "52px 2fr 1fr 110px 110px 300px",
-              padding: "14px 22px",
-              borderBottom: "1px solid var(--border-subtle)",
-              alignItems: "center",
               fontSize: 13,
-              background: w.featured ? "rgba(182,138,46,0.06)" : "transparent",
+              borderColor: w.featured ? "var(--accent)" : "var(--border-subtle)",
+              background: w.featured ? "rgba(182,138,46,0.06)" : "var(--surface-card)",
             }}
           >
             {/* Thumb */}
-            <div style={{ width: 44, height: 44, background: "var(--bg-page-alt)", border: "1px solid var(--border-subtle)", overflow: "hidden", flexShrink: 0 }}>
+            <div style={{ width: 52, height: 52, background: "var(--bg-page-alt)", border: "1px solid var(--border-subtle)", overflow: "hidden", flexShrink: 0, borderRadius: 4 }}>
               {w.image && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={w.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               )}
             </div>
 
-            {/* Name */}
-            <div>
+            {/* Name + ref */}
+            <div style={{ flex: "1 1 180px", minWidth: 0 }}>
               <div style={{ fontWeight: 500, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 8 }}>
                 {w.featured && <span title="Em destaque na homepage" style={{ color: "var(--accent)" }}>★</span>}
                 {w.brand} {w.model}
@@ -200,20 +175,18 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
               <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 2 }}>
                 {w.year && `${w.year} · `}
                 {w.movementType ? MOVEMENT_TYPE_LABELS[w.movementType] : ""}
+                {w.reference ? ` · Ref. ${w.reference}` : ""}
               </div>
             </div>
 
-            {/* Ref */}
-            <div style={{ color: "var(--text-secondary)", fontFamily: "var(--font-mono)", fontSize: 12 }}>{w.reference ?? "—"}</div>
-
-            {/* Price */}
-            <div style={{ textAlign: "right", fontWeight: 500 }}>{eur(w.price)}</div>
-
-            {/* Status */}
-            <div style={{ textAlign: "center" }}><Badge status={w.status} /></div>
+            {/* Price + status */}
+            <div className="hmg-watch-meta" style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <span style={{ fontWeight: 500 }}>{eur(w.price)}</span>
+              <Badge status={w.status} />
+            </div>
 
             {/* Actions */}
-            <div style={{ display: "flex", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
+            <div className="hmg-watch-actions" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               <button
                 onClick={() => toggleFeatured(w)}
                 disabled={busy === w.id}
