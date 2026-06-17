@@ -317,7 +317,6 @@
                 label: "WhatsApp",
                 value: "+351 930 675 358",
               },
-              // { ic: "map-pin", label: "Atelier", value: "Lisboa · visitas com marcação" },
             ].map((c) => (
               <div
                 key={c.label}

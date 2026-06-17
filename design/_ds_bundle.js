@@ -6564,22 +6564,17 @@
                   {
                     ic: "mail",
                     label: "Email",
-                    value: "ola@hmgwatches.pt",
+                    value: "contact@hmgwatches.com",
                   },
                   {
                     ic: "instagram",
                     label: "Instagram",
-                    value: "@hmgwatches",
+                    value: "@hmg.watch_",
                   },
                   {
                     ic: "message-circle",
                     label: "WhatsApp",
-                    value: "+351 910 000 000",
-                  },
-                  {
-                    ic: "map-pin",
-                    label: "Atelier",
-                    value: "Lisboa · visitas com marcação",
+                    value: "+351 930 675 358",
                   },
                 ].map((c) =>
                   /*#__PURE__*/ React.createElement(

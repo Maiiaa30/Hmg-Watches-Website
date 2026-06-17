@@ -101,10 +101,23 @@ export function Footer() {
               onMouseEnter={(e) => applyHover(e)}
               onMouseLeave={(e) => removeHover(e)}
             >
-              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <svg
+                width={18}
+                height={18}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                 <circle cx="12" cy="12" r="4" />
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                <circle
+                  cx="17.5"
+                  cy="6.5"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
               </svg>
             </a>
             {/* WhatsApp */}
@@ -115,7 +128,14 @@ export function Footer() {
               onMouseEnter={(e) => applyHover(e)}
               onMouseLeave={(e) => removeHover(e)}
             >
-              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <svg
+                width={18}
+                height={18}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
               </svg>
             </a>
@@ -127,7 +147,14 @@ export function Footer() {
               onMouseEnter={(e) => applyHover(e)}
               onMouseLeave={(e) => removeHover(e)}
             >
-              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <svg
+                width={18}
+                height={18}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                 <polyline points="22,6 12,13 2,6" />
               </svg>
@@ -137,7 +164,10 @@ export function Footer() {
 
         {/* Nav columns */}
         {NAV_COLUMNS.map((col) => (
-          <div key={col.title} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div
+            key={col.title}
+            style={{ display: "flex", flexDirection: "column", gap: 14 }}
+          >
             <div
               style={{
                 fontFamily: "var(--font-ui)",
@@ -182,8 +212,11 @@ export function Footer() {
           color: "var(--text-tertiary)",
         }}
       >
-        <span>© {new Date().getFullYear()} HMG Watches. Todos os direitos reservados.</span>
-        <span>Lisboa · Portugal</span>
+        <span>
+          © {new Date().getFullYear()} HMG Watches. Todos os direitos
+          reservados.
+        </span>
+        <span>Portugal</span>
       </div>
     </footer>
   );
