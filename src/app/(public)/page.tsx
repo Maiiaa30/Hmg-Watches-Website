@@ -7,7 +7,7 @@ import { eq, and, desc, lte } from "drizzle-orm";
 import { WatchCard } from "@/components/public/WatchCard";
 import { ContactForm } from "@/components/public/ContactForm";
 import { TypingText } from "@/components/public/TypingText";
-import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
+import { SITE_NAME, SITE_DESCRIPTION, BLOG_CATEGORY_LABELS } from "@/constants";
 
 export const metadata: Metadata = {
   title: { absolute: `${SITE_NAME} — Relógios de Luxo` },
@@ -457,7 +457,7 @@ export default async function HomePage() {
                   <span className="hmg-overline">Diário de Bordo</span>
                 </div>
                 <h2 style={{ fontSize: 44, lineHeight: 1.1 }}>
-                  <TypingText startOnView segments={[{ text: "Reflexões sobre relojoaria" }]} />
+                  <TypingText startOnView segments={[{ text: "Do nosso caderno" }]} />
                 </h2>
               </div>
               <Link
@@ -465,73 +465,44 @@ export default async function HomePage() {
                 className="hmg-ghost-btn hmg-ghost-btn--dark"
                 style={{ whiteSpace: "nowrap", flexShrink: 0 }}
               >
-                Ver todos
+                Todos os artigos
                 <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </Link>
             </div>
-            <div
-              className="hmg-stack"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 28,
-              }}
-            >
+            <div className="hmg-blog-grid">
               {posts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/blog/${post.slug}`}
-                  style={{
-                    display: "block",
-                    borderTop: "1px solid var(--border-subtle)",
-                    paddingTop: 28,
-                  }}
-                >
-                  <span
+                <Link key={post.id} href={`/blog/${post.slug}`} className="hmg-article-card">
+                  <div
+                    className="hmg-article-cover"
                     style={{
-                      display: "inline-block",
-                      padding: "3px 10px",
-                      border: "1px solid var(--border-strong)",
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 10,
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      color: "var(--text-secondary)",
-                      marginBottom: 16,
+                      aspectRatio: "16 / 10",
+                      borderRadius: 6,
+                      overflow: "hidden",
+                      border: "1px solid var(--border-subtle)",
+                      backgroundImage: post.coverImage ? `url(${post.coverImage})` : undefined,
+                      background: post.coverImage ? undefined : "linear-gradient(140deg, hsl(40 26% 93%), hsl(40 20% 84%))",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
                     }}
-                  >
-                    {post.category}
-                  </span>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 22,
-                      lineHeight: 1.25,
-                      marginBottom: 12,
-                    }}
-                  >
+                  />
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent-press)" }}>
+                      {BLOG_CATEGORY_LABELS[post.category]}
+                    </span>
+                    <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--text-tertiary)" }} />
+                    <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{post.readingTimeMinutes} min de leitura</span>
+                  </div>
+                  <h3 className="hmg-article-title" style={{ fontFamily: "var(--font-display)", fontSize: 23, lineHeight: 1.25 }}>
                     {post.title}
                   </h3>
-                  <p
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    {post.excerpt}
-                  </p>
-                  <div
-                    style={{
-                      marginTop: 20,
-                      fontSize: 12,
-                      color: "var(--text-tertiary)",
-                    }}
-                  >
-                    {post.readingTimeMinutes} min de leitura
-                  </div>
+                  <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--text-secondary)" }}>{post.excerpt}</p>
+                  {post.publishedAt && (
+                    <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
+                      {new Intl.DateTimeFormat("pt-PT", { day: "numeric", month: "short", year: "numeric" }).format(post.publishedAt)}
+                    </span>
+                  )}
                 </Link>
               ))}
             </div>
