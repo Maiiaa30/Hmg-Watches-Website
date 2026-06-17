@@ -10,7 +10,7 @@ interface GeneratedArticle {
 }
 
 // Google Gemini free-tier model. Override via GEMINI_MODEL if needed.
-const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
+const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
 interface GeminiResponse {
   candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
