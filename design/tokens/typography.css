@@ -1,0 +1,53 @@
+/* ============================================================
+   HMG Watches — Typography tokens
+   Serif display (Playfair Display) for headlines,
+   clean sans (DM Sans) for body & UI.
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-serif:  "Playfair Display", "Georgia", "Times New Roman", serif;
+  --font-sans:   "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:   "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Semantic family aliases */
+  --font-display: var(--font-serif);
+  --font-body:    var(--font-sans);
+  --font-ui:      var(--font-sans);
+
+  /* ---- Type scale (px) ---- */
+  --fs-display-xl: 76px;  /* hero headline */
+  --fs-display-l:  56px;  /* page titles */
+  --fs-display-m:  40px;  /* section titles */
+  --fs-display-s:  30px;  /* card / sub-section titles */
+  --fs-heading:    22px;  /* heading inside content */
+  --fs-body-l:     19px;  /* editorial body */
+  --fs-body:       16px;  /* default body / UI */
+  --fs-body-s:     14px;  /* secondary UI */
+  --fs-caption:    12px;  /* captions / refs */
+  --fs-overline:   11px;  /* eyebrow / overline */
+
+  /* ---- Weights ---- */
+  --fw-light:    300; /* @kind font */
+  --fw-regular:  400; /* @kind font */
+  --fw-medium:   500; /* @kind font */
+  --fw-semibold: 600; /* @kind font */
+  --fw-bold:     700; /* @kind font */
+
+  /* ---- Line heights ---- */
+  --lh-tight:   1.08;  /* @kind font */
+  --lh-snug:    1.25;  /* @kind font */
+  --lh-normal:  1.5;   /* @kind font */
+  --lh-relaxed: 1.8;   /* @kind font */
+
+  /* ---- Letter spacing ---- */
+  --ls-tight:    -0.02em; /* @kind font */
+  --ls-normal:   0;       /* @kind font */
+  --ls-wide:     0.04em;  /* @kind font */
+  --ls-wider:    0.18em;  /* @kind font */
+
+  /* ---- Semantic role aliases ---- */
+  --text-hero:    var(--fw-regular) var(--fs-display-xl)/var(--lh-tight) var(--font-display); /* @kind font */
+  --text-title:   var(--fw-regular) var(--fs-display-l)/var(--lh-tight) var(--font-display); /* @kind font */
+  --text-section: var(--fw-regular) var(--fs-display-m)/var(--lh-snug) var(--font-display); /* @kind font */
+}

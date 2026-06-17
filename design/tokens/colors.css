@@ -1,0 +1,73 @@
+/* ============================================================
+   HMG Watches — Color tokens
+   LIGHT LUXURY. Warm ivory canvas drawn from the logo, charcoal
+   ink, refined gold, brushed-steel neutral. Light is the identity.
+   ============================================================ */
+
+:root {
+  /* ---- Base palette (raw values) ---- */
+  --hmg-ivory:       #F7F2E8; /* page — warm cream, matches the logo plate */
+  --hmg-ivory-deep:  #EFE8D7; /* alternating section band */
+  --hmg-paper:       #FCFAF4; /* raised surface / niche */
+  --hmg-white:       #FFFFFF; /* crisp card */
+
+  --hmg-ink:         #1A1814; /* near-black warm — primary text & outlines */
+  --hmg-ink-2:       #5C5648; /* secondary text — warm taupe */
+  --hmg-ink-3:       #938A78; /* tertiary text / disabled */
+
+  --hmg-gold:        #B68A2E; /* refined gold — lines, accents */
+  --hmg-gold-bright: #C9A24B; /* logo highlight gold */
+  --hmg-gold-deep:   #8A6A22; /* pressed / text-safe gold */
+
+  --hmg-steel:       #9A9C9E; /* brushed-steel neutral */
+
+  --hmg-line:        #E3D9C6; /* subtle hairline on ivory */
+  --hmg-line-strong: #CFC3AC; /* stronger hairline */
+
+  /* ---- Semantic — disponibilidade ---- */
+  --hmg-available-bg: #E2ECDD; /* badge disponível — fundo verde subtil */
+  --hmg-available-fg: #3F6B3F; /* badge disponível — texto */
+  --hmg-sold-bg:      #E8E2D5; /* badge vendido — fundo */
+  --hmg-sold-fg:      #8C8472; /* badge vendido — texto */
+
+  /* ---- Semantic — variação de mercado ---- */
+  --hmg-up:          #3F6B3F; /* subida — verde */
+  --hmg-down:        #B5543F; /* descida — vermelho dessaturado quente */
+
+  /* ============================================================
+     Semantic aliases — use these in components
+     ============================================================ */
+  --bg-page:         var(--hmg-ivory);
+  --bg-page-alt:     var(--hmg-ivory-deep);
+  --surface-card:    var(--hmg-white);
+  --surface-raised:  var(--hmg-paper);
+  --surface-sunken:  var(--hmg-ivory-deep);
+
+  --text-primary:    var(--hmg-ink);
+  --text-secondary:  var(--hmg-ink-2);
+  --text-tertiary:   var(--hmg-ink-3);
+  --text-on-gold:    var(--hmg-ink);
+
+  --accent:          var(--hmg-gold);
+  --accent-hover:    var(--hmg-gold-bright);
+  --accent-press:    var(--hmg-gold-deep);
+
+  --border-subtle:   var(--hmg-line);
+  --border-strong:   var(--hmg-line-strong);
+  /* dark hairline (e.g. charcoal ghost-button outline) */
+  --border-on-dark:  rgba(26, 24, 20, 0.24);
+
+  --focus-ring:      var(--hmg-gold-deep);
+
+  /* Status */
+  --status-available-bg: var(--hmg-available-bg);
+  --status-available-fg: var(--hmg-available-fg);
+  --status-sold-bg:      var(--hmg-sold-bg);
+  --status-sold-fg:      var(--hmg-sold-fg);
+  --trend-up:            var(--hmg-up);
+  --trend-down:          var(--hmg-down);
+
+  /* Overlays / scrims for imagery (fade to ivory) */
+  --scrim-bottom:    linear-gradient(to top, rgba(247,242,232,0.97) 0%, rgba(247,242,232,0) 72%); /* @kind other */
+  --scrim-full:      linear-gradient(to top, rgba(247,242,232,0.88) 0%, rgba(247,242,232,0.18) 100%); /* @kind other */
+}

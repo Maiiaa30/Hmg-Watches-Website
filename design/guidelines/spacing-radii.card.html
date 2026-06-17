@@ -1,0 +1,21 @@
+<!-- @dsCard group="Spacing" viewport="700x180" name="Raios & elevação" subtitle="Cantos contidos, profundidade subtil" -->
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 32px 40px; background: var(--bg-page); }
+  .row { display: flex; gap: 28px; align-items: flex-end; }
+  .item { text-align: center; }
+  .box { width: 96px; height: 72px; background: var(--surface-raised); border: 1px solid var(--border-subtle); }
+  .t { font: var(--fw-medium) 11px var(--font-ui); color: var(--text-secondary); margin-top: 10px; }
+  .v { font: 400 11px var(--font-mono); color: var(--text-tertiary); margin-top: 2px; }
+</style></head>
+<body>
+  <div class="row">
+    <div class="item"><div class="box" style="border-radius:2px"></div><div class="t">sm</div><div class="v">2px</div></div>
+    <div class="item"><div class="box" style="border-radius:4px"></div><div class="t">md</div><div class="v">4px</div></div>
+    <div class="item"><div class="box" style="border-radius:8px"></div><div class="t">lg</div><div class="v">8px</div></div>
+    <div class="item"><div class="box" style="border-radius:4px;box-shadow:0 12px 48px rgba(0,0,0,.45)"></div><div class="t">shadow-card</div><div class="v">elevação</div></div>
+    <div class="item"><div class="box" style="border-radius:4px;box-shadow:0 30px 80px rgba(0,0,0,.55)"></div><div class="t">shadow-float</div><div class="v">relógio flutua</div></div>
+  </div>
+</body></html>

@@ -1,0 +1,81 @@
+<!-- @dsCard group="Website" viewport="1340x900" name="Website — público" subtitle="Homepage, catálogo, detalhe, blog, mercado, contacto" -->
+<!-- @startingPoint section="Website" subtitle="Site público completo (8 ecrãs navegáveis)" viewport="1340x900" -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HMG Watches</title>
+<link rel="icon" href="../../assets/favicon.svg" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; }
+  #hmg-scroll { height: 100vh; overflow-y: auto; scroll-behavior: smooth; }
+  #hmg-scroll::-webkit-scrollbar { width: 10px; }
+  #hmg-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+  a { -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+<div id="hmg-scroll"><div id="root"></div></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+
+<script src="data.js"></script>
+<script type="text/babel" src="responsive.js"></script>
+<script type="text/babel" src="Icon.jsx"></script>
+<script type="text/babel" src="WatchVisual.jsx"></script>
+<script type="text/babel" src="Chrome.jsx"></script>
+<script type="text/babel" src="HomeAbout.jsx"></script>
+<script type="text/babel" src="BlogScreens.jsx"></script>
+<script type="text/babel" src="CatalogDetail.jsx"></script>
+<script type="text/babel" src="MarketContact.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+  function App() {
+    const [route, setRoute] = React.useState("home");
+    const [watchId, setWatchId] = React.useState(null);
+    const [articleId, setArticleId] = React.useState(null);
+
+    const scrollTop = () => { const el = document.getElementById("hmg-scroll"); if (el) el.scrollTop = 0; };
+    const scrollToContact = () => {
+      const sc = document.getElementById("hmg-scroll");
+      const el = document.getElementById("home-contact");
+      if (sc && el) sc.scrollTo({ top: el.offsetTop - 70, behavior: "smooth" });
+    };
+    const go = (r, id) => {
+      if (r === "article" && id) setArticleId(id);
+      if (r === "contact") {
+        setRoute("home");
+        setTimeout(scrollToContact, route === "home" ? 20 : 120);
+        return;
+      }
+      setRoute(r); scrollTop();
+    };
+    const openWatch = (id) => { setWatchId(id); setRoute("detail"); scrollTop(); };
+
+    let screen;
+    if (route === "home") screen = <window.HomeScreen go={go} openWatch={openWatch} />;
+    else if (route === "about") screen = <window.AboutScreen go={go} />;
+    else if (route === "catalog") screen = <window.CatalogScreen openWatch={openWatch} />;
+    else if (route === "detail") screen = <window.DetailScreen watchId={watchId} openWatch={openWatch} go={go} />;
+    else if (route === "blog") screen = <window.BlogScreen go={go} />;
+    else if (route === "article") screen = <window.ArticleScreen go={go} articleId={articleId} />;
+    else if (route === "market") screen = <window.MarketScreen openWatch={openWatch} />;
+
+    return (
+      <React.Fragment>
+        <window.Header route={route} go={go} />
+        <main>{screen}</main>
+        <window.Footer go={go} />
+      </React.Fragment>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

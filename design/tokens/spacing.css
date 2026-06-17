@@ -1,0 +1,61 @@
+/* ============================================================
+   HMG Watches — Spacing, radii, shadows, motion
+   Whitespace is design. Generous margins, room to breathe.
+   ============================================================ */
+
+:root {
+  /* ---- Spacing scale (4px base) ---- */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  24px;
+  --sp-6:  32px;
+  --sp-7:  48px;
+  --sp-8:  64px;
+  --sp-9:  96px;
+  --sp-10: 128px;
+  --sp-11: 160px;  /* section breathing room */
+
+  /* Semantic spacing */
+  --gap-card:      var(--sp-6);  /* generous gap between product cards */
+  --pad-card:      var(--sp-6);
+  --section-y:     var(--sp-10); /* vertical rhythm between sections */
+  --gutter:        var(--sp-7);  /* page side gutter */
+
+  /* ---- Container widths ---- */
+  --container-max:    1320px; /* @kind other */
+  --container-narrow: 760px;  /* @kind other */
+
+  /* ---- Radii — restrained, never playful ---- */
+  --radius-none: 0;
+  --radius-sm:   2px;
+  --radius-md:   4px;
+  --radius-lg:   8px;
+  --radius-pill: 999px;
+
+  /* ---- Borders ---- */
+  --border-hair: 1px;
+
+  /* ---- Shadows — soft, warm; depth without harshness on ivory ---- */
+  --shadow-none:  none;
+  --shadow-soft:  0 2px 18px rgba(40, 33, 20, 0.06);
+  --shadow-card:  0 14px 44px rgba(40, 33, 20, 0.10);
+  --shadow-float: 0 40px 90px rgba(40, 33, 20, 0.16); /* a watch floating in its niche */
+  --glow-gold:    0 0 0 1px rgba(182, 138, 46, 0.40);
+
+  /* ---- Motion — subtle, 250–350ms, no excess ---- */
+  --ease-out:    cubic-bezier(0.22, 0.61, 0.36, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1); /* @kind other */
+  --dur-fast:    180ms; /* @kind other */
+  --dur-base:    280ms; /* @kind other */
+  --dur-slow:    350ms; /* @kind other */
+  --transition-base: all var(--dur-base) var(--ease-out); /* @kind other */
+
+  /* ---- Z-index ---- */
+  --z-base:    0;    /* @kind other */
+  --z-sticky:  100;  /* @kind other */
+  --z-overlay: 1000; /* @kind other */
+  --z-modal:   1100; /* @kind other */
+  --z-toast:   1200; /* @kind other */
+}

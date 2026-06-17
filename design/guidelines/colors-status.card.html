@@ -1,0 +1,21 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Estado & mercado" subtitle="Disponível, vendido, subida, descida" -->
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 28px; background: var(--bg-page); }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .sw { border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; background: var(--surface-card); }
+  .chip { height: 64px; display:flex; align-items:center; justify-content:center; font: var(--fw-medium) 12px var(--font-ui); letter-spacing: var(--ls-wide); text-transform: uppercase; }
+  .meta { padding: 10px 12px; }
+  .name { font: var(--fw-medium) 12px var(--font-ui); color: var(--text-primary); }
+  .hex { font: 400 11px var(--font-mono); color: var(--text-tertiary); margin-top: 3px; }
+</style></head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:#E2ECDD;color:#3F6B3F">Disponível</div><div class="meta"><div class="name">Disponível</div><div class="hex">#E2ECDD / #3F6B3F</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E8E2D5;color:#8C8472">Vendido</div><div class="meta"><div class="name">Vendido</div><div class="hex">#E8E2D5 / #8C8472</div></div></div>
+    <div class="sw"><div class="chip" style="background:rgba(63,107,63,.12);color:#3F6B3F">▲ +2,1%</div><div class="meta"><div class="name">Subida</div><div class="hex">#3F6B3F</div></div></div>
+    <div class="sw"><div class="chip" style="background:rgba(181,84,63,.12);color:#B5543F">▼ −1,4%</div><div class="meta"><div class="name">Descida</div><div class="hex">#B5543F</div></div></div>
+  </div>
+</body></html>

@@ -1,0 +1,5 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HMG">
+  <rect width="120" height="120" fill="#0A0A0A"></rect>
+  <rect x="3" y="3" width="114" height="114" fill="none" stroke="#B8986A" stroke-width="1"></rect>
+  <text x="60" y="74" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-weight="500" font-size="46" fill="#F5F5F0">HMG</text>
+</svg>

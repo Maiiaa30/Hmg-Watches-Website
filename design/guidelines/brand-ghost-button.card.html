@@ -1,0 +1,23 @@
+<!-- @dsCard group="Brand" viewport="700x210" name="Ghost button — princípio" subtitle="Borda fina, enche no hover (250ms). Sem fundos sólidos no site público." -->
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 40px; background: var(--bg-page); display:flex; flex-direction:column; gap:22px; }
+  .note { font: 400 13px/1.6 var(--font-body); color: var(--text-secondary); max-width: 540px; }
+  .row { display:flex; gap:18px; align-items:center; }
+  .gb { display:inline-flex; align-items:center; justify-content:center; padding:15px 32px; font: var(--fw-medium) 13px var(--font-ui); letter-spacing: var(--ls-wide); text-transform:uppercase; border-radius: var(--radius-sm); cursor:pointer; transition: all 250ms var(--ease-out); background:transparent; }
+  .gb.gold { border:1px solid var(--accent); color: var(--accent); }
+  .gb.gold:hover { background: var(--accent); color: var(--text-on-gold); }
+  .gb.light { border:1px solid var(--border-on-dark); color: var(--text-primary); }
+  .gb.light:hover { background: var(--text-primary); color: var(--bg-page); }
+  .hint { font: 400 11px var(--font-mono); color: var(--text-tertiary); }
+</style></head>
+<body>
+  <div class="note">Todos os botões do site público são <em>ghost</em>: apenas borda fina, fundo transparente. No hover enchem suavemente com a cor da borda. Botões sólidos vivem só no painel de admin.</div>
+  <div class="row">
+    <span class="gb gold">Ver Coleção</span>
+    <span class="gb light">Saber mais</span>
+    <span class="hint">← passe o cursor</span>
+  </div>
+</body></html>
