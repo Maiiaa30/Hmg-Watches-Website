@@ -25,20 +25,25 @@ export async function createSupabaseServerClient() {
   );
 }
 
-export async function getSession() {
+/**
+ * Returns the authenticated user, verified against the Supabase Auth server.
+ * Use this server-side instead of getSession(), whose data comes straight
+ * from cookies and may not be authentic (OWASP A01).
+ */
+export async function getUser() {
   const supabase = await createSupabaseServerClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session;
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
 }
 
 export async function requireAdmin() {
-  const session = await getSession();
-  if (!session) {
+  const user = await getUser();
+  if (!user) {
     throw new Error("Unauthorized");
   }
-  return session;
+  return { user };
 }
 
 export async function logAudit({

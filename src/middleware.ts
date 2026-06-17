@@ -25,15 +25,16 @@ export async function middleware(request: NextRequest) {
     }
   );
 
+  // Validate the user against the Supabase Auth server (not just cookies)
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
 
   // Protect all /admin routes (except /admin/login)
   if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
-    if (!session) {
+    if (!user) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/admin/login";
       loginUrl.searchParams.set("redirect", pathname);
@@ -42,7 +43,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect logged-in admin away from login page
-  if (pathname === "/admin/login" && session) {
+  if (pathname === "/admin/login" && user) {
     const adminUrl = request.nextUrl.clone();
     adminUrl.pathname = "/admin";
     return NextResponse.redirect(adminUrl);
