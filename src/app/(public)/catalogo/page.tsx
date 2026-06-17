@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { watches } from "@/lib/db/schema";
-import { eq, or, desc, and } from "drizzle-orm";
+import { eq, or, desc } from "drizzle-orm";
 import { WatchCard } from "@/components/public/WatchCard";
 import { TypingText } from "@/components/public/TypingText";
 import { SITE_NAME } from "@/constants";

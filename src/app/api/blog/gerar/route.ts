@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { blogPosts, auditLogs } from "@/lib/db/schema";
+import { blogPosts } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { requireAdmin, logAudit } from "@/lib/auth/utils";
 import { generateBlogSchema } from "@/lib/validations/blog";

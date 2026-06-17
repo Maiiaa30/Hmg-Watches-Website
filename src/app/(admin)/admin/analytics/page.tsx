@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { pageViews, watchLeads } from "@/lib/db/schema";
-import { eq, desc, gte, sql, and } from "drizzle-orm";
+import { eq, desc, gte, sql } from "drizzle-orm";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { subDays } from "date-fns";
 

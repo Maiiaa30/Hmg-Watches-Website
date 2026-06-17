@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { watches, blogPosts, pageViews, contactMessages, watchLeads, auditLogs } from "@/lib/db/schema";
-import { eq, sql, gte, desc, and } from "drizzle-orm";
+import { eq, sql, gte, desc } from "drizzle-orm";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AUDIT_ACTION_LABELS, AUDIT_ENTITY_LABELS } from "@/constants";
 import Link from "next/link";

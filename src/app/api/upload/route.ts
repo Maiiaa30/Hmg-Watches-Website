@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
   );
 
   if (!uploadRes.ok) {
-    const err = await uploadRes.text();
+    console.error("[upload] Supabase Storage error:", await uploadRes.text());
     return NextResponse.json<ApiResponse>({ success: false, error: "Erro no upload." }, { status: 500 });
   }
 

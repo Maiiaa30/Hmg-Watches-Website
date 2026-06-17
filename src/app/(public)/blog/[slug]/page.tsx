@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
-import { eq, ne, and } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { SITE_NAME, BLOG_CATEGORY_LABELS } from "@/constants";
 
 interface Props {

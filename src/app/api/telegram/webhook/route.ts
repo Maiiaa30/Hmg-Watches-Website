@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import crypto from "crypto";
 
 interface TelegramUpdate {
   update_id: number;
@@ -15,11 +14,9 @@ interface TelegramUpdate {
 }
 
 export async function POST(request: NextRequest) {
-  // Verify Telegram webhook secret
+  // Verify the Telegram webhook secret token (sent by Telegram on each call)
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
   if (secret) {
-    const token = process.env.TELEGRAM_BOT_TOKEN ?? "";
-    const secretKey = crypto.createHmac("sha256", "WebAppData").update(token).digest();
     const signature = request.headers.get("x-telegram-bot-api-secret-token");
     if (signature !== secret) {
       return NextResponse.json({ ok: false }, { status: 401 });
