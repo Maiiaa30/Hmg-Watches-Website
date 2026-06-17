@@ -3,24 +3,18 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
-  const { pathname, search } = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
   // Optional dedicated admin subdomain, e.g. ADMIN_HOST="admin.hmgwatches.com".
   // Unset in local dev → admin stays at /admin as usual.
   const adminHost = process.env.ADMIN_HOST;
 
-  if (adminHost) {
-    // On the admin subdomain, the bare root serves the dashboard.
-    if (host === adminHost && pathname === "/") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin";
-      return NextResponse.rewrite(url);
-    }
-    // On the public domain, send /admin to the admin subdomain (keeps the
-    // public site clean and makes the subdomain the canonical admin entry).
-    if (host !== adminHost && pathname.startsWith("/admin")) {
-      return NextResponse.redirect(`https://${adminHost}${pathname}${search}`);
-    }
+  // On the admin subdomain (when configured), the bare root serves the
+  // dashboard. /admin keeps working on the main domain — no redirect.
+  if (adminHost && host === adminHost && pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin";
+    return NextResponse.rewrite(url);
   }
 
   // Only the admin area and protected APIs need the auth round-trip.
