@@ -7,6 +7,9 @@ interface SettingsState {
   weekly_report_enabled: string;
   weekly_report_day: string;
   weekly_report_hour_utc: string;
+  blog_auto_enabled: string;
+  blog_auto_day: string;
+  blog_auto_category: string;
   site_name: string;
   site_contact_email: string;
   instagram_url: string;
@@ -16,10 +19,32 @@ const DEFAULT_SETTINGS: SettingsState = {
   weekly_report_enabled: "false",
   weekly_report_day: "saturday",
   weekly_report_hour_utc: "20",
+  blog_auto_enabled: "false",
+  blog_auto_day: "random",
+  blog_auto_category: "random",
   site_name: "HMG Watches",
   site_contact_email: "",
   instagram_url: "",
 };
+
+const WEEKDAYS = [
+  { value: "random", label: "Aleatório (dia diferente cada semana)" },
+  { value: "monday", label: "Segunda-feira" },
+  { value: "tuesday", label: "Terça-feira" },
+  { value: "wednesday", label: "Quarta-feira" },
+  { value: "thursday", label: "Quinta-feira" },
+  { value: "friday", label: "Sexta-feira" },
+  { value: "saturday", label: "Sábado" },
+  { value: "sunday", label: "Domingo" },
+];
+
+const BLOG_CATS = [
+  { value: "random", label: "Aleatória" },
+  { value: "novidades", label: "Novidades" },
+  { value: "curiosidades", label: "Curiosidades" },
+  { value: "guias", label: "Guias" },
+  { value: "mercado", label: "Mercado" },
+];
 
 export default function AdminDefinicoesPage() {
   const [pwForm, setPwForm] = useState({ current: "", new: "", confirm: "" });
@@ -33,6 +58,8 @@ export default function AdminDefinicoesPage() {
   const [testing, setTesting] = useState(false);
   const [reportStatus, setReportStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [sendingReport, setSendingReport] = useState(false);
+  const [blogStatus, setBlogStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [generatingBlog, setGeneratingBlog] = useState(false);
 
   // Load current settings
   useEffect(() => {
@@ -79,6 +106,22 @@ export default function AdminDefinicoesPage() {
       setTestStatus({ type: "error", text: "Erro de rede." });
     } finally {
       setTesting(false);
+    }
+  }
+
+  async function generateBlogNow() {
+    setGeneratingBlog(true);
+    setBlogStatus(null);
+    try {
+      const res = await fetch("/api/cron/weekly-blog", { method: "POST" });
+      const data = await res.json();
+      setBlogStatus(data.success
+        ? { type: "success", text: "Artigo gerado e enviado para aprovação no Telegram." }
+        : { type: "error", text: data.error ?? "Falha ao gerar o artigo." });
+    } catch {
+      setBlogStatus({ type: "error", text: "Erro de rede." });
+    } finally {
+      setGeneratingBlog(false);
     }
   }
 
@@ -203,6 +246,62 @@ export default function AdminDefinicoesPage() {
             {reportStatus && (
               <p style={{ color: reportStatus.type === "success" ? "var(--trend-up)" : "var(--hmg-down)", fontSize: 13, margin: 0 }}>
                 {reportStatus.text}
+              </p>
+            )}
+          </div>
+        </Card>
+
+        {/* Auto blog generation */}
+        <Card title="Geração Automática de Artigos">
+          <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 18 }}>
+            <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: 0 }}>
+              Uma vez por semana, a IA gera automaticamente um artigo sobre um tema à escolha
+              e envia-o para aprovação no Telegram (fica como <em>pendente</em> até aprovares).
+            </p>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={settings.blog_auto_enabled === "true"}
+                onChange={(e) => setSettings({ ...settings, blog_auto_enabled: e.target.checked ? "true" : "false" })}
+              />
+              Ativar geração automática semanal
+            </label>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div>
+                <label style={labelStyle}>Dia da semana</label>
+                <select style={inputStyle} value={settings.blog_auto_day} onChange={(e) => setSettings({ ...settings, blog_auto_day: e.target.value })}>
+                  {WEEKDAYS.map((d) => (
+                    <option key={d.value} value={d.value}>{d.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>Categoria</label>
+                <select style={inputStyle} value={settings.blog_auto_category} onChange={(e) => setSettings({ ...settings, blog_auto_category: e.target.value })}>
+                  {BLOG_CATS.map((c) => (
+                    <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <p style={{ fontSize: 12, color: "var(--text-tertiary)", margin: 0 }}>
+              A verificação corre diariamente (~10:00 UTC) e só gera no dia escolhido, uma vez por semana.
+            </p>
+
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+              <button onClick={saveSettings} disabled={savingSettings} style={primaryBtn}>
+                {savingSettings ? "A guardar…" : "Guardar definições"}
+              </button>
+              <button onClick={generateBlogNow} disabled={generatingBlog} style={ghostBtn}>
+                {generatingBlog ? "A gerar…" : "Gerar artigo agora"}
+              </button>
+            </div>
+            {blogStatus && (
+              <p style={{ color: blogStatus.type === "success" ? "var(--trend-up)" : "var(--hmg-down)", fontSize: 13, margin: 0 }}>
+                {blogStatus.text}
               </p>
             )}
           </div>
