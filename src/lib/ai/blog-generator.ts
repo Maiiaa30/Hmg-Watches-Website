@@ -64,6 +64,19 @@ Responde APENAS em JSON válido, sem texto adicional, com este formato exacto:
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           responseMimeType: "application/json",
+          // Enforce a strict JSON schema so the long Markdown content is
+          // always properly escaped — plain responseMimeType alone lets the
+          // model emit unescaped newlines that break JSON.parse.
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              title: { type: "STRING" },
+              excerpt: { type: "STRING" },
+              content: { type: "STRING" },
+              category: { type: "STRING" },
+            },
+            required: ["title", "excerpt", "content", "category"],
+          },
           // Gemini 2.5 models "think" before answering and that consumes the
           // output budget. Disable thinking and give ample room for a full
           // 600-1000 word article, otherwise the JSON gets truncated.
