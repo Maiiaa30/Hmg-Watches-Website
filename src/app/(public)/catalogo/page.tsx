@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { watches } from "@/lib/db/schema";
 import { eq, or, desc, and } from "drizzle-orm";
 import { WatchCard } from "@/components/public/WatchCard";
+import { TypingText } from "@/components/public/TypingText";
 import { SITE_NAME } from "@/constants";
 
 export const metadata: Metadata = {
@@ -26,9 +27,10 @@ export default async function CatalogoPage() {
     <div style={{ padding: "var(--section-y) 0" }}>
       <div className="hmg-container">
         {/* Header */}
-        <div style={{ marginBottom: 72 }}>
+        <div className="hmg-fade-up" style={{ marginBottom: 72 }}>
           <span className="hmg-overline">Coleção</span>
           <h1
+            aria-label="Catálogo"
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -36,7 +38,7 @@ export default async function CatalogoPage() {
               marginBottom: 16,
             }}
           >
-            Catálogo
+            <TypingText segments={[{ text: "Catálogo" }]} />
           </h1>
           <p
             style={{

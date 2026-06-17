@@ -4,6 +4,7 @@ import { watchMarketHighlights } from "@/lib/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { SITE_NAME } from "@/constants";
 import { MetalsChart } from "@/components/public/MetalsChart";
+import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
   title: `Mercado — ${SITE_NAME}`,
@@ -101,9 +102,10 @@ export default async function MercadoPage() {
   return (
     <div style={{ padding: "var(--section-y) 0" }}>
       <div className="hmg-container">
-        <div style={{ marginBottom: 72 }}>
+        <div className="hmg-fade-up" style={{ marginBottom: 72 }}>
           <span className="hmg-overline">Mercado</span>
           <h1
+            aria-label="Pulso do mercado"
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -111,7 +113,7 @@ export default async function MercadoPage() {
               marginBottom: 16,
             }}
           >
-            Pulso do mercado
+            <TypingText segments={[{ text: "Pulso do mercado" }]} />
           </h1>
           <p style={{ fontSize: "var(--fs-body-l)", color: "var(--text-secondary)", maxWidth: 520 }}>
             Metais preciosos e relógios em destaque no mercado secundário.

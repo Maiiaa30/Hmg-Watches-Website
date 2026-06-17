@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/constants";
+import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
   title: `Sobre Nós — ${SITE_NAME}`,
@@ -12,6 +13,7 @@ export default function SobreNosPage() {
       <div className="hmg-container" style={{ maxWidth: "var(--container-narrow)" }}>
         <span className="hmg-overline">Sobre nós</span>
         <h1
+          aria-label="Uma montra limpa que serve as peças."
           style={{
             fontSize: "var(--fs-display-l)",
             lineHeight: "var(--lh-tight)",
@@ -19,10 +21,12 @@ export default function SobreNosPage() {
             marginBottom: 32,
           }}
         >
-          Uma montra limpa que<br />
-          <span style={{ fontStyle: "italic", color: "var(--accent-press)" }}>
-            serve as peças.
-          </span>
+          <TypingText
+            segments={[
+              { text: "Uma montra limpa que\n" },
+              { text: "serve as peças.", style: { fontStyle: "italic", color: "var(--accent-press)" } },
+            ]}
+          />
         </h1>
 
         <div

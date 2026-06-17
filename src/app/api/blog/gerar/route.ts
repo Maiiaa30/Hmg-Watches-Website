@@ -47,8 +47,24 @@ export async function POST(request: NextRequest) {
 
   const { category, topic } = parsed.data;
 
-  // Generate with Claude
-  const article = await generateBlogPost(category, topic);
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return NextResponse.json<ApiResponse>(
+      { success: false, error: "ANTHROPIC_API_KEY não configurado." },
+      { status: 400 }
+    );
+  }
+
+  // Generate with Claude — surface a clean message on API/billing errors
+  let article;
+  try {
+    article = await generateBlogPost(category, topic);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erro desconhecido.";
+    const friendly = /credit balance/i.test(message)
+      ? "Saldo de créditos da Anthropic insuficiente. Adicione créditos em console.anthropic.com → Plans & Billing."
+      : `Falha ao gerar o artigo: ${message}`;
+    return NextResponse.json<ApiResponse>({ success: false, error: friendly }, { status: 502 });
+  }
 
   // Unique slug
   const base = slugify(article.title, { lower: true, strict: true }).slice(0, 80);

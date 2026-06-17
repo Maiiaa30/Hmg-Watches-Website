@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, desc, lte, and } from "drizzle-orm";
 import { SITE_NAME, BLOG_CATEGORY_LABELS } from "@/constants";
+import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
   title: `Diário de Bordo — ${SITE_NAME}`,
@@ -25,9 +26,10 @@ export default async function BlogPage() {
   return (
     <div style={{ padding: "var(--section-y) 0" }}>
       <div className="hmg-container">
-        <div style={{ marginBottom: 72 }}>
+        <div className="hmg-fade-up" style={{ marginBottom: 72 }}>
           <span className="hmg-overline">Diário de Bordo</span>
           <h1
+            aria-label="Reflexões sobre relojoaria"
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -35,7 +37,7 @@ export default async function BlogPage() {
               marginBottom: 16,
             }}
           >
-            Reflexões sobre relojoaria
+            <TypingText segments={[{ text: "Reflexões sobre relojoaria" }]} />
           </h1>
         </div>
 

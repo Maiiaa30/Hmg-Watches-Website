@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/public/ContactForm";
+import { TypingText } from "@/components/public/TypingText";
 import { SITE_NAME } from "@/constants";
 
 export const metadata: Metadata = {
@@ -20,9 +21,10 @@ export default function ContactoPage() {
         }}
       >
         {/* Left */}
-        <div>
+        <div className="hmg-fade-up">
           <span className="hmg-overline">Contacto</span>
           <h1
+            aria-label="Fale connosco."
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -30,7 +32,7 @@ export default function ContactoPage() {
               marginBottom: 24,
             }}
           >
-            Fale connosco.
+            <TypingText segments={[{ text: "Fale connosco." }]} />
           </h1>
           <p
             style={{
