@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { watchMarketHighlights } from "@/lib/db/schema";
 import { eq, asc } from "drizzle-orm";
-import { SITE_NAME } from "@/constants";
 import { MetalsChart } from "@/components/public/MetalsChart";
 import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
-  title: `Mercado — ${SITE_NAME}`,
+  title: "Mercado",
   description: "Preços de metais preciosos e relógios em valorização.",
 };
 
@@ -198,6 +197,7 @@ export default async function MercadoPage() {
               <span className="hmg-overline">Relógios em alta</span>
             </div>
             <div
+              className="hmg-stack"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(3, 1fr)",

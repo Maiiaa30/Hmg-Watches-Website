@@ -10,7 +10,7 @@ import { TypingText } from "@/components/public/TypingText";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} — Relógios de Luxo`,
+  title: { absolute: `${SITE_NAME} — Relógios de Luxo` },
   description: SITE_DESCRIPTION,
 };
 
@@ -63,6 +63,7 @@ export default async function HomePage() {
     <div>
       {/* ── Hero ── */}
       <section
+        className="hmg-hero"
         style={{
           position: "relative",
           minHeight: "calc(100vh - 84px)",
@@ -72,7 +73,7 @@ export default async function HomePage() {
         }}
       >
         <div
-          className="hmg-container"
+          className="hmg-container hmg-stack"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -155,6 +156,7 @@ export default async function HomePage() {
 
           {heroWatch && (
             <div
+              className="hmg-hero-media"
               style={{
                 position: "relative",
                 display: "flex",
@@ -190,7 +192,7 @@ export default async function HomePage() {
                 </Link>
                 {/* Floating label — overlaps the bottom-left corner of the image */}
                 <div
-                  className="hmg-fade-up"
+                  className="hmg-fade-up hmg-hero-label"
                   style={{
                     position: "absolute",
                     left: -120,
@@ -326,6 +328,7 @@ export default async function HomePage() {
               </div>
             </div>
             <div
+              className="hmg-stack"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(4, 1fr)",
@@ -349,7 +352,7 @@ export default async function HomePage() {
         }}
       >
         <div
-          className="hmg-container"
+          className="hmg-container hmg-stack"
           style={{
             padding: "130px var(--gutter)",
             display: "grid",
@@ -469,6 +472,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <div
+              className="hmg-stack"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(3, 1fr)",

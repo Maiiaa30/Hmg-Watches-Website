@@ -3,11 +3,11 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, desc, lte, and } from "drizzle-orm";
-import { SITE_NAME, BLOG_CATEGORY_LABELS } from "@/constants";
+import { BLOG_CATEGORY_LABELS } from "@/constants";
 import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
-  title: `Diário de Bordo — ${SITE_NAME}`,
+  title: "Diário de Bordo",
   description: "Reflexões, guias e curiosidades sobre relojoaria.",
 };
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
-import { SITE_NAME, BLOG_CATEGORY_LABELS } from "@/constants";
+import { BLOG_CATEGORY_LABELS } from "@/constants";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -25,9 +25,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .from(blogPosts)
     .where(eq(blogPosts.slug, slug))
     .limit(1);
-  if (!post) return { title: `Não encontrado — ${SITE_NAME}` };
+  if (!post) return { title: "Não encontrado" };
   return {
-    title: `${post.title} — ${SITE_NAME}`,
+    title: post.title,
     description: post.excerpt,
     openGraph: {
       images: post.coverImage ? [{ url: post.coverImage }] : [],

@@ -11,7 +11,6 @@ import { WatchCard } from "@/components/public/WatchCard";
 import {
   MOVEMENT_TYPE_LABELS,
   CONDITION_LABELS,
-  SITE_NAME,
 } from "@/constants";
 
 interface Props {
@@ -34,10 +33,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .where(eq(watches.slug, slug))
     .limit(1);
 
-  if (!watch) return { title: `Não encontrado — ${SITE_NAME}` };
+  if (!watch) return { title: "Não encontrado" };
 
   return {
-    title: `${watch.brand} ${watch.model} — ${SITE_NAME}`,
+    title: `${watch.brand} ${watch.model}`,
     description: watch.description ?? `${watch.brand} ${watch.model}${watch.reference ? ` (${watch.reference})` : ""}. ${watch.year ?? ""}`,
     openGraph: {
       images: watch.images[0] ? [{ url: watch.images[0] }] : [],
@@ -112,6 +111,7 @@ export default async function WatchDetailPage({ params }: Props) {
         </nav>
 
         <div
+          className="hmg-stack"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",

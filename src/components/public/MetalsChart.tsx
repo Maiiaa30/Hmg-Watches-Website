@@ -81,7 +81,7 @@ export function MetalsChart({ series }: { series: MetalSeries[] }) {
   return (
     <div>
       {/* Metal selector tabs */}
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${series.length}, 1fr)`, gap: 14, marginBottom: 28 }}>
+      <div className="hmg-metal-tabs" style={{ display: "grid", gridTemplateColumns: `repeat(${series.length}, 1fr)`, gap: 14, marginBottom: 28 }}>
         {series.map((s) => {
           const isActive = s.key === active.key;
           const sUp = s.changePct >= 0;

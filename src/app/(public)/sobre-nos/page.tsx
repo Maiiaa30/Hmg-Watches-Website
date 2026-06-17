@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { SITE_NAME } from "@/constants";
 import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
-  title: `Sobre Nós — ${SITE_NAME}`,
+  title: "Sobre Nós",
   description: "A história e os valores da HMG Watches.",
 };
 
@@ -52,6 +51,7 @@ export default function SobreNosPage() {
         </div>
 
         <div
+          className="hmg-stack"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",

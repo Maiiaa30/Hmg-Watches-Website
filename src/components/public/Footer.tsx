@@ -30,6 +30,7 @@ const NAV_COLUMNS = [
 export function Footer() {
   return (
     <footer
+      className="hmg-footer"
       style={{
         borderTop: "1px solid var(--border-strong)",
         padding: "84px 56px 44px",
@@ -37,6 +38,7 @@ export function Footer() {
       }}
     >
       <div
+        className="hmg-footer-grid"
         style={{
           maxWidth: "var(--container-max)",
           margin: "0 auto",
@@ -168,6 +170,7 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div
+        className="hmg-footer-bottom"
         style={{
           maxWidth: "var(--container-max)",
           margin: "56px auto 0",

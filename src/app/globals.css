@@ -263,3 +263,54 @@ button { font-family: inherit; }
   .hmg-cursor { animation: none; }
   .hmg-fade-up, .hmg-img-in { animation: none; }
 }
+
+/* ---- Mobile responsiveness ---- */
+@media (max-width: 768px) {
+  :root {
+    --gutter: 20px;
+    --section-y: 64px;
+    --fs-display-l: 38px;
+    --fs-display-s: 26px;
+  }
+
+  /* Any grid marked .hmg-stack collapses to one column */
+  .hmg-stack {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Hero */
+  .hmg-hero {
+    min-height: auto !important;
+    padding: 24px 0 56px !important;
+  }
+  .hmg-hero-media {
+    min-height: 0 !important;
+  }
+  .hmg-hero-label {
+    position: static !important;
+    left: auto !important;
+    bottom: auto !important;
+    margin-top: 16px;
+    max-width: none !important;
+  }
+
+  /* Precious-metals chart tabs: 2 per row instead of 4 */
+  .hmg-metal-tabs {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Footer */
+  .hmg-footer {
+    padding: 56px 20px 32px !important;
+  }
+  .hmg-footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 28px !important;
+  }
+  .hmg-footer-bottom {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+}

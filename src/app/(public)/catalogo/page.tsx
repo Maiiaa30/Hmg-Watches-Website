@@ -4,10 +4,9 @@ import { watches } from "@/lib/db/schema";
 import { eq, or, desc } from "drizzle-orm";
 import { WatchCard } from "@/components/public/WatchCard";
 import { TypingText } from "@/components/public/TypingText";
-import { SITE_NAME } from "@/constants";
 
 export const metadata: Metadata = {
-  title: `Catálogo — ${SITE_NAME}`,
+  title: "Catálogo",
   description: "Todos os relógios disponíveis e histórico de vendas da HMG Watches.",
 };
 

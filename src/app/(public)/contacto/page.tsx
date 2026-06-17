@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/public/ContactForm";
 import { TypingText } from "@/components/public/TypingText";
-import { SITE_NAME } from "@/constants";
 
 export const metadata: Metadata = {
-  title: `Contacto — ${SITE_NAME}`,
+  title: "Contacto",
   description: "Fale connosco sobre compra, venda ou avaliação de relógios.",
 };
 
@@ -12,7 +11,7 @@ export default function ContactoPage() {
   return (
     <div style={{ padding: "var(--section-y) 0" }}>
       <div
-        className="hmg-container"
+        className="hmg-container hmg-stack"
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
