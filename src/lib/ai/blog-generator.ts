@@ -13,9 +13,13 @@ interface GeneratedArticle {
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
 interface GeminiResponse {
-  candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  candidates?: Array<{
+    content?: { parts?: Array<{ text?: string }> };
+    finishReason?: string;
+  }>;
   error?: { message?: string };
   promptFeedback?: { blockReason?: string };
+  usageMetadata?: Record<string, number>;
 }
 
 export async function generateBlogPost(
@@ -80,8 +84,16 @@ Responde APENAS em JSON válido, sem texto adicional, com este formato exacto:
     throw new Error(`Conteúdo bloqueado pelo Gemini (${data.promptFeedback.blockReason}).`);
   }
 
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const candidate = data.candidates?.[0];
+  const finishReason = candidate?.finishReason;
+  const text = candidate?.content?.parts?.[0]?.text ?? "";
+
+  if (finishReason === "MAX_TOKENS") {
+    console.error("[blog-generator] MAX_TOKENS — output truncated.", data.usageMetadata);
+    throw new Error("Resposta cortada (MAX_TOKENS). O modelo gastou o orçamento de tokens.");
+  }
   if (!text) {
+    console.error("[blog-generator] empty text.", { finishReason, usage: data.usageMetadata });
     throw new Error("Resposta vazia da IA.");
   }
 
@@ -91,8 +103,16 @@ Responde APENAS em JSON válido, sem texto adicional, com este formato exacto:
   } catch {
     // Try to extract JSON from the response
     const match = text.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error("Resposta inválida da IA.");
-    parsed = JSON.parse(match[0]) as typeof parsed;
+    if (!match) {
+      console.error("[blog-generator] no JSON found. finishReason:", finishReason, "raw:", text.slice(0, 400));
+      throw new Error("Resposta inválida da IA.");
+    }
+    try {
+      parsed = JSON.parse(match[0]) as typeof parsed;
+    } catch {
+      console.error("[blog-generator] JSON parse failed. finishReason:", finishReason, "raw:", text.slice(0, 400));
+      throw new Error("Resposta inválida da IA.");
+    }
   }
 
   const wordCount = parsed.content.split(/\s+/).length;
