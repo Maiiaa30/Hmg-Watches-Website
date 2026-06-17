@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -35,6 +36,12 @@ interface AdminShellProps {
 
 export function AdminShell({ children, title, action, unreadLeads = 0 }: AdminShellProps) {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close the mobile drawer whenever the route changes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   function isActive(href: string) {
     if (href === "/admin") return pathname === "/admin";
@@ -43,8 +50,13 @@ export function AdminShell({ children, title, action, unreadLeads = 0 }: AdminSh
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: "var(--bg-page)" }}>
+      {/* Backdrop (mobile, when drawer open) */}
+      {menuOpen && (
+        <div className="hmg-admin-backdrop" onClick={() => setMenuOpen(false)} />
+      )}
       {/* Sidebar */}
       <aside
+        className={`hmg-admin-sidebar${menuOpen ? " open" : ""}`}
         style={{
           width: 248,
           flexShrink: 0,
@@ -170,10 +182,12 @@ export function AdminShell({ children, title, action, unreadLeads = 0 }: AdminSh
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
         {/* Topbar */}
         <div
+          className="hmg-admin-topbar"
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            gap: 12,
             padding: "26px 40px",
             borderBottom: "1px solid var(--border-subtle)",
             position: "sticky",
@@ -183,24 +197,40 @@ export function AdminShell({ children, title, action, unreadLeads = 0 }: AdminSh
             zIndex: 10,
           }}
         >
-          <h1
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 28,
-              fontWeight: 500,
-            }}
-          >
-            {title}
-          </h1>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
+            <button
+              className="hmg-admin-hamburger"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Abrir menu"
+              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: 0 }}
+            >
+              <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                <path d="M3 12h18M3 6h18M3 18h18" />
+              </svg>
+            </button>
+            <h1
+              className="hmg-admin-title"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 28,
+                fontWeight: 500,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {title}
+            </h1>
+          </div>
           {action && (
-            <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 18, flexShrink: 0 }}>
               {action}
             </div>
           )}
         </div>
 
         {/* Content */}
-        <div style={{ padding: "32px 40px", flex: 1 }}>
+        <div className="hmg-admin-content" style={{ padding: "32px 40px", flex: 1 }}>
           {children}
         </div>
       </div>

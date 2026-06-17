@@ -326,6 +326,38 @@ button { font-family: inherit; }
 .hmg-article-card:hover .hmg-article-title { color: var(--accent-press); }
 .hmg-article-title { transition: color var(--dur-base) var(--ease-out); }
 
+/* ---- Admin shell responsiveness ---- */
+.hmg-admin-backdrop { display: none; }
+.hmg-admin-hamburger { display: none; }
+@media (max-width: 900px) {
+  .hmg-admin-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    z-index: 1100;
+    transform: translateX(-100%);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .hmg-admin-sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-float);
+  }
+  .hmg-admin-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1050;
+  }
+  .hmg-admin-hamburger { display: inline-flex !important; }
+  .hmg-admin-topbar { padding: 16px 18px !important; }
+  .hmg-admin-title { font-size: 20px !important; }
+  /* Let wide admin tables scroll horizontally instead of breaking layout */
+  .hmg-admin-content { padding: 18px !important; overflow-x: auto; }
+}
+
 /* ---- Mobile responsiveness ---- */
 @media (max-width: 768px) {
   :root {
