@@ -44,36 +44,9 @@ export function MensagensList({ messages }: { messages: MessageRow[] }) {
   }
 
   return (
-    <div
-      style={{
-        background: "var(--surface-card)",
-        border: "1px solid var(--border-subtle)",
-        borderRadius: 6,
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1.5fr 1.5fr 120px 80px",
-          padding: "14px 22px",
-          borderBottom: "1px solid var(--border-subtle)",
-          background: "var(--bg-page-alt)",
-          fontSize: 11,
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: "var(--text-tertiary)",
-        }}
-      >
-        <div>Assunto</div>
-        <div>Nome</div>
-        <div>Email</div>
-        <div style={{ textAlign: "center" }}>Data</div>
-        <div style={{ textAlign: "center" }}>Lido</div>
-      </div>
-
+    <div className="hmg-admin-cardlist">
       {messages.length === 0 && (
-        <div style={{ padding: "60px 24px", textAlign: "center", color: "var(--text-tertiary)", fontSize: 14 }}>
+        <div style={{ padding: "48px 24px", textAlign: "center", color: "var(--text-tertiary)", fontSize: 14, background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 8 }}>
           Nenhuma mensagem recebida.
         </div>
       )}
@@ -81,31 +54,38 @@ export function MensagensList({ messages }: { messages: MessageRow[] }) {
       {messages.map((msg) => {
         const isOpen = expanded === msg.id;
         return (
-          <div key={msg.id} style={{ borderBottom: "1px solid var(--border-subtle)", background: !msg.read ? "rgba(182,138,46,0.04)" : "transparent" }}>
+          <div
+            key={msg.id}
+            style={{
+              background: !msg.read ? "rgba(182,138,46,0.06)" : "var(--surface-card)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: 8,
+              overflow: "hidden",
+            }}
+          >
             <div
               onClick={() => setExpanded(isOpen ? null : msg.id)}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "2fr 1.5fr 1.5fr 120px 80px",
-                padding: "16px 22px",
-                alignItems: "center",
-                fontSize: 13,
-                cursor: "pointer",
-              }}
+              className="hmg-watch-card"
+              style={{ cursor: "pointer", border: "none", borderRadius: 0, fontSize: 13 }}
             >
-              <div style={{ fontWeight: 500, color: "var(--text-primary)" }}>{msg.subject}</div>
-              <div style={{ color: "var(--text-secondary)" }}>{msg.name}</div>
-              <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{msg.email}</div>
-              <div style={{ textAlign: "center", fontSize: 11, color: "var(--text-tertiary)" }}>
-                {new Intl.DateTimeFormat("pt-PT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }).format(new Date(msg.createdAt))}
+              {/* Subject + sender */}
+              <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+                <div style={{ fontWeight: 500, color: "var(--text-primary)" }}>{msg.subject}</div>
+                <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 2 }}>
+                  {msg.name} · {msg.email}
+                </div>
               </div>
-              <div style={{ textAlign: "center" }}>
+              {/* Date + read dot */}
+              <div className="hmg-watch-meta" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 11, color: "var(--text-tertiary)" }}>
+                  {new Intl.DateTimeFormat("pt-PT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }).format(new Date(msg.createdAt))}
+                </span>
                 <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: msg.read ? "var(--border-strong)" : "var(--accent)" }} />
               </div>
             </div>
 
             {isOpen && (
-              <div style={{ padding: "0 22px 20px", borderTop: "1px solid var(--border-subtle)" }}>
+              <div style={{ padding: "0 18px 20px", borderTop: "1px solid var(--border-subtle)" }}>
                 <div style={{ paddingTop: 16, fontSize: 14, lineHeight: 1.7, color: "var(--text-secondary)", whiteSpace: "pre-wrap" }}>
                   {msg.message}
                 </div>
