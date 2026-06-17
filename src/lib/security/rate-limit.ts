@@ -2,13 +2,21 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
 function createRedis() {
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) {
     return null;
   }
-  return new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  });
+  // The @upstash/redis REST client requires the HTTPS REST URL — not the
+  // rediss:// TCP connection string. Guard against misconfiguration so a
+  // wrong value disables rate limiting instead of crashing every route.
+  if (!url.startsWith("https://")) {
+    console.warn(
+      "[rate-limit] UPSTASH_REDIS_REST_URL must start with https:// (got a non-REST URL). Rate limiting disabled."
+    );
+    return null;
+  }
+  return new Redis({ url, token });
 }
 
 const redis = createRedis();

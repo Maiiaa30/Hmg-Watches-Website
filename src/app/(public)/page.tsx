@@ -81,7 +81,7 @@ export default async function HomePage() {
             width: "100%",
           }}
         >
-          <div style={{ maxWidth: 560 }}>
+          <div className="hmg-fade-up" style={{ maxWidth: 560 }}>
             <div
               style={{
                 display: "flex",
@@ -166,6 +166,7 @@ export default async function HomePage() {
               <div style={{ position: "relative", width: "min(400px, 100%)" }}>
                 <Link
                   href={`/catalogo/${heroWatch.slug}`}
+                  className="hmg-img-in"
                   style={{
                     display: "block",
                     position: "relative",
@@ -189,6 +190,7 @@ export default async function HomePage() {
                 </Link>
                 {/* Floating label — overlaps the bottom-left corner of the image */}
                 <div
+                  className="hmg-fade-up"
                   style={{
                     position: "absolute",
                     left: -120,
@@ -198,6 +200,7 @@ export default async function HomePage() {
                     padding: "16px 20px",
                     boxShadow: "var(--shadow-card)",
                     maxWidth: 220,
+                    animationDelay: "0.55s",
                   }}
                 >
                 <div
@@ -295,7 +298,7 @@ export default async function HomePage() {
               >
                 <div>
                   <h2 style={{ fontSize: 44, lineHeight: 1.1 }}>
-                    Peças selecionadas
+                    <TypingText startOnView segments={[{ text: "Peças selecionadas" }]} />
                   </h2>
                   <p
                     style={{
@@ -380,9 +383,7 @@ export default async function HomePage() {
               <span className="hmg-overline">Sobre nós</span>
             </div>
             <h2 style={{ fontSize: 46, lineHeight: 1.12 }}>
-              Uma montra limpa
-              <br />
-              que serve as peças.
+              <TypingText startOnView segments={[{ text: "Uma montra limpa\nque serve as peças." }]} />
             </h2>
           </div>
           <div>
@@ -453,7 +454,7 @@ export default async function HomePage() {
                   <span className="hmg-overline">Diário de Bordo</span>
                 </div>
                 <h2 style={{ fontSize: 44, lineHeight: 1.1 }}>
-                  Reflexões sobre relojoaria
+                  <TypingText startOnView segments={[{ text: "Reflexões sobre relojoaria" }]} />
                 </h2>
               </div>
               <Link
@@ -554,7 +555,7 @@ export default async function HomePage() {
               marginBottom: 20,
             }}
           >
-            Tem interesse num relógio?
+            <TypingText startOnView segments={[{ text: "Tem interesse num relógio?" }]} />
           </h2>
           <p
             style={{
