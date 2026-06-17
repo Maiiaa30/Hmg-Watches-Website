@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { watches, blogPosts } from "@/lib/db/schema";
 import { eq, and, desc, lte } from "drizzle-orm";
 import { WatchCard } from "@/components/public/WatchCard";
+import { ContactForm } from "@/components/public/ContactForm";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 
 export const metadata: Metadata = {
@@ -154,46 +155,52 @@ export default async function HomePage() {
           </div>
 
           {heroWatch && (
-            <div style={{ position: "relative", height: 500 }}>
-              <Link
-                href={`/catalogo/${heroWatch.slug}`}
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  width: 380,
-                  aspectRatio: "37 / 47",
-                  borderRadius: 8,
-                  overflow: "hidden",
-                  border: "1px solid var(--border-strong)",
-                  boxShadow: "var(--shadow-float)",
-                  display: "block",
-                }}
-              >
-                {heroWatch.images[0] && (
-                  <Image
-                    src={heroWatch.images[0]}
-                    alt={`${heroWatch.brand} ${heroWatch.model}`}
-                    fill
-                    style={{ objectFit: "cover", objectPosition: "center 42%" }}
-                    priority
-                  />
-                )}
-              </Link>
-              {/* Floating label */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  bottom: 56,
-                  background: "var(--surface-card)",
-                  border: "1px solid var(--border-subtle)",
-                  padding: "16px 20px",
-                  boxShadow: "var(--shadow-card)",
-                  maxWidth: 220,
-                }}
-              >
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: 520,
+              }}
+            >
+              <div style={{ position: "relative", width: "min(400px, 100%)" }}>
+                <Link
+                  href={`/catalogo/${heroWatch.slug}`}
+                  style={{
+                    display: "block",
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "37 / 47",
+                    borderRadius: 8,
+                    overflow: "hidden",
+                    border: "1px solid var(--border-strong)",
+                    boxShadow: "var(--shadow-float)",
+                  }}
+                >
+                  {heroWatch.images[0] && (
+                    <Image
+                      src={heroWatch.images[0]}
+                      alt={`${heroWatch.brand} ${heroWatch.model}`}
+                      fill
+                      style={{ objectFit: "cover", objectPosition: "center 42%" }}
+                      priority
+                    />
+                  )}
+                </Link>
+                {/* Floating label — overlaps the bottom-left corner of the image */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: -120,
+                    bottom: 48,
+                    background: "var(--surface-card)",
+                    border: "1px solid var(--border-subtle)",
+                    padding: "16px 20px",
+                    boxShadow: "var(--shadow-card)",
+                    maxWidth: 220,
+                  }}
+                >
                 <div
                   style={{
                     fontFamily: "var(--font-ui)",
@@ -234,6 +241,7 @@ export default async function HomePage() {
                   <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="var(--accent-press)" strokeWidth={1.5}>
                     <path d="M7 17L17 7M17 7H7M17 7v10" />
                   </svg>
+                </div>
                 </div>
               </div>
             </div>
@@ -537,7 +545,7 @@ export default async function HomePage() {
           textAlign: "center",
         }}
       >
-        <div className="hmg-container" style={{ maxWidth: "var(--container-narrow)" }}>
+        <div className="hmg-container" style={{ maxWidth: 560 }}>
           <span className="hmg-overline">Contacto</span>
           <h2
             style={{
@@ -560,12 +568,7 @@ export default async function HomePage() {
             Fale connosco — gostamos de conversar sobre relojoaria tanto quanto
             de vender relógios.
           </p>
-          <Link href="/contacto" className="hmg-ghost-btn hmg-ghost-btn--gold">
-            Entrar em contacto
-            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </Link>
+          <ContactForm />
         </div>
       </section>
     </div>
