@@ -47,21 +47,21 @@ export async function POST(request: NextRequest) {
 
   const { category, topic } = parsed.data;
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json<ApiResponse>(
-      { success: false, error: "ANTHROPIC_API_KEY não configurado." },
+      { success: false, error: "GEMINI_API_KEY não configurado. Crie uma chave gratuita em aistudio.google.com." },
       { status: 400 }
     );
   }
 
-  // Generate with Claude — surface a clean message on API/billing errors
+  // Generate with Gemini — surface a clean message on API/quota errors
   let article;
   try {
     article = await generateBlogPost(category, topic);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erro desconhecido.";
-    const friendly = /credit balance/i.test(message)
-      ? "Saldo de créditos da Anthropic insuficiente. Adicione créditos em console.anthropic.com → Plans & Billing."
+    const friendly = /quota|rate limit|resource.*exhausted|429/i.test(message)
+      ? "Limite gratuito do Gemini atingido. Tente novamente mais tarde."
       : `Falha ao gerar o artigo: ${message}`;
     return NextResponse.json<ApiResponse>({ success: false, error: friendly }, { status: 502 });
   }
