@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const NAV = [
@@ -69,16 +68,38 @@ export function Header() {
           margin: "0 auto",
         }}
       >
-        {/* Logo */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", cursor: "pointer" }} aria-label="HMG Watches — Início">
-          <Image
-            src="/uploads/logoFinal.png"
-            alt="HMG Watches"
-            width={56}
-            height={56}
-            priority
-            style={{ height: 56, width: "auto" }}
-          />
+        {/* Wordmark */}
+        <Link
+          href="/"
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: 9,
+            cursor: "pointer",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 27,
+              fontWeight: 600,
+              letterSpacing: "0.01em",
+              color: "var(--text-primary)",
+            }}
+          >
+            HMG
+          </span>
+          <span
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 10,
+              letterSpacing: "0.36em",
+              textTransform: "uppercase",
+              color: "var(--accent-press)",
+            }}
+          >
+            Watches
+          </span>
         </Link>
 
         {/* Desktop nav */}
