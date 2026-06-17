@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { watches } from "@/lib/db/schema";
@@ -8,6 +7,7 @@ import { eq, ne, and } from "drizzle-orm";
 import { Badge } from "@/components/ui/Badge";
 import { LeadForm } from "@/components/public/LeadForm";
 import { WatchCard } from "@/components/public/WatchCard";
+import { WatchGallery } from "@/components/public/WatchGallery";
 import {
   MOVEMENT_TYPE_LABELS,
   CONDITION_LABELS,
@@ -120,70 +120,7 @@ export default async function WatchDetailPage({ params }: Props) {
           }}
         >
           {/* Gallery */}
-          <div>
-            <div
-              style={{
-                position: "relative",
-                aspectRatio: "4 / 5",
-                background: "var(--bg-page-alt)",
-                marginBottom: 16,
-                border: "1px solid var(--border-subtle)",
-                overflow: "hidden",
-              }}
-            >
-              {watch.images[0] ? (
-                <Image
-                  src={watch.images[0]}
-                  alt={`${watch.brand} ${watch.model}`}
-                  fill
-                  style={{ objectFit: "cover", objectPosition: "center 42%" }}
-                  priority
-                  sizes="(max-width: 1200px) 50vw, 600px"
-                />
-              ) : (
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "var(--text-tertiary)",
-                    fontFamily: "var(--font-display)",
-                    fontStyle: "italic",
-                  }}
-                >
-                  Sem imagem
-                </div>
-              )}
-            </div>
-            {/* Thumbnails */}
-            {watch.images.length > 1 && (
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                {watch.images.slice(0, 5).map((img, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      width: 72,
-                      height: 72,
-                      border: i === 0 ? "1px solid var(--accent)" : "1px solid var(--border-subtle)",
-                      overflow: "hidden",
-                      position: "relative",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Image
-                      src={img}
-                      alt={`Vista ${i + 1}`}
-                      fill
-                      style={{ objectFit: "cover" }}
-                      sizes="72px"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <WatchGallery images={watch.images} alt={`${watch.brand} ${watch.model}`} />
 
           {/* Info */}
           <div style={{ position: "sticky", top: 100 }}>

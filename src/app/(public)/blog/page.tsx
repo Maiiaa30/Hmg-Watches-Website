@@ -95,6 +95,22 @@ export default async function BlogPage() {
                     paddingTop: 28,
                   }}
                 >
+                  {post.coverImage && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={post.coverImage}
+                      alt={post.title}
+                      loading="lazy"
+                      style={{
+                        width: "100%",
+                        aspectRatio: "16 / 10",
+                        objectFit: "cover",
+                        borderRadius: 6,
+                        border: "1px solid var(--border-subtle)",
+                        marginBottom: 18,
+                      }}
+                    />
+                  )}
                   <span
                     style={{
                       display: "inline-block",

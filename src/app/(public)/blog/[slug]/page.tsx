@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { BLOG_CATEGORY_LABELS } from "@/constants";
+import { renderMarkdown } from "@/lib/markdown";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -115,17 +116,29 @@ export default async function BlogArticlePage({ params }: Props) {
           <span>{post.readingTimeMinutes} min de leitura</span>
         </div>
 
-        {/* Content — Markdown stored as plain text, render as prose */}
+        {/* Cover image */}
+        {post.coverImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={post.coverImage}
+            alt={post.title}
+            loading="lazy"
+            style={{
+              width: "100%",
+              aspectRatio: "16 / 9",
+              objectFit: "cover",
+              borderRadius: 8,
+              border: "1px solid var(--border-subtle)",
+              marginBottom: 48,
+            }}
+          />
+        )}
+
+        {/* Content — Markdown rendered to sanitized HTML */}
         <div
-          style={{
-            fontSize: "var(--fs-body-l)",
-            lineHeight: "var(--lh-relaxed)",
-            color: "var(--text-secondary)",
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {post.content}
-        </div>
+          className="hmg-prose"
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
+        />
 
         {/* Back */}
         <div

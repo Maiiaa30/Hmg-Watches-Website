@@ -67,6 +67,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<ApiResponse>({ success: false, error: friendly }, { status: 502 });
   }
 
+  // Find a themed cover image online (keyless, CC-licensed via Openverse)
+  const coverImage = await findCoverImage(article.title);
+
   // Unique slug
   const base = slugify(article.title, { lower: true, strict: true }).slice(0, 80);
   let slug = base;
@@ -85,6 +88,7 @@ export async function POST(request: NextRequest) {
       content: article.content,
       excerpt: article.excerpt,
       category: article.category,
+      coverImage,
       status: "pending_approval",
       generatedByAi: true,
       readingTimeMinutes: article.readingTimeMinutes,
@@ -131,4 +135,24 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json<ApiResponse>({ success: true, data: created }, { status: 201 });
+}
+
+// Search Openverse (free, no API key) for a themed, CC-licensed cover image.
+async function findCoverImage(title: string): Promise<string | null> {
+  const queries = [title, `${title} relógio`, "luxury watch"];
+  for (const q of queries) {
+    try {
+      const res = await fetch(
+        `https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=1&mature=false`,
+        { headers: { Accept: "application/json" } }
+      );
+      if (!res.ok) continue;
+      const data = (await res.json()) as { results?: Array<{ url?: string }> };
+      const url = data.results?.[0]?.url;
+      if (typeof url === "string" && url.startsWith("https://")) return url;
+    } catch {
+      // try next query
+    }
+  }
+  return null;
 }
