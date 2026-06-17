@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 
 export function WatchGallery({ images, alt }: { images: string[]; alt: string }) {
@@ -8,11 +8,39 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
   const [lightbox, setLightbox] = useState(false);
   const [zoomed, setZoomed] = useState(false);
 
+  const touchStartX = useRef<number | null>(null);
+  const swiped = useRef(false);
+
   const count = images.length;
   const go = useCallback(
     (dir: number) => setActive((i) => (i + dir + count) % count),
     [count]
   );
+
+  // Swipe handling for the main image (mobile)
+  function onTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+    swiped.current = false;
+  }
+  function onTouchEnd(e: React.TouchEvent) {
+    const start = touchStartX.current;
+    if (start == null) return;
+    const dx = (e.changedTouches[0]?.clientX ?? start) - start;
+    if (Math.abs(dx) > 40 && count > 1) {
+      swiped.current = true;
+      go(dx < 0 ? 1 : -1);
+    }
+    touchStartX.current = null;
+  }
+  // A swipe shouldn't also open the lightbox; a tap should
+  function onMainClick() {
+    if (swiped.current) {
+      swiped.current = false;
+      return;
+    }
+    setZoomed(false);
+    setLightbox(true);
+  }
 
   // Keyboard controls while the lightbox is open
   useEffect(() => {
@@ -53,9 +81,11 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
 
   return (
     <div>
-      {/* Main image — click to open lightbox */}
+      {/* Main image — swipe on mobile, arrows to navigate, tap to open lightbox */}
       <div
-        onClick={() => { setZoomed(false); setLightbox(true); }}
+        onClick={onMainClick}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
         style={{
           position: "relative",
           aspectRatio: "4 / 5",
@@ -64,6 +94,7 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
           border: "1px solid var(--border-subtle)",
           overflow: "hidden",
           cursor: "zoom-in",
+          touchAction: "pan-y",
         }}
       >
         <Image
@@ -74,11 +105,47 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
           priority
           sizes="(max-width: 1200px) 50vw, 600px"
         />
+
+        {/* Navigation arrows */}
+        {count > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); go(-1); }}
+              aria-label="Foto anterior"
+              style={mainNavBtn("left")}
+            >
+              ‹
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); go(1); }}
+              aria-label="Foto seguinte"
+              style={mainNavBtn("right")}
+            >
+              ›
+            </button>
+            {/* Dots */}
+            <div style={{ position: "absolute", bottom: 12, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 6 }}>
+              {images.map((_, i) => (
+                <span
+                  key={i}
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: i === active ? "#fff" : "rgba(255,255,255,0.5)",
+                    boxShadow: "0 0 2px rgba(0,0,0,0.4)",
+                  }}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         {/* Zoom hint */}
         <div
           style={{
             position: "absolute",
-            bottom: 12,
+            top: 12,
             right: 12,
             background: "rgba(0,0,0,0.55)",
             color: "#fff",
@@ -182,6 +249,27 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
       )}
     </div>
   );
+}
+
+function mainNavBtn(side: "left" | "right"): React.CSSProperties {
+  return {
+    position: "absolute",
+    [side]: 10,
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "rgba(0,0,0,0.4)",
+    border: "none",
+    color: "#fff",
+    width: 38,
+    height: 38,
+    borderRadius: "50%",
+    cursor: "pointer",
+    fontSize: 22,
+    lineHeight: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
 }
 
 function navBtn(side: "left" | "right"): React.CSSProperties {
