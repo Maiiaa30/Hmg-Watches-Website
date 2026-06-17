@@ -60,7 +60,11 @@ Responde APENAS em JSON válido, sem texto adicional, com este formato exacto:
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           responseMimeType: "application/json",
-          maxOutputTokens: 2048,
+          // Gemini 2.5 models "think" before answering and that consumes the
+          // output budget. Disable thinking and give ample room for a full
+          // 600-1000 word article, otherwise the JSON gets truncated.
+          thinkingConfig: { thinkingBudget: 0 },
+          maxOutputTokens: 8192,
           temperature: 0.9,
         },
       }),
