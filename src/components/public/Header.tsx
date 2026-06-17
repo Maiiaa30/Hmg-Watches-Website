@@ -36,6 +36,16 @@ export function Header() {
     return pathname.startsWith(href);
   }
 
+  // On the homepage, "Contacto" smooth-scrolls to the embedded form instead
+  // of navigating. On every other page it behaves as a normal link.
+  function handleNavClick(e: React.MouseEvent, href: string) {
+    if (href === "/contacto" && pathname === "/") {
+      e.preventDefault();
+      document.getElementById("home-contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setMobileOpen(false);
+    }
+  }
+
   return (
     <header
       style={{
@@ -105,6 +115,7 @@ export function Header() {
               <Link
                 key={n.href}
                 href={n.href}
+                onClick={(e) => handleNavClick(e, n.href)}
                 style={{
                   fontFamily: "var(--font-ui)",
                   fontSize: 12.5,
@@ -188,6 +199,7 @@ export function Header() {
             <Link
               key={n.href}
               href={n.href}
+              onClick={(e) => handleNavClick(e, n.href)}
               style={{
                 padding: "13px 6px",
                 fontFamily: "var(--font-ui)",

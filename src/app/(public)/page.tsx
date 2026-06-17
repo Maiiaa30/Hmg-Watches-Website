@@ -6,6 +6,7 @@ import { watches, blogPosts } from "@/lib/db/schema";
 import { eq, and, desc, lte } from "drizzle-orm";
 import { WatchCard } from "@/components/public/WatchCard";
 import { ContactForm } from "@/components/public/ContactForm";
+import { TypingText } from "@/components/public/TypingText";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 
 export const metadata: Metadata = {
@@ -105,23 +106,21 @@ export default async function HomePage() {
               <span className="hmg-overline">Em destaque</span>
             </div>
             <h1
+              aria-label="Tempo que não se perde."
               style={{
                 fontSize: "clamp(46px, 6vw, 78px)",
                 lineHeight: 1.02,
                 letterSpacing: "-0.025em",
+                minHeight: "1.02em",
               }}
             >
-              Tempo que
-              <br />
-              <span
-                style={{
-                  fontStyle: "italic",
-                  color: "var(--accent-press)",
-                }}
-              >
-                não
-              </span>{" "}
-              se perde.
+              <TypingText
+                segments={[
+                  { text: "Tempo que\n" },
+                  { text: "não", style: { fontStyle: "italic", color: "var(--accent-press)" } },
+                  { text: " se perde." },
+                ]}
+              />
             </h1>
             <p
               style={{

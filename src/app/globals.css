@@ -234,3 +234,15 @@ button { font-family: inherit; }
   color: var(--text-primary);
   border-color: var(--border-on-dark);
 }
+
+/* Typing caret (hero headline) */
+@keyframes hmgBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.hmg-cursor {
+  display: inline-block;
+  color: var(--accent);
+  font-weight: 300;
+  animation: hmgBlink 1s step-end infinite;
+}
