@@ -2,6 +2,39 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get("host") ?? "";
+  const { pathname, search } = request.nextUrl;
+
+  // Optional dedicated admin subdomain, e.g. ADMIN_HOST="admin.hmgwatches.com".
+  // Unset in local dev → admin stays at /admin as usual.
+  const adminHost = process.env.ADMIN_HOST;
+
+  if (adminHost) {
+    // On the admin subdomain, the bare root serves the dashboard.
+    if (host === adminHost && pathname === "/") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin";
+      return NextResponse.rewrite(url);
+    }
+    // On the public domain, send /admin to the admin subdomain (keeps the
+    // public site clean and makes the subdomain the canonical admin entry).
+    if (host !== adminHost && pathname.startsWith("/admin")) {
+      return NextResponse.redirect(`https://${adminHost}${pathname}${search}`);
+    }
+  }
+
+  // Only the admin area and protected APIs need the auth round-trip.
+  const needsAuth =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/api/relogios") ||
+    pathname.startsWith("/api/blog") ||
+    pathname.startsWith("/api/upload") ||
+    pathname.startsWith("/api/mercado/relogios-alta") ||
+    pathname.startsWith("/api/analytics");
+  if (!needsAuth) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -30,8 +63,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-
   // Protect all /admin routes (except /admin/login)
   if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
     if (!user) {
@@ -54,6 +85,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/admin/:path*",
     "/api/relogios/:path*",
     "/api/blog/:path*",
