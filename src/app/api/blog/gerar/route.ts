@@ -12,8 +12,9 @@ import slugify from "slugify";
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
 
-  // Cost-protection rate limit
-  if (blogGenerateRatelimit) {
+  // Cost-protection rate limit (production only — in dev there's no real IP,
+  // so all requests share one bucket and block local testing)
+  if (process.env.NODE_ENV === "production" && blogGenerateRatelimit) {
     const { success } = await blogGenerateRatelimit.limit(ip);
     if (!success) {
       return NextResponse.json<ApiResponse>(
