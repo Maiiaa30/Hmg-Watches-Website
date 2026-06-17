@@ -1,5 +1,6 @@
 import { Header } from "@/components/public/Header";
 import { Footer } from "@/components/public/Footer";
+import { AnalyticsTracker } from "@/components/public/AnalyticsTracker";
 
 export default function PublicLayout({
   children,
@@ -8,6 +9,7 @@ export default function PublicLayout({
 }) {
   return (
     <>
+      <AnalyticsTracker />
       <Header />
       <main>{children}</main>
       <Footer />

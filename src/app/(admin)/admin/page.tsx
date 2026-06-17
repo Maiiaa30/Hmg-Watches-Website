@@ -5,7 +5,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { AUDIT_ACTION_LABELS, AUDIT_ENTITY_LABELS } from "@/constants";
 import Link from "next/link";
 
-export const revalidate = 300;
+export const revalidate = 0;
 
 async function getDashboardData() {
   const today = new Date();
