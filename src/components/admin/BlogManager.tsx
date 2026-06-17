@@ -130,30 +130,9 @@ export function BlogManager({ posts }: { posts: BlogRow[] }) {
 
       {error && <p style={{ color: "var(--hmg-down)", fontSize: 14, margin: 0 }}>{error}</p>}
 
-      <div style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 6, overflow: "hidden" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "3fr 1fr 1fr 60px 110px 220px",
-            padding: "14px 22px",
-            borderBottom: "1px solid var(--border-subtle)",
-            background: "var(--bg-page-alt)",
-            fontSize: 11,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "var(--text-tertiary)",
-          }}
-        >
-          <div>Título</div>
-          <div>Categoria</div>
-          <div>Estado</div>
-          <div style={{ textAlign: "center" }}>IA</div>
-          <div style={{ textAlign: "center" }}>Criado</div>
-          <div style={{ textAlign: "right" }}>Ações</div>
-        </div>
-
+      <div className="hmg-admin-cardlist">
         {posts.length === 0 && (
-          <div style={{ padding: "60px 24px", textAlign: "center", color: "var(--text-tertiary)", fontSize: 14 }}>
+          <div style={{ padding: "48px 24px", textAlign: "center", color: "var(--text-tertiary)", fontSize: 14, background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 8 }}>
             Nenhum artigo ainda.
           </div>
         )}
@@ -161,27 +140,30 @@ export function BlogManager({ posts }: { posts: BlogRow[] }) {
         {posts.map((post) => (
           <div
             key={post.id}
+            className="hmg-watch-card"
             style={{
-              display: "grid",
-              gridTemplateColumns: "3fr 1fr 1fr 60px 110px 220px",
-              padding: "16px 22px",
-              borderBottom: "1px solid var(--border-subtle)",
-              alignItems: "center",
               fontSize: 13,
-              background: post.status === "pending_approval" ? "rgba(254,243,199,0.4)" : "transparent",
+              background: post.status === "pending_approval" ? "rgba(254,243,199,0.5)" : "var(--surface-card)",
             }}
           >
-            <div>
-              <div style={{ fontWeight: 500 }}>{post.title}</div>
-              <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 2 }}>{post.excerpt?.slice(0, 80)}…</div>
+            {/* Title + excerpt */}
+            <div style={{ flex: "1 1 220px", minWidth: 0 }}>
+              <div style={{ fontWeight: 500, display: "flex", alignItems: "center", gap: 8 }}>
+                {post.generatedByAi && <span title="Gerado por IA">🤖</span>}
+                {post.title}
+              </div>
+              <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 2 }}>
+                {BLOG_CATEGORY_LABELS[post.category]} · {new Intl.DateTimeFormat("pt-PT", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(new Date(post.createdAt))}
+              </div>
             </div>
-            <div style={{ fontSize: 12 }}>{BLOG_CATEGORY_LABELS[post.category]}</div>
-            <div><Badge status={post.status} /></div>
-            <div style={{ textAlign: "center", fontSize: 16 }}>{post.generatedByAi ? "🤖" : ""}</div>
-            <div style={{ textAlign: "center", fontSize: 11, color: "var(--text-tertiary)" }}>
-              {new Intl.DateTimeFormat("pt-PT", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(new Date(post.createdAt))}
+
+            {/* Status */}
+            <div className="hmg-watch-meta">
+              <Badge status={post.status} />
             </div>
-            <div style={{ display: "flex", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
+
+            {/* Actions */}
+            <div className="hmg-watch-actions" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               {post.status !== "published" ? (
                 <button onClick={() => changeStatus(post.id, "published")} disabled={busy === post.id} style={miniBtn("gold")}>Publicar</button>
               ) : (
