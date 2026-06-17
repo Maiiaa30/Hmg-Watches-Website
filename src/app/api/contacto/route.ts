@@ -4,6 +4,7 @@ import { contactMessages } from "@/lib/db/schema";
 import { contactSchema } from "@/lib/validations/contacto";
 import { sanitizeText } from "@/lib/security/sanitize";
 import { contactRatelimit, getClientIp } from "@/lib/security/rate-limit";
+import { sendEmail, sendTelegram, renderEmail } from "@/lib/notify";
 import type { ApiResponse } from "@/types";
 
 export async function POST(request: NextRequest) {
@@ -51,31 +52,73 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const cleanName = sanitizeText(name);
+  const cleanEmail = email.toLowerCase().trim();
+  const cleanSubject = sanitizeText(subject);
+  const cleanMessage = sanitizeText(message);
+
   await db.insert(contactMessages).values({
-    name: sanitizeText(name),
-    email: email.toLowerCase().trim(),
-    subject: sanitizeText(subject),
-    message: sanitizeText(message),
+    name: cleanName,
+    email: cleanEmail,
+    subject: cleanSubject,
+    message: cleanMessage,
   });
 
-  // Email to admin
-  if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
-    try {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: process.env.RESEND_FROM_EMAIL,
-          to: process.env.RESEND_FROM_EMAIL,
-          subject: `[Contacto] ${subject}`,
-          html: `<p><strong>De:</strong> ${name} &lt;${email}&gt;</p><p><strong>Mensagem:</strong></p><p>${message.replace(/\n/g, "<br>")}</p>`,
-        }),
-      });
-    } catch {}
-  }
+  // Notify admin (Telegram + email) and confirm to the sender — awaited so it
+  // completes before the serverless function returns.
+  await notify({ name: cleanName, email: cleanEmail, subject: cleanSubject, message: cleanMessage });
 
   return NextResponse.json<ApiResponse>({ success: true });
+}
+
+async function notify(c: { name: string; email: string; subject: string; message: string }) {
+  const adminFrom = process.env.RESEND_FROM_EMAIL;
+  const when = new Intl.DateTimeFormat("pt-PT", {
+    timeZone: "Europe/Lisbon",
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date());
+
+  // 1. Telegram to admin
+  await sendTelegram(
+    `✉️ *Nova mensagem de contacto*\n_${c.subject}_\n\n👤 *De:* ${c.name}\n📧 ${c.email}\n\n💬 *Mensagem:*\n"${c.message}"\n\n⏰ ${when}`
+  );
+
+  // 2. Branded email to admin (reply goes straight to the sender)
+  if (adminFrom) {
+    await sendEmail({
+      to: adminFrom,
+      replyTo: c.email,
+      subject: `[Contacto] ${c.subject}`,
+      html: renderEmail({
+        heading: "Nova mensagem de contacto",
+        paragraphs: ["Recebeste uma nova mensagem através do formulário de contacto."],
+        details: [
+          { label: "Nome", value: c.name },
+          { label: "Email", value: c.email },
+          { label: "Assunto", value: c.subject },
+          { label: "Data", value: when },
+        ],
+        quote: c.message,
+        footerNote: "Responde diretamente a este email para contactar a pessoa.",
+      }),
+    });
+  }
+
+  // 3. Confirmation email to the sender
+  await sendEmail({
+    to: c.email,
+    replyTo: adminFrom,
+    subject: "Recebemos a sua mensagem — HMG Watches",
+    html: renderEmail({
+      heading: "Mensagem recebida",
+      paragraphs: [
+        `Olá ${c.name},`,
+        "Obrigado pelo seu contacto. Recebemos a sua mensagem e a nossa equipa entrará em contacto consigo o mais brevemente possível.",
+        "Para sua referência, deixamos abaixo uma cópia do que nos enviou:",
+      ],
+      quote: c.message,
+      footerNote: "Esta é uma confirmação automática — não precisa de responder.",
+    }),
+  });
 }

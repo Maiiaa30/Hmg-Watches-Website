@@ -1,188 +1,664 @@
 <!-- @dsCard group="Website" viewport="1320x900" name="Hero — opções" subtitle="5 direções de hero para escolher" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HMG Watches · Opções de Hero</title>
-<link rel="icon" href="../../assets/favicon.svg" />
-<link rel="stylesheet" href="../../styles.css" />
-<style>
-  body { margin: 0; background: #D8D3C8; }
-  .canvas { padding: 56px 40px 80px; display: flex; flex-direction: column; gap: 64px; align-items: center; }
-  .frame { width: 1280px; max-width: 100%; }
-  .label { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
-  .label .n { font-family: var(--font-display); font-style: italic; font-size: 22px; color: #6E6657; }
-  .label .t { font-family: var(--font-ui); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: #4A4438; }
-  .label .d { font-family: var(--font-ui); font-size: 12px; color: #6E6657; }
-  .hero { background: var(--bg-page); border: 1px solid #C7BCA6; border-radius: 10px; overflow: hidden; box-shadow: 0 18px 50px rgba(40,33,20,0.12); }
-  .pagehead { width: 1280px; max-width: 100%; }
-  .pagehead h1 { font-size: 38px; }
-  .pagehead p { color: #4A4438; font-size: 15px; margin-top: 10px; max-width: 640px; line-height: 1.6; }
-</style>
-</head>
-<body>
-<div id="root"></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HMG Watches · Opções de Hero</title>
+    <link rel="icon" href="../../assets/favicon.svg" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        background: #d8d3c8;
+      }
+      .canvas {
+        padding: 56px 40px 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 64px;
+        align-items: center;
+      }
+      .frame {
+        width: 1280px;
+        max-width: 100%;
+      }
+      .label {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+      .label .n {
+        font-family: var(--font-display);
+        font-style: italic;
+        font-size: 22px;
+        color: #6e6657;
+      }
+      .label .t {
+        font-family: var(--font-ui);
+        font-size: 13px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #4a4438;
+      }
+      .label .d {
+        font-family: var(--font-ui);
+        font-size: 12px;
+        color: #6e6657;
+      }
+      .hero {
+        background: var(--bg-page);
+        border: 1px solid #c7bca6;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 18px 50px rgba(40, 33, 20, 0.12);
+      }
+      .pagehead {
+        width: 1280px;
+        max-width: 100%;
+      }
+      .pagehead h1 {
+        font-size: 38px;
+      }
+      .pagehead p {
+        color: #4a4438;
+        font-size: 15px;
+        margin-top: 10px;
+        max-width: 640px;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script src="../../_ds_bundle.js"></script>
-<script src="data.js"></script>
-<script type="text/babel" src="WatchVisual.jsx"></script>
-<script type="text/babel" src="Icon.jsx"></script>
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../../_ds_bundle.js"></script>
+    <script src="data.js"></script>
+    <script type="text/babel" src="WatchVisual.jsx"></script>
+    <script type="text/babel" src="Icon.jsx"></script>
 
-<script type="text/babel" data-presets="react">
-const { Button, Badge, WatchCard, Overline } = window.HMGWatchesDesignSystem_1cb2d0;
-const Icon = window.Icon, WatchVisual = window.WatchVisual, D = window.HMGDATA;
-const W = D.watches;
-const IMG = W[0].images[0];      // TAG Heuer Professional (segurado, fundo verde)
-const IMG2 = W[1].images[0];     // TAG Heuer 2000 dourado
+    <script type="text/babel" data-presets="react">
+      const { Button, Badge, WatchCard, Overline } =
+        window.HMGWatchesDesignSystem_1cb2d0;
+      const Icon = window.Icon,
+        WatchVisual = window.WatchVisual,
+        D = window.HMGDATA;
+      const W = D.watches;
+      const IMG = W[0].images[0]; // TAG Heuer Professional (segurado, fundo verde)
+      const IMG2 = W[1].images[0]; // TAG Heuer 2000 dourado
 
-const serif = { fontFamily: "var(--font-display)" };
+      const serif = { fontFamily: "var(--font-display)" };
 
-/* 1 — Vitrine: texto à esquerda, painel-imagem em arco à direita */
-function HeroVitrine() {
-  return (
-    <div className="hero" style={{ height: 640, display: "grid", gridTemplateColumns: "1.04fr 0.96fr", alignItems: "center", padding: "0 64px" }}>
-      <div style={{ maxWidth: 540 }}>
-        <Overline>Boutique de relojoaria · Lisboa</Overline>
-        <h1 style={{ ...serif, fontSize: 78, lineHeight: 1.02, marginTop: 22, letterSpacing: "-0.025em" }}>Tempo que<br/><span style={{ fontStyle: "italic", color: "var(--accent-press)" }}>não</span> se perde.</h1>
-        <p style={{ fontSize: 19, lineHeight: 1.7, color: "var(--text-secondary)", marginTop: 26, maxWidth: 420 }}>Relógios de exceção. Curados, autenticados, prontos a usar.</p>
-        <div style={{ display: "flex", gap: 14, marginTop: 40 }}>
-          <Button variant="ghost-gold" size="lg" iconRight={<Icon name="arrow-right" size={16} />}>Ver Coleção</Button>
-          <Button variant="ghost-light" size="lg">A nossa história</Button>
-        </div>
-      </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ position: "relative", width: 380, height: 520 }}>
-          <div style={{ position: "absolute", inset: 0, borderRadius: "190px 190px 10px 10px", overflow: "hidden", border: "1px solid var(--border-strong)", boxShadow: "var(--shadow-card)" }}>
-            <img src={IMG} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 42%" }} />
+      /* 1 — Vitrine: texto à esquerda, painel-imagem em arco à direita */
+      function HeroVitrine() {
+        return (
+          <div
+            className="hero"
+            style={{
+              height: 640,
+              display: "grid",
+              gridTemplateColumns: "1.04fr 0.96fr",
+              alignItems: "center",
+              padding: "0 64px",
+            }}
+          >
+            <div style={{ maxWidth: 540 }}>
+              <Overline>Boutique de relojoaria</Overline>
+              <h1
+                style={{
+                  ...serif,
+                  fontSize: 78,
+                  lineHeight: 1.02,
+                  marginTop: 22,
+                  letterSpacing: "-0.025em",
+                }}
+              >
+                Tempo que
+                <br />
+                <span
+                  style={{ fontStyle: "italic", color: "var(--accent-press)" }}
+                >
+                  não
+                </span>{" "}
+                se perde.
+              </h1>
+              <p
+                style={{
+                  fontSize: 19,
+                  lineHeight: 1.7,
+                  color: "var(--text-secondary)",
+                  marginTop: 26,
+                  maxWidth: 420,
+                }}
+              >
+                Relógios de exceção. Curados, autenticados, prontos a usar.
+              </p>
+              <div style={{ display: "flex", gap: 14, marginTop: 40 }}>
+                <Button
+                  variant="ghost-gold"
+                  size="lg"
+                  iconRight={<Icon name="arrow-right" size={16} />}
+                >
+                  Ver Coleção
+                </Button>
+                <Button variant="ghost-light" size="lg">
+                  A nossa história
+                </Button>
+              </div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div style={{ position: "relative", width: 380, height: 520 }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    borderRadius: "190px 190px 10px 10px",
+                    overflow: "hidden",
+                    border: "1px solid var(--border-strong)",
+                    boxShadow: "var(--shadow-card)",
+                  }}
+                >
+                  <img
+                    src={IMG}
+                    alt=""
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center 42%",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: "12px",
+                    borderRadius: "180px 180px 6px 6px",
+                    border: "1px solid rgba(247,242,232,0.6)",
+                    pointerEvents: "none",
+                  }}
+                />
+              </div>
+            </div>
           </div>
-          <div style={{ position: "absolute", inset: "12px", borderRadius: "180px 180px 6px 6px", border: "1px solid rgba(247,242,232,0.6)", pointerEvents: "none" }} />
-        </div>
-      </div>
-    </div>
-  );
-}
+        );
+      }
 
-/* 2 — Capa: imagem full-bleed com véu de marfim e headline sobreposta */
-function HeroCapa() {
-  return (
-    <div className="hero" style={{ height: 640, position: "relative" }}>
-      <img src={IMG} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "70% 40%" }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(100deg, var(--bg-page) 0%, var(--bg-page) 34%, rgba(247,242,232,0.82) 48%, rgba(247,242,232,0) 72%)" }} />
-      <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 64px", maxWidth: 620 }}>
-        <Overline>Curados · Autenticados</Overline>
-        <h1 style={{ ...serif, fontSize: 76, lineHeight: 1.02, marginTop: 22, letterSpacing: "-0.025em" }}>Tempo que<br/><span style={{ fontStyle: "italic", color: "var(--accent-press)" }}>não</span> se perde.</h1>
-        <p style={{ fontSize: 19, lineHeight: 1.7, color: "var(--text-secondary)", marginTop: 24, maxWidth: 380 }}>Uma montra limpa que serve as peças — não o contrário.</p>
-        <div style={{ display: "flex", gap: 14, marginTop: 38 }}>
-          <Button variant="ghost-gold" size="lg" iconRight={<Icon name="arrow-right" size={16} />}>Ver Coleção</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
+      /* 2 — Capa: imagem full-bleed com véu de marfim e headline sobreposta */
+      function HeroCapa() {
+        return (
+          <div className="hero" style={{ height: 640, position: "relative" }}>
+            <img
+              src={IMG}
+              alt=""
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "70% 40%",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(100deg, var(--bg-page) 0%, var(--bg-page) 34%, rgba(247,242,232,0.82) 48%, rgba(247,242,232,0) 72%)",
+              }}
+            />
+            <div
+              style={{
+                position: "relative",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                padding: "0 64px",
+                maxWidth: 620,
+              }}
+            >
+              <Overline>Curados · Autenticados</Overline>
+              <h1
+                style={{
+                  ...serif,
+                  fontSize: 76,
+                  lineHeight: 1.02,
+                  marginTop: 22,
+                  letterSpacing: "-0.025em",
+                }}
+              >
+                Tempo que
+                <br />
+                <span
+                  style={{ fontStyle: "italic", color: "var(--accent-press)" }}
+                >
+                  não
+                </span>{" "}
+                se perde.
+              </h1>
+              <p
+                style={{
+                  fontSize: 19,
+                  lineHeight: 1.7,
+                  color: "var(--text-secondary)",
+                  marginTop: 24,
+                  maxWidth: 380,
+                }}
+              >
+                Uma montra limpa que serve as peças — não o contrário.
+              </p>
+              <div style={{ display: "flex", gap: 14, marginTop: 38 }}>
+                <Button
+                  variant="ghost-gold"
+                  size="lg"
+                  iconRight={<Icon name="arrow-right" size={16} />}
+                >
+                  Ver Coleção
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+      }
 
-/* 3 — Centrado: tipografia pura, crista circular, regra dourada */
-function HeroCentrado() {
-  return (
-    <div className="hero" style={{ height: 640, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 64px" }}>
-      <div style={{ width: 116, height: 116, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--accent)", boxShadow: "var(--shadow-soft)", marginBottom: 30 }}>
-        <img src={IMG} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 42%" }} />
-      </div>
-      <Overline>Boutique de relojoaria · Lisboa</Overline>
-      <h1 style={{ ...serif, fontSize: 74, lineHeight: 1.04, marginTop: 18, letterSpacing: "-0.025em", maxWidth: 820 }}>Tempo que <span style={{ fontStyle: "italic", color: "var(--accent-press)" }}>não</span> se perde.</h1>
-      <div style={{ width: 60, height: 1, background: "var(--accent)", margin: "26px auto" }} />
-      <p style={{ fontSize: 19, lineHeight: 1.7, color: "var(--text-secondary)", maxWidth: 460 }}>Relógios de exceção. Curados, autenticados, prontos a usar.</p>
-      <div style={{ display: "flex", gap: 14, marginTop: 34, justifyContent: "center" }}>
-        <Button variant="ghost-gold" size="lg" iconRight={<Icon name="arrow-right" size={16} />}>Ver Coleção</Button>
-        <Button variant="ghost-light" size="lg">A nossa história</Button>
-      </div>
-    </div>
-  );
-}
+      /* 3 — Centrado: tipografia pura, crista circular, regra dourada */
+      function HeroCentrado() {
+        return (
+          <div
+            className="hero"
+            style={{
+              height: 640,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: "0 64px",
+            }}
+          >
+            <div
+              style={{
+                width: 116,
+                height: 116,
+                borderRadius: "50%",
+                overflow: "hidden",
+                border: "1px solid var(--accent)",
+                boxShadow: "var(--shadow-soft)",
+                marginBottom: 30,
+              }}
+            >
+              <img
+                src={IMG}
+                alt=""
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center 42%",
+                }}
+              />
+            </div>
+            <Overline>Boutique de relojoaria</Overline>
+            <h1
+              style={{
+                ...serif,
+                fontSize: 74,
+                lineHeight: 1.04,
+                marginTop: 18,
+                letterSpacing: "-0.025em",
+                maxWidth: 820,
+              }}
+            >
+              Tempo que{" "}
+              <span
+                style={{ fontStyle: "italic", color: "var(--accent-press)" }}
+              >
+                não
+              </span>{" "}
+              se perde.
+            </h1>
+            <div
+              style={{
+                width: 60,
+                height: 1,
+                background: "var(--accent)",
+                margin: "26px auto",
+              }}
+            />
+            <p
+              style={{
+                fontSize: 19,
+                lineHeight: 1.7,
+                color: "var(--text-secondary)",
+                maxWidth: 460,
+              }}
+            >
+              Relógios de exceção. Curados, autenticados, prontos a usar.
+            </p>
+            <div
+              style={{
+                display: "flex",
+                gap: 14,
+                marginTop: 34,
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                variant="ghost-gold"
+                size="lg"
+                iconRight={<Icon name="arrow-right" size={16} />}
+              >
+                Ver Coleção
+              </Button>
+              <Button variant="ghost-light" size="lg">
+                A nossa história
+              </Button>
+            </div>
+          </div>
+        );
+      }
 
-/* 4 — Montra: headline em cima, fila de peças como herói */
-function HeroMontra() {
-  const items = W.slice(0, 3);
-  return (
-    <div className="hero" style={{ padding: "64px 64px 72px" }}>
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 40, marginBottom: 48 }}>
-        <div>
-          <Overline>Boutique de relojoaria · Lisboa</Overline>
-          <h1 style={{ ...serif, fontSize: 60, lineHeight: 1.04, marginTop: 18, letterSpacing: "-0.02em" }}>Tempo que <span style={{ fontStyle: "italic", color: "var(--accent-press)" }}>não</span> se perde.</h1>
-        </div>
-        <div style={{ maxWidth: 300, textAlign: "right" }}>
-          <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: 20 }}>Relógios de exceção. Curados, autenticados, prontos a usar.</p>
-          <Button variant="ghost-gold" iconRight={<Icon name="arrow-right" size={15} />}>Ver Coleção</Button>
-        </div>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
-        {items.map((w) => (
-          <WatchCard key={w.id} brand={w.brand} model={w.model} reference={w.ref} price={w.price} status={w.status}
-            image={w.images && w.images[0]} visual={<WatchVisual hue={w.hue} sold={w.status === "sold"} />} />
-        ))}
-      </div>
-    </div>
-  );
-}
+      /* 4 — Montra: headline em cima, fila de peças como herói */
+      function HeroMontra() {
+        const items = W.slice(0, 3);
+        return (
+          <div className="hero" style={{ padding: "64px 64px 72px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "space-between",
+                gap: 40,
+                marginBottom: 48,
+              }}
+            >
+              <div>
+                <Overline>Boutique de relojoaria</Overline>
+                <h1
+                  style={{
+                    ...serif,
+                    fontSize: 60,
+                    lineHeight: 1.04,
+                    marginTop: 18,
+                    letterSpacing: "-0.02em",
+                  }}
+                >
+                  Tempo que{" "}
+                  <span
+                    style={{
+                      fontStyle: "italic",
+                      color: "var(--accent-press)",
+                    }}
+                  >
+                    não
+                  </span>{" "}
+                  se perde.
+                </h1>
+              </div>
+              <div style={{ maxWidth: 300, textAlign: "right" }}>
+                <p
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 1.7,
+                    color: "var(--text-secondary)",
+                    marginBottom: 20,
+                  }}
+                >
+                  Relógios de exceção. Curados, autenticados, prontos a usar.
+                </p>
+                <Button
+                  variant="ghost-gold"
+                  iconRight={<Icon name="arrow-right" size={15} />}
+                >
+                  Ver Coleção
+                </Button>
+              </div>
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 28,
+              }}
+            >
+              {items.map((w) => (
+                <WatchCard
+                  key={w.id}
+                  brand={w.brand}
+                  model={w.model}
+                  reference={w.ref}
+                  price={w.price}
+                  status={w.status}
+                  image={w.images && w.images[0]}
+                  visual={
+                    <WatchVisual hue={w.hue} sold={w.status === "sold"} />
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        );
+      }
 
-/* 5 — Editorial assimétrico: número grande, imagem deslocada, etiqueta de museu */
-function HeroEditorial() {
-  return (
-    <div className="hero" style={{ height: 640, position: "relative", display: "grid", gridTemplateColumns: "1fr 1fr", padding: "0 0 0 64px", alignItems: "center" }}>
-      <div style={{ position: "relative", zIndex: 2, maxWidth: 520 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-          <span style={{ ...serif, fontStyle: "italic", fontSize: 17, color: "var(--accent)" }}>Nº 01</span>
-          <span style={{ height: 1, width: 46, background: "var(--accent)" }} />
-          <Overline>Em destaque</Overline>
-        </div>
-        <h1 style={{ ...serif, fontSize: 72, lineHeight: 1.02, letterSpacing: "-0.025em" }}>Tempo que<br/><span style={{ fontStyle: "italic", color: "var(--accent-press)" }}>não</span> se perde.</h1>
-        <p style={{ fontSize: 18, lineHeight: 1.7, color: "var(--text-secondary)", marginTop: 24, maxWidth: 380 }}>Relógios de exceção. Curados, autenticados, prontos a usar.</p>
-        <div style={{ display: "flex", gap: 14, marginTop: 36 }}>
-          <Button variant="ghost-gold" size="lg" iconRight={<Icon name="arrow-right" size={16} />}>Ver Coleção</Button>
-        </div>
-      </div>
-      <div style={{ position: "relative", height: "100%" }}>
-        <div style={{ position: "absolute", right: 56, top: "50%", transform: "translateY(-50%)", width: 360, height: 460, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border-strong)", boxShadow: "var(--shadow-float)" }}>
-          <img src={IMG} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 42%" }} />
-        </div>
-        <div style={{ position: "absolute", right: 396, bottom: 70, background: "var(--surface-card)", border: "1px solid var(--border-subtle)", padding: "14px 18px", boxShadow: "var(--shadow-card)" }}>
-          <div style={{ fontFamily: "var(--font-ui)", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-secondary)" }}>{W[0].brand}</div>
-          <div style={{ ...serif, fontSize: 18, marginTop: 4 }}>{W[0].model}</div>
-          <div style={{ fontSize: 14, color: "var(--accent-press)", marginTop: 4 }}>{W[0].price}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
+      /* 5 — Editorial assimétrico: número grande, imagem deslocada, etiqueta de museu */
+      function HeroEditorial() {
+        return (
+          <div
+            className="hero"
+            style={{
+              height: 640,
+              position: "relative",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              padding: "0 0 0 64px",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ position: "relative", zIndex: 2, maxWidth: 520 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  marginBottom: 20,
+                }}
+              >
+                <span
+                  style={{
+                    ...serif,
+                    fontStyle: "italic",
+                    fontSize: 17,
+                    color: "var(--accent)",
+                  }}
+                >
+                  Nº 01
+                </span>
+                <span
+                  style={{ height: 1, width: 46, background: "var(--accent)" }}
+                />
+                <Overline>Em destaque</Overline>
+              </div>
+              <h1
+                style={{
+                  ...serif,
+                  fontSize: 72,
+                  lineHeight: 1.02,
+                  letterSpacing: "-0.025em",
+                }}
+              >
+                Tempo que
+                <br />
+                <span
+                  style={{ fontStyle: "italic", color: "var(--accent-press)" }}
+                >
+                  não
+                </span>{" "}
+                se perde.
+              </h1>
+              <p
+                style={{
+                  fontSize: 18,
+                  lineHeight: 1.7,
+                  color: "var(--text-secondary)",
+                  marginTop: 24,
+                  maxWidth: 380,
+                }}
+              >
+                Relógios de exceção. Curados, autenticados, prontos a usar.
+              </p>
+              <div style={{ display: "flex", gap: 14, marginTop: 36 }}>
+                <Button
+                  variant="ghost-gold"
+                  size="lg"
+                  iconRight={<Icon name="arrow-right" size={16} />}
+                >
+                  Ver Coleção
+                </Button>
+              </div>
+            </div>
+            <div style={{ position: "relative", height: "100%" }}>
+              <div
+                style={{
+                  position: "absolute",
+                  right: 56,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  width: 360,
+                  height: 460,
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  border: "1px solid var(--border-strong)",
+                  boxShadow: "var(--shadow-float)",
+                }}
+              >
+                <img
+                  src={IMG}
+                  alt=""
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center 42%",
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  position: "absolute",
+                  right: 396,
+                  bottom: 70,
+                  background: "var(--surface-card)",
+                  border: "1px solid var(--border-subtle)",
+                  padding: "14px 18px",
+                  boxShadow: "var(--shadow-card)",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 10,
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "var(--text-secondary)",
+                  }}
+                >
+                  {W[0].brand}
+                </div>
+                <div style={{ ...serif, fontSize: 18, marginTop: 4 }}>
+                  {W[0].model}
+                </div>
+                <div
+                  style={{
+                    fontSize: 14,
+                    color: "var(--accent-press)",
+                    marginTop: 4,
+                  }}
+                >
+                  {W[0].price}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
 
-const OPTIONS = [
-  { n: "01", t: "Vitrine", d: "Texto à esquerda · peça num arco à direita", C: HeroVitrine },
-  { n: "02", t: "Capa", d: "Imagem full-bleed com véu de marfim", C: HeroCapa },
-  { n: "03", t: "Centrado", d: "Tipografia pura · crista circular", C: HeroCentrado },
-  { n: "04", t: "Montra", d: "Headline + fila de peças como herói", C: HeroMontra },
-  { n: "05", t: "Editorial", d: "Assimétrico · etiqueta de museu", C: HeroEditorial },
-];
+      const OPTIONS = [
+        {
+          n: "01",
+          t: "Vitrine",
+          d: "Texto à esquerda · peça num arco à direita",
+          C: HeroVitrine,
+        },
+        {
+          n: "02",
+          t: "Capa",
+          d: "Imagem full-bleed com véu de marfim",
+          C: HeroCapa,
+        },
+        {
+          n: "03",
+          t: "Centrado",
+          d: "Tipografia pura · crista circular",
+          C: HeroCentrado,
+        },
+        {
+          n: "04",
+          t: "Montra",
+          d: "Headline + fila de peças como herói",
+          C: HeroMontra,
+        },
+        {
+          n: "05",
+          t: "Editorial",
+          d: "Assimétrico · etiqueta de museu",
+          C: HeroEditorial,
+        },
+      ];
 
-function Page() {
-  return (
-    <div className="canvas">
-      <div className="pagehead">
-        <h1 style={{ fontFamily: "var(--font-display)" }}>Opções de Hero</h1>
-        <p>Cinco direções para a secção principal da homepage. Diz-me o número que preferes (ou uma mistura) e aplico no site.</p>
-      </div>
-      {OPTIONS.map((o) => (
-        <div className="frame" key={o.n}>
-          <div className="label"><span className="n">{o.n}</span><span className="t">{o.t}</span><span className="d">— {o.d}</span></div>
-          <o.C />
-        </div>
-      ))}
-    </div>
-  );
-}
-ReactDOM.createRoot(document.getElementById("root")).render(<Page />);
-</script>
-</body>
+      function Page() {
+        return (
+          <div className="canvas">
+            <div className="pagehead">
+              <h1 style={{ fontFamily: "var(--font-display)" }}>
+                Opções de Hero
+              </h1>
+              <p>
+                Cinco direções para a secção principal da homepage. Diz-me o
+                número que preferes (ou uma mistura) e aplico no site.
+              </p>
+            </div>
+            {OPTIONS.map((o) => (
+              <div className="frame" key={o.n}>
+                <div className="label">
+                  <span className="n">{o.n}</span>
+                  <span className="t">{o.t}</span>
+                  <span className="d">— {o.d}</span>
+                </div>
+                <o.C />
+              </div>
+            ))}
+          </div>
+        );
+      }
+      ReactDOM.createRoot(document.getElementById("root")).render(<Page />);
+    </script>
+  </body>
 </html>

@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { watchLeadSchema } from "@/lib/validations/contacto";
 import { sanitizeText } from "@/lib/security/sanitize";
 import { contactRatelimit, getClientIp } from "@/lib/security/rate-limit";
+import { sendEmail, sendTelegram, renderEmail } from "@/lib/notify";
 import type { ApiResponse } from "@/types";
 
 export async function POST(
@@ -88,8 +89,9 @@ export async function POST(
     userAgent: request.headers.get("user-agent") ?? "unknown",
   });
 
-  // Telegram + Email notifications (async, non-blocking)
-  void notifyAdmin(watch, { name: cleanName, email, phone, message: cleanMessage }, lead?.id ?? "");
+  // Telegram + email to admin, and confirmation to the sender.
+  // Awaited so it completes before the serverless function returns.
+  await notifyAdmin(watch, { name: cleanName, email: email ?? null, phone: phone ?? null, message: cleanMessage }, lead?.id ?? "");
 
   return NextResponse.json<ApiResponse>({ success: true });
 }
@@ -129,50 +131,61 @@ Telemóvel: ${lead.phone || "—"}
 🔗 Ver anúncio: ${watchUrl}
 ⏰ ${dateStr}`;
 
-  let notifiedTelegram = false;
-  let notifiedEmail = false;
+  // 1. Telegram to admin
+  const notifiedTelegram = await sendTelegram(tgMessage);
 
-  // Telegram
-  if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
-    try {
-      const res = await fetch(
-        `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: process.env.TELEGRAM_CHAT_ID,
-            text: tgMessage,
-            parse_mode: "Markdown",
-          }),
-        }
-      );
-      notifiedTelegram = res.ok;
-    } catch {}
+  // 2. Branded email to admin (reply goes to the sender if they left an email)
+  const adminFrom = process.env.RESEND_FROM_EMAIL;
+  let notifiedEmail = false;
+  if (adminFrom) {
+    notifiedEmail = await sendEmail({
+      to: adminFrom,
+      replyTo: lead.email ?? undefined,
+      subject: isSold
+        ? `[Relógio Vendido] Interesse em algo similar — ${watch.brand} ${watch.model}`
+        : `[Relógio Disponível] Novo contacto — ${watch.brand} ${watch.model}`,
+      html: renderEmail({
+        heading: isSold ? "Interesse em relógio similar" : "Novo contacto sobre um relógio",
+        paragraphs: [
+          isSold
+            ? "Este relógio já foi vendido — o contacto procura algo parecido."
+            : "Recebeste um novo contacto sobre um relógio disponível.",
+        ],
+        details: [
+          { label: "Relógio", value: `${watch.brand} ${watch.model}` },
+          ...(watch.reference ? [{ label: "Referência", value: watch.reference }] : []),
+          { label: "Nome", value: lead.name ?? "Não indicado" },
+          { label: "Email", value: lead.email || "—" },
+          { label: "Telemóvel", value: lead.phone || "—" },
+          { label: "Data", value: dateStr },
+        ],
+        quote: lead.message,
+        cta: { url: watchUrl, label: "Ver anúncio" },
+        footerNote: "Responde diretamente a este email para contactar a pessoa.",
+      }),
+    });
   }
 
-  // Email via Resend
-  if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
-    try {
-      const subject = isSold
-        ? `[Relógio Vendido] Interesse em algo similar — ${watch.brand} ${watch.model}`
-        : `[Relógio Disponível] Novo contacto — ${watch.brand} ${watch.model}`;
-
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: process.env.RESEND_FROM_EMAIL,
-          to: process.env.RESEND_FROM_EMAIL,
-          subject,
-          html: `<pre style="font-family:sans-serif;white-space:pre-wrap">${tgMessage.replace(/\*/g, "").replace(/_/g, "")}</pre>`,
-        }),
-      });
-      notifiedEmail = res.ok;
-    } catch {}
+  // 3. Confirmation email to the sender (only if they left an email)
+  if (lead.email) {
+    await sendEmail({
+      to: lead.email,
+      replyTo: adminFrom,
+      subject: "Recebemos o seu contacto — HMG Watches",
+      html: renderEmail({
+        heading: "Pedido recebido",
+        paragraphs: [
+          `Olá ${lead.name ?? ""},`.trim(),
+          isSold
+            ? `Obrigado pelo seu interesse. Embora o ${watch.brand} ${watch.model} já tenha sido vendido, vamos avisá-lo assim que tivermos algo semelhante.`
+            : `Obrigado pelo seu interesse no ${watch.brand} ${watch.model}. A nossa equipa entrará em contacto consigo o mais brevemente possível.`,
+          "Para sua referência, deixamos abaixo uma cópia da sua mensagem:",
+        ],
+        quote: lead.message,
+        cta: { url: watchUrl, label: "Ver o relógio" },
+        footerNote: "Esta é uma confirmação automática — não precisa de responder.",
+      }),
+    });
   }
 
   // Update notification flags
