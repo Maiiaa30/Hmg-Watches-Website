@@ -6,6 +6,8 @@ node_modules/
 # Internal tooling / notes — keep local, not in the repo
 .claude/
 CLAUDE.md
+PROGRESS.md
+progresses/
 
 # Local env — NEVER commit
 .env
