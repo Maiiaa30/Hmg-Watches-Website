@@ -1,40 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { siteSettings } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 import { requireAdmin, logAudit } from "@/lib/auth/utils";
 import { generateAndSaveBlogPost, friendlyGenError, BLOG_CATEGORIES } from "@/lib/ai/create-post";
-import { maybeRefreshWeeklyMovers, isoWeekKey } from "@/lib/ai/movers";
+import { maybeRefreshWeeklyMovers, isoWeekKey, isoWeekNumber } from "@/lib/ai/movers";
+import { getSetting, setSetting } from "@/lib/db/settings";
 import type { ApiResponse, BlogCategory } from "@/types";
 
 const DAY_INDEX: Record<string, number> = {
   sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6,
 };
-
-async function getSetting(key: string): Promise<string | null> {
-  const [row] = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
-  return row?.value ?? null;
-}
-
-async function setSetting(key: string, value: string) {
-  await db
-    .insert(siteSettings)
-    .values({ key, value, updatedAt: new Date() })
-    .onConflictDoUpdate({ target: siteSettings.key, set: { value, updatedAt: new Date() } });
-}
-
-// ISO week number — used to pick a deterministic "random" day/category per week
-function isoWeek(d: Date): number {
-  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-  const dayNum = (date.getUTCDay() + 6) % 7;
-  date.setUTCDate(date.getUTCDate() - dayNum + 3);
-  const firstThursday = date.getTime();
-  date.setUTCMonth(0, 1);
-  if (date.getUTCDay() !== 4) {
-    date.setUTCMonth(0, 1 + ((4 - date.getUTCDay()) + 7) % 7);
-  }
-  return 1 + Math.ceil((firstThursday - date.getTime()) / 604800000);
-}
 
 function pickCategory(pref: string | null, week: number): BlogCategory {
   if (pref && BLOG_CATEGORIES.includes(pref as BlogCategory)) return pref as BlogCategory;
@@ -71,8 +44,8 @@ export async function GET(request: NextRequest) {
   }
 
   const now = new Date();
-  const week = isoWeek(now);
-  const weekKey = `${now.getUTCFullYear()}-W${week}`;
+  const week = isoWeekNumber(now);
+  const weekKey = isoWeekKey(now);
 
   // Which day should it run?
   const dayPref = (await getSetting("blog_auto_day")) ?? "random";
@@ -120,7 +93,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const week = isoWeek(new Date());
+  const week = isoWeekNumber(new Date());
   const category = pickCategory(await getSetting("blog_auto_category"), week);
 
   try {

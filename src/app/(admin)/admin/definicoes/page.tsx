@@ -14,6 +14,7 @@ interface SettingsState {
   site_name: string;
   site_contact_email: string;
   instagram_url: string;
+  whatsapp_number: string;
 }
 
 const DEFAULT_SETTINGS: SettingsState = {
@@ -27,6 +28,7 @@ const DEFAULT_SETTINGS: SettingsState = {
   site_name: "HMG Watches",
   site_contact_email: "",
   instagram_url: "",
+  whatsapp_number: "",
 };
 
 const WEEKDAYS = [
@@ -218,6 +220,10 @@ export default function AdminDefinicoesPage() {
             <div>
               <label style={labelStyle}>Instagram (URL)</label>
               <input style={inputStyle} value={settings.instagram_url} onChange={(e) => setSettings({ ...settings, instagram_url: e.target.value })} placeholder="https://instagram.com/…" />
+            </div>
+            <div>
+              <label style={labelStyle}>WhatsApp (número internacional, só dígitos)</label>
+              <input style={inputStyle} value={settings.whatsapp_number} onChange={(e) => setSettings({ ...settings, whatsapp_number: e.target.value })} placeholder="351912345678" />
             </div>
 
             <hr style={{ border: "none", borderTop: "1px solid var(--border-subtle)", margin: "4px 0" }} />

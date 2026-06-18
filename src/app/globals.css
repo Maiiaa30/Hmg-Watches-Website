@@ -551,6 +551,94 @@ button { font-family: inherit; }
   .hmg-mover-model { white-space: normal; }
 }
 
+/* ---- Watch card (Server Component; hover handled in CSS) ---- */
+.hmg-watchcard {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+.hmg-watchcard:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-3px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hmg-watchcard:hover { transform: none; }
+}
+
+/* ---- Catalogue filter / sort bar ---- */
+.hmg-filterbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding-bottom: 28px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.hmg-filter-pill {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+  min-height: 36px;
+}
+.hmg-filter-pill:hover { border-color: var(--accent); color: var(--text-primary); }
+.hmg-filter-pill[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-on-gold);
+}
+.hmg-filter-spacer { flex: 1; }
+.hmg-filter-select {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 36px;
+}
+.hmg-filter-count { font-size: 12px; color: var(--text-tertiary); }
+@media (max-width: 600px) {
+  .hmg-filter-spacer { flex-basis: 100%; height: 0; }
+}
+
+/* ---- Skeleton loaders ---- */
+.hmg-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-page-alt);
+}
+.hmg-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  animation: hmgShimmer 1.4s ease-in-out infinite;
+}
+@keyframes hmgShimmer {
+  100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hmg-skeleton::after { animation: none; }
+}
+
 /* ---- Admin Leads — responsive card rows (mobile) ---- */
 @media (max-width: 760px) {
   .hmg-leads-row {

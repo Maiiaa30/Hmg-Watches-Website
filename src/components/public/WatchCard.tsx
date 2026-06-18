@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
@@ -14,28 +12,24 @@ interface WatchCardProps {
 
 export function WatchCard({ watch }: WatchCardProps) {
   const image = watch.images[0];
-  const priceFormatted = new Intl.NumberFormat("pt-PT", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(Number(watch.price));
+  // High-end pieces are often listed without a public price ("price on
+  // request") — render that elegantly instead of "€0".
+  const priceNum = Number(watch.price);
+  const priceFormatted =
+    priceNum > 0
+      ? new Intl.NumberFormat("pt-PT", {
+          style: "currency",
+          currency: "EUR",
+          maximumFractionDigits: 0,
+        }).format(priceNum)
+      : "Sob consulta";
 
   return (
     <Link
       href={`/catalogo/${watch.slug}`}
       style={{ display: "block", textDecoration: "none", cursor: "pointer" }}
     >
-      <div
-        style={{ background: "var(--surface-card)", boxShadow: "var(--shadow-soft)" }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLDivElement).style.boxShadow =
-            "var(--shadow-card)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLDivElement).style.boxShadow =
-            "var(--shadow-soft)";
-        }}
-      >
+      <div className="hmg-watchcard">
         {/* Image */}
         <div
           style={{

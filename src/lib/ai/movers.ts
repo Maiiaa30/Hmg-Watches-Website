@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
-import { siteSettings, watchMarketHighlights } from "@/lib/db/schema";
+import { watchMarketHighlights } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { getSetting, setSetting } from "@/lib/db/settings";
 
 // Google Gemini free-tier model (same one the blog generator uses).
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
@@ -187,31 +188,28 @@ export async function refreshAndSaveMovers(count = 10): Promise<number> {
   return movers.length;
 }
 
-async function getSetting(key: string): Promise<string | null> {
-  const [row] = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
-  return row?.value ?? null;
-}
-
-async function setSetting(key: string, value: string) {
-  await db
-    .insert(siteSettings)
-    .values({ key, value, updatedAt: new Date() })
-    .onConflictDoUpdate({ target: siteSettings.key, set: { value, updatedAt: new Date() } });
-}
-
-// ISO-week key like "2026-W25" — used to throttle the job to once per week.
-export function isoWeekKey(d: Date): string {
+// ISO-week number — the deterministic "week of year" used for throttling and to
+// pick a per-week day/category.
+export function isoWeekNumber(d: Date): number {
   const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
   const dayNum = (date.getUTCDay() + 6) % 7;
   date.setUTCDate(date.getUTCDate() - dayNum + 3);
   const firstThursday = date.getTime();
-  const year = date.getUTCFullYear();
   date.setUTCMonth(0, 1);
   if (date.getUTCDay() !== 4) {
     date.setUTCMonth(0, 1 + ((4 - date.getUTCDay()) + 7) % 7);
   }
-  const week = 1 + Math.ceil((firstThursday - date.getTime()) / 604800000);
-  return `${year}-W${week}`;
+  return 1 + Math.ceil((firstThursday - date.getTime()) / 604800000);
+}
+
+// ISO-week key like "2026-W25" — used to throttle the job to once per week.
+// The year component is the ISO year (year of that week's Thursday), preserving
+// the original behaviour.
+export function isoWeekKey(d: Date): string {
+  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const dayNum = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - dayNum + 3);
+  return `${date.getUTCFullYear()}-W${isoWeekNumber(d)}`;
 }
 
 export type MoversRefreshResult =

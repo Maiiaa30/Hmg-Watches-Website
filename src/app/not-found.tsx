@@ -36,11 +36,24 @@ export default function NotFound() {
           marginBottom: 40,
         }}
       >
-        A página que procura não existe ou foi movida.
+        A página que procura não existe ou foi movida. Talvez encontre o que
+        procura na nossa coleção.
       </p>
-      <Link href="/" className="hmg-ghost-btn hmg-ghost-btn--gold">
-        Voltar ao início
-      </Link>
+      <div
+        style={{
+          display: "flex",
+          gap: 16,
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        <Link href="/" className="hmg-ghost-btn hmg-ghost-btn--gold">
+          Voltar ao início
+        </Link>
+        <Link href="/catalogo" className="hmg-ghost-btn hmg-ghost-btn--gold">
+          Ver coleção
+        </Link>
+      </div>
     </div>
   );
 }

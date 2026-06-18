@@ -1,16 +1,32 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { cache } from "react";
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, and, ne, desc, lte } from "drizzle-orm";
-import { BLOG_CATEGORY_LABELS } from "@/constants";
+import { BLOG_CATEGORY_LABELS, SITE_NAME } from "@/constants";
+import { APP_URL } from "@/lib/app-url";
 import { renderMarkdown } from "@/lib/markdown";
 import { ShareButton } from "@/components/public/ShareButton";
+import { DetailAnalytics } from "@/components/public/DetailAnalytics";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
+
+export const revalidate = 300;
+
+// Single-post fetch shared by generateMetadata and the page component.
+// cache() dedupes the query within a request.
+const getPost = cache(async (slug: string) => {
+  const [post] = await db
+    .select()
+    .from(blogPosts)
+    .where(eq(blogPosts.slug, slug))
+    .limit(1);
+  return post;
+});
 
 export async function generateStaticParams() {
   const published = await db
@@ -22,17 +38,31 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const [post] = await db
-    .select()
-    .from(blogPosts)
-    .where(eq(blogPosts.slug, slug))
-    .limit(1);
+  const post = await getPost(slug);
   if (!post) return { title: "Não encontrado" };
+
+  const url = `${APP_URL}/blog/${slug}`;
+  const images = post.coverImage ? [post.coverImage] : [];
+
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
-      images: post.coverImage ? [{ url: post.coverImage }] : [],
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url,
+      images,
+      publishedTime: post.publishedAt
+        ? new Date(post.publishedAt).toISOString()
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images,
     },
   };
 }
@@ -42,13 +72,27 @@ const dateFmt = (d: Date) =>
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params;
-  const [post] = await db
-    .select()
-    .from(blogPosts)
-    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, "published")))
-    .limit(1);
+  const post = await getPost(slug);
 
-  if (!post) notFound();
+  if (!post || post.status !== "published") notFound();
+
+  // Article JSON-LD. publishedAt/updatedAt may be Date or string — coerce
+  // defensively, guarding null.
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    image: post.coverImage ? [post.coverImage] : undefined,
+    datePublished: post.publishedAt
+      ? new Date(post.publishedAt).toISOString()
+      : undefined,
+    dateModified: post.updatedAt
+      ? new Date(post.updatedAt).toISOString()
+      : undefined,
+    author: { "@type": "Organization", name: SITE_NAME },
+    publisher: { "@type": "Organization", name: SITE_NAME },
+  };
 
   const now = new Date();
   const related = await db
@@ -66,6 +110,11 @@ export default async function BlogArticlePage({ params }: Props) {
 
   return (
     <div>
+      <DetailAnalytics blogPostId={post.id} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
       {/* ── Immersive hero ── */}
       <section
         style={{
