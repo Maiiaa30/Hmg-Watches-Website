@@ -12,6 +12,7 @@ export interface Auction {
   description: string | null;
   imageUrl: string | null;
   startsAt: string; // "YYYY-MM-DD" (the day it happens)
+  startsTime: string | null; // "HH:MM" (optional time of day)
   location: string | null;
   active: boolean;
 }

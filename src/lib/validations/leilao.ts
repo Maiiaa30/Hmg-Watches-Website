@@ -11,6 +11,12 @@ export const auctionSchema = z.object({
   description: z.string().max(600).optional().nullable(),
   imageUrl: z.string().url("URL de imagem inválida").max(500).optional().nullable().or(z.literal("")),
   startsAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida (AAAA-MM-DD)"),
+  startsTime: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, "Hora inválida (HH:MM)")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   location: z.string().max(160).optional().nullable(),
   active: z.boolean().default(true),
 });

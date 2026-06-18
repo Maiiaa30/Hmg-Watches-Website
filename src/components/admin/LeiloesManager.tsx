@@ -11,6 +11,7 @@ export interface AuctionRow {
   description: string | null;
   imageUrl: string | null;
   startsAt: string;
+  startsTime: string | null;
   location: string | null;
   active: boolean;
 }
@@ -22,13 +23,14 @@ interface FormState {
   description: string;
   imageUrl: string;
   startsAt: string;
+  startsTime: string;
   location: string;
   active: boolean;
 }
 
 const EMPTY_FORM: FormState = {
   title: "", house: "", url: "", description: "",
-  imageUrl: "", startsAt: "", location: "", active: true,
+  imageUrl: "", startsAt: "", startsTime: "", location: "", active: true,
 };
 
 function formatDate(iso: string): string {
@@ -45,6 +47,7 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
   const [editingId, setEditingId] = useState<string | null>(null); // null=closed, "new"=create
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const today = new Intl.DateTimeFormat("en-CA", {
@@ -65,6 +68,7 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
       description: a.description ?? "",
       imageUrl: a.imageUrl ?? "",
       startsAt: a.startsAt,
+      startsTime: a.startsTime ?? "",
       location: a.location ?? "",
       active: a.active,
     });
@@ -82,6 +86,7 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
       description: form.description || undefined,
       imageUrl: form.imageUrl || undefined,
       startsAt: form.startsAt,
+      startsTime: form.startsTime || undefined,
       location: form.location || undefined,
       active: form.active,
     };
@@ -103,6 +108,27 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
       setError("Erro de rede.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function uploadImage(file: File) {
+    setUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("watchId", "auctions"); // storage folder
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success && data.data?.url) {
+        setForm((f) => ({ ...f, imageUrl: data.data.url }));
+      } else {
+        setError(data.error ?? "Falha no upload da imagem.");
+      }
+    } catch {
+      setError("Erro de rede no upload.");
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -210,13 +236,55 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
               <Field label="Título *"><input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="Important Watches" /></Field>
               <Field label="Casa leiloeira"><input value={form.house} onChange={(e) => setForm({ ...form, house: e.target.value })} style={inputStyle} placeholder="Christie's" /></Field>
               <Field label="Data *"><input type="date" value={form.startsAt} onChange={(e) => setForm({ ...form, startsAt: e.target.value })} style={inputStyle} /></Field>
+              <Field label="Hora"><input type="time" value={form.startsTime} onChange={(e) => setForm({ ...form, startsTime: e.target.value })} style={inputStyle} /></Field>
               <Field label="Local"><input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} style={inputStyle} placeholder="Genebra / Online" /></Field>
             </div>
             <div style={{ marginTop: 14 }}>
               <Field label="Ligação (URL) *"><input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} style={inputStyle} placeholder="https://www.christies.com/..." /></Field>
             </div>
             <div style={{ marginTop: 14 }}>
-              <Field label="URL da imagem"><input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} style={inputStyle} placeholder="https://…" /></Field>
+              <Field label="Imagem">
+                <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap" }}>
+                  {form.imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={form.imageUrl}
+                      alt="Pré-visualização"
+                      style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 6, border: "1px solid var(--border-subtle)", flexShrink: 0 }}
+                    />
+                  )}
+                  <div style={{ flex: 1, minWidth: 180, display: "flex", flexDirection: "column", gap: 8 }}>
+                    <input
+                      value={form.imageUrl}
+                      onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                      style={inputStyle}
+                      placeholder="https://…  (ou carregar abaixo)"
+                    />
+                    <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                      <label style={uploadBtn}>
+                        {uploading ? "A carregar…" : "Carregar imagem"}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          disabled={uploading}
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) uploadImage(f);
+                            e.target.value = "";
+                          }}
+                          style={{ display: "none" }}
+                        />
+                      </label>
+                      {form.imageUrl && (
+                        <button type="button" onClick={() => setForm({ ...form, imageUrl: "" })} style={miniBtn()}>
+                          Remover imagem
+                        </button>
+                      )}
+                    </div>
+                    <span style={{ fontSize: 11, color: "var(--text-tertiary)" }}>JPEG, PNG ou WebP · máx. 5MB</span>
+                  </div>
+                </div>
+              </Field>
             </div>
             <div style={{ marginTop: 14 }}>
               <Field label="Nota (opcional)"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ ...inputStyle, height: 70, resize: "vertical" }} maxLength={600} /></Field>
@@ -272,6 +340,19 @@ function miniBtn(variant?: "gold" | "danger"): React.CSSProperties {
     fontFamily: "var(--font-ui)",
   };
 }
+
+const uploadBtn: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  padding: "8px 14px",
+  borderRadius: 4,
+  border: "1px solid var(--border-strong)",
+  background: "transparent",
+  color: "var(--text-secondary)",
+  fontFamily: "var(--font-ui)",
+  fontSize: 12,
+  cursor: "pointer",
+};
 
 const labelStyle: React.CSSProperties = {
   display: "block",
