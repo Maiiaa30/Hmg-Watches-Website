@@ -165,7 +165,7 @@ export default function AdminDefinicoesPage() {
 
   return (
     <AdminShell title="Definições">
-      <div style={{ maxWidth: 620, display: "flex", flexDirection: "column", gap: 32 }}>
+      <div className="hmg-settings-grid">
         {/* Change password */}
         <Card title="Alterar password">
           <form
@@ -207,7 +207,7 @@ export default function AdminDefinicoesPage() {
         </Card>
 
         {/* Site info + weekly report */}
-        <Card title="Informações do site & Relatório Semanal">
+        <Card title="Informações do site & Relatório Semanal" wide>
           <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 18 }}>
             <div>
               <label style={labelStyle}>Nome do site</label>
@@ -237,7 +237,7 @@ export default function AdminDefinicoesPage() {
               Ativar relatório semanal via Telegram
             </label>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="hmg-settings-fields">
               <div>
                 <label style={labelStyle}>Dia de envio</label>
                 <select style={inputStyle} value={settings.weekly_report_day} onChange={(e) => setSettings({ ...settings, weekly_report_day: e.target.value })}>
@@ -294,7 +294,7 @@ export default function AdminDefinicoesPage() {
               Ativar geração automática semanal
             </label>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="hmg-settings-fields">
               <div>
                 <label style={labelStyle}>Dia da semana</label>
                 <select style={inputStyle} value={settings.blog_auto_day} onChange={(e) => setSettings({ ...settings, blog_auto_day: e.target.value })}>
@@ -396,9 +396,9 @@ export default function AdminDefinicoesPage() {
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({ title, children, wide }: { title: string; children: React.ReactNode; wide?: boolean }) {
   return (
-    <section style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 6, overflow: "hidden" }}>
+    <section className={wide ? "hmg-settings-wide" : undefined} style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 6, overflow: "hidden" }}>
       <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--border-subtle)", fontFamily: "var(--font-display)", fontSize: 18 }}>
         {title}
       </div>
