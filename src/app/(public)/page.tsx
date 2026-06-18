@@ -7,6 +7,7 @@ import { eq, and, desc, lte } from "drizzle-orm";
 import { WatchCard } from "@/components/public/WatchCard";
 import { ContactForm } from "@/components/public/ContactForm";
 import { TypingText } from "@/components/public/TypingText";
+import { getTodaysAuctions } from "@/lib/leiloes";
 import { SITE_NAME, SITE_DESCRIPTION, BLOG_CATEGORY_LABELS } from "@/constants";
 
 export const metadata: Metadata = {
@@ -50,10 +51,11 @@ async function getHeroWatch() {
 }
 
 export default async function HomePage() {
-  const [featured, posts, featuredHero] = await Promise.all([
+  const [featured, posts, featuredHero, todaysAuctions] = await Promise.all([
     getFeaturedWatches(),
     getLatestPosts(),
     getHeroWatch(),
+    getTodaysAuctions(),
   ]);
 
   // Use the admin-chosen featured watch as the hero; fall back to the latest.
@@ -253,6 +255,67 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+
+      {/* ── Today's auction banner ── */}
+      {todaysAuctions.length > 0 && (
+        <section style={{ padding: "0 0 8px" }}>
+          <div className="hmg-container" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {todaysAuctions.map((a) => (
+              <a
+                key={a.id}
+                href={a.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hmg-auction-banner"
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 10,
+                    fontWeight: 600,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--text-on-gold)",
+                    background: "var(--accent)",
+                    padding: "4px 10px",
+                    borderRadius: 100,
+                    flexShrink: 0,
+                  }}
+                >
+                  Hoje
+                </span>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "var(--font-display)", fontSize: 18 }}>
+                    Leilão a decorrer: {a.title}
+                  </span>
+                  {a.house && (
+                    <span style={{ color: "var(--text-tertiary)", fontSize: 14 }}> · {a.house}</span>
+                  )}
+                </span>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 7,
+                    flexShrink: 0,
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 12,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    color: "var(--accent-press)",
+                  }}
+                  aria-hidden="true"
+                >
+                  Ver leilão
+                  <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <path d="M7 17L17 7M17 7H7M17 7v10" />
+                  </svg>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── Featured pieces ── */}
       {featured.length > 0 && (

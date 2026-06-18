@@ -72,6 +72,10 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "market_highlight.created": "Relógio em alta adicionado",
   "market_highlight.updated": "Relógio em alta atualizado",
   "market_highlight.deleted": "Relógio em alta removido",
+  "market_highlight.ai_refreshed": "Top 10 atualizado pela IA",
+  "auction.created": "Leilão adicionado",
+  "auction.updated": "Leilão atualizado",
+  "auction.deleted": "Leilão removido",
   "settings.updated": "Definições atualizadas",
   "telegram.test_sent": "Mensagem de teste do Telegram enviada",
   "cron.weekly_report_sent": "Relatório semanal enviado",
@@ -89,6 +93,7 @@ export const AUDIT_ENTITY_LABELS: Record<string, string> = {
   blog_posts: "Blog",
   contact_messages: "Mensagens",
   watch_market_highlights: "Mercado",
+  auctions: "Leilões",
   site_settings: "Definições",
   admin: "Administração",
 };

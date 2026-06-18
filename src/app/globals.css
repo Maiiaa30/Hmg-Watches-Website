@@ -576,6 +576,98 @@ button { font-family: inherit; }
   gap: 16px;
 }
 
+/* ---- Auctions (leilões) ---- */
+.hmg-auction-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 22px 26px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.hmg-auction-card:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+.hmg-auction-thumb {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+}
+.hmg-auction-today {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-on-gold);
+  background: var(--accent);
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+.hmg-auction-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-press);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hmg-auction-card:hover { transform: none; }
+}
+@media (max-width: 600px) {
+  .hmg-auction-card { flex-wrap: wrap; gap: 16px; padding: 18px 20px; }
+  .hmg-auction-cta { width: 100%; }
+}
+
+/* ---- Homepage today's-auction banner ---- */
+.hmg-auction-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 22px;
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface-card));
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--dur-base) var(--ease-out);
+}
+.hmg-auction-banner:hover {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-card));
+}
+
+/* ---- Back link (watch detail) ---- */
+.hmg-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out), gap var(--dur-base) var(--ease-out);
+}
+.hmg-back-link:hover {
+  color: var(--accent-press);
+  gap: 12px;
+}
+
 /* ---- Watch card (Server Component; hover handled in CSS) ---- */
 .hmg-watchcard {
   background: var(--surface-card);
