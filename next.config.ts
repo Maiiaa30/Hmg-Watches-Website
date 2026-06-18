@@ -31,6 +31,9 @@ const securityHeaders = [
       "img-src 'self' data: blob: https:",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://metals.dev",
       "frame-ancestors 'none'",
+      // Auto-upgrade any http subresource (e.g. a stored http image URL) to
+      // https so the page never triggers a mixed-content "not secure" warning.
+      "upgrade-insecure-requests",
     ].join("; "),
   },
 ];
