@@ -46,6 +46,9 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null); // null=closed, "new"=create
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  // Which entry the current `form` is a draft of ("new" or a row id). Lets a
+  // click-outside keep the draft so re-opening the same entry restores the text.
+  const [draftId, setDraftId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,24 +58,44 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
   }).format(new Date());
 
   function openNew() {
-    setForm(EMPTY_FORM);
-    setEditingId("new");
     setError(null);
+    // Restore a kept draft instead of wiping it.
+    if (draftId !== "new") {
+      setForm(EMPTY_FORM);
+      setDraftId("new");
+    }
+    setEditingId("new");
   }
 
   function openEdit(a: AuctionRow) {
-    setForm({
-      title: a.title,
-      house: a.house ?? "",
-      url: a.url,
-      description: a.description ?? "",
-      imageUrl: a.imageUrl ?? "",
-      startsAt: a.startsAt,
-      startsTime: a.startsTime ?? "",
-      location: a.location ?? "",
-      active: a.active,
-    });
+    setError(null);
+    if (draftId !== a.id) {
+      setForm({
+        title: a.title,
+        house: a.house ?? "",
+        url: a.url,
+        description: a.description ?? "",
+        imageUrl: a.imageUrl ?? "",
+        startsAt: a.startsAt,
+        startsTime: a.startsTime ?? "",
+        location: a.location ?? "",
+        active: a.active,
+      });
+      setDraftId(a.id);
+    }
     setEditingId(a.id);
+  }
+
+  // Click outside: hide the modal but KEEP the draft (re-open restores it).
+  function closeKeepingDraft() {
+    if (!saving) setEditingId(null);
+  }
+
+  // X / Cancelar / after save: close AND discard the draft.
+  function discardAndClose() {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setDraftId(null);
     setError(null);
   }
 
@@ -101,7 +124,7 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
       if (!data.success) {
         setError(data.error ?? "Erro ao guardar.");
       } else {
-        setEditingId(null);
+        discardAndClose();
         router.refresh();
       }
     } catch {
@@ -225,13 +248,30 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
 
       {editingId && (
         <div
-          onClick={() => !saving && setEditingId(null)}
+          onClick={closeKeepingDraft}
           style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "flex-start", justifyContent: "center", zIndex: 1000, padding: "60px 20px", overflowY: "auto" }}
         >
           <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 8, padding: "28px 30px", width: "100%", maxWidth: 560, boxShadow: "var(--shadow-float)" }}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, marginBottom: 20 }}>
-              {editingId === "new" ? "Novo leilão" : "Editar leilão"}
-            </h2>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 20 }}>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, margin: 0 }}>
+                {editingId === "new" ? "Novo leilão" : "Editar leilão"}
+              </h2>
+              <button
+                type="button"
+                onClick={discardAndClose}
+                disabled={saving}
+                aria-label="Fechar e limpar"
+                title="Fechar e limpar"
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-tertiary)", padding: 2, lineHeight: 0, flexShrink: 0 }}
+              >
+                <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p style={{ fontSize: 12, color: "var(--text-tertiary)", margin: "0 0 18px" }}>
+              Clicar fora fecha mas mantém o que escreveu. Use o × para descartar.
+            </p>
             <div className="hmg-settings-fields">
               <Field label="Título *"><input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="Important Watches" /></Field>
               <Field label="Casa leiloeira"><input value={form.house} onChange={(e) => setForm({ ...form, house: e.target.value })} style={inputStyle} placeholder="Christie's" /></Field>
@@ -297,7 +337,7 @@ export function LeiloesManager({ auctions }: { auctions: AuctionRow[] }) {
             {error && <p style={{ color: "var(--hmg-down)", fontSize: 13, marginTop: 14 }}>{error}</p>}
 
             <div style={{ display: "flex", gap: 10, marginTop: 24, justifyContent: "flex-end" }}>
-              <button onClick={() => setEditingId(null)} disabled={saving} style={miniBtn()}>Cancelar</button>
+              <button onClick={discardAndClose} disabled={saving} style={miniBtn()}>Cancelar</button>
               <button onClick={save} disabled={saving} style={primaryBtn}>{saving ? "A guardar…" : "Guardar"}</button>
             </div>
           </div>

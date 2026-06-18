@@ -41,6 +41,9 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
 
   const [editingId, setEditingId] = useState<string | null>(null); // null = closed, "new" = create
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  // Which entry the current `form` is a draft of — lets a click-outside keep
+  // the draft so re-opening the same entry restores the text.
+  const [draftId, setDraftId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiMsg, setAiMsg] = useState<string | null>(null);
@@ -65,24 +68,43 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
   }
 
   function openNew() {
-    setForm(EMPTY_FORM);
-    setEditingId("new");
     setError(null);
+    if (draftId !== "new") {
+      setForm(EMPTY_FORM);
+      setDraftId("new");
+    }
+    setEditingId("new");
   }
 
   function openEdit(h: HighlightRow) {
-    setForm({
-      brand: h.brand,
-      model: h.model,
-      reference: h.reference ?? "",
-      imageUrl: h.imageUrl ?? "",
-      appreciationPct: h.appreciationPct,
-      period: h.period,
-      editorialNote: h.editorialNote ?? "",
-      source: h.source ?? "",
-      active: h.active,
-    });
+    setError(null);
+    if (draftId !== h.id) {
+      setForm({
+        brand: h.brand,
+        model: h.model,
+        reference: h.reference ?? "",
+        imageUrl: h.imageUrl ?? "",
+        appreciationPct: h.appreciationPct,
+        period: h.period,
+        editorialNote: h.editorialNote ?? "",
+        source: h.source ?? "",
+        active: h.active,
+      });
+      setDraftId(h.id);
+    }
     setEditingId(h.id);
+  }
+
+  // Click outside: hide the modal but KEEP the draft (re-open restores it).
+  function closeKeepingDraft() {
+    if (!saving) setEditingId(null);
+  }
+
+  // X / Cancelar / after save: close AND discard the draft.
+  function discardAndClose() {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setDraftId(null);
     setError(null);
   }
 
@@ -111,7 +133,7 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
       if (!data.success) {
         setError(data.error ?? "Erro ao guardar.");
       } else {
-        setEditingId(null);
+        discardAndClose();
         router.refresh();
       }
     } catch {
@@ -246,13 +268,30 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
       {/* Add/Edit modal */}
       {editingId && (
         <div
-          onClick={() => !saving && setEditingId(null)}
+          onClick={closeKeepingDraft}
           style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "flex-start", justifyContent: "center", zIndex: 1000, padding: "60px 20px", overflowY: "auto" }}
         >
           <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)", borderRadius: 8, padding: "28px 30px", width: "100%", maxWidth: 560, boxShadow: "var(--shadow-float)" }}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, marginBottom: 20 }}>
-              {editingId === "new" ? "Nova entrada" : "Editar entrada"}
-            </h2>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 20 }}>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, margin: 0 }}>
+                {editingId === "new" ? "Nova entrada" : "Editar entrada"}
+              </h2>
+              <button
+                type="button"
+                onClick={discardAndClose}
+                disabled={saving}
+                aria-label="Fechar e limpar"
+                title="Fechar e limpar"
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-tertiary)", padding: 2, lineHeight: 0, flexShrink: 0 }}
+              >
+                <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p style={{ fontSize: 12, color: "var(--text-tertiary)", margin: "0 0 18px" }}>
+              Clicar fora fecha mas mantém o que escreveu. Use o × para descartar.
+            </p>
             <div className="hmg-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Marca *"><input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} style={inputStyle} /></Field>
               <Field label="Modelo *"><input value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} style={inputStyle} /></Field>
@@ -275,7 +314,7 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
             {error && <p style={{ color: "var(--hmg-down)", fontSize: 13, marginTop: 14 }}>{error}</p>}
 
             <div style={{ display: "flex", gap: 10, marginTop: 24, justifyContent: "flex-end" }}>
-              <button onClick={() => setEditingId(null)} disabled={saving} style={miniBtn()}>Cancelar</button>
+              <button onClick={discardAndClose} disabled={saving} style={miniBtn()}>Cancelar</button>
               <button onClick={save} disabled={saving} style={primaryBtn}>{saving ? "A guardar…" : "Guardar"}</button>
             </div>
           </div>
