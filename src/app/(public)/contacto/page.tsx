@@ -41,8 +41,9 @@ export default function ContactoPage() {
               maxWidth: 400,
             }}
           >
-            Gostamos de conversar sobre relojoaria tanto quanto de vender
-            relógios. Seja para comprar, vender ou simplesmente perguntar.
+            Gostamos de conversar sobre relojoaria tanto quanto de encontrar o
+            relógio certo. Para comprar, vender ou apenas trocar impressões —
+            estamos a uma mensagem de distância.
           </p>
         </div>
 

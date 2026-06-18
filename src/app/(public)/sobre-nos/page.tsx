@@ -12,7 +12,7 @@ export default function SobreNosPage() {
       <div className="hmg-container" style={{ maxWidth: "var(--container-narrow)" }}>
         <span className="hmg-overline">Sobre nós</span>
         <h1
-          aria-label="Uma montra limpa que serve as peças."
+          aria-label="Pela paixão pelos relógios, levada mais longe."
           style={{
             fontSize: "var(--fs-display-l)",
             lineHeight: "var(--lh-tight)",
@@ -22,8 +22,8 @@ export default function SobreNosPage() {
         >
           <TypingText
             segments={[
-              { text: "Uma montra limpa que\n" },
-              { text: "serve as peças.", style: { fontStyle: "italic", color: "var(--accent-press)" } },
+              { text: "Pela paixão pelos relógios,\n" },
+              { text: "levada mais longe.", style: { fontStyle: "italic", color: "var(--accent-press)" } },
             ]}
           />
         </h1>
@@ -39,14 +39,20 @@ export default function SobreNosPage() {
           }}
         >
           <p>
-            Não vendemos tempo — devolvemos-lhe valor. Cada relógio que chega à
-            HMG é estudado, autenticado e avaliado com o mesmo rigor com que
-            escolheríamos para nós próprios.
+            A HMG Watches nasceu de uma paixão simples e genuína: o fascínio
+            pelos relógios — pela engenharia que cabe num pulso e pelas histórias
+            que cada peça transporta consigo.
           </p>
           <p>
-            Somos movidos pela convicção de que um relógio bem escolhido não
-            precisa de apresentações. Serve o pulso. Conta uma história. E, com
-            o tempo certo, valoriza.
+            Quisemos ir mais fundo. Em vez de apenas vender relógios, decidimos
+            criar algo pessoal — uma curadoria que procura, para cada pessoa, a
+            peça certa. Não a mais cara nem a mais óbvia: a certa. Aquela que
+            serve o pulso, conta uma história e, com o tempo, valoriza.
+          </p>
+          <p>
+            Trabalhamos inteiramente online. É isso que nos permite dedicar a
+            atenção ao que realmente importa: seleccionar bem, autenticar com
+            rigor e acompanhar cada cliente de perto, esteja onde estiver.
           </p>
         </div>
 
@@ -74,8 +80,8 @@ export default function SobreNosPage() {
             },
             {
               n: "03",
-              title: "Prontos a usar",
-              text: "Os relógios chegam-lhe em condição de uso imediato. Sem surpresas depois da compra.",
+              title: "Acompanhamento",
+              text: "Trabalhamos online e de forma próxima. Aconselhamos, esclarecemos e acompanhamos cada compra como se fosse para nós.",
             },
           ].map((pillar) => (
             <div key={pillar.n}>

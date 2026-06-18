@@ -88,7 +88,8 @@ export function Footer() {
               maxWidth: 300,
             }}
           >
-            Relógios de exceção. Curados, autenticados, prontos a usar.
+            Relojoaria de luxo, online. Peças seleccionadas e autenticadas,
+            com curadoria pessoal para cada cliente.
           </p>
           <div style={{ display: "flex", gap: 12, marginTop: 22 }}>
             {/* Instagram */}
@@ -216,7 +217,7 @@ export function Footer() {
           © {new Date().getFullYear()} HMG Watches. Todos os direitos
           reservados.
         </span>
-        <span>Portugal</span>
+        <span>Loja online · Portugal</span>
       </div>
     </footer>
   );
