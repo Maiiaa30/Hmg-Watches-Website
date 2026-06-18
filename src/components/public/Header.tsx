@@ -8,6 +8,7 @@ const NAV = [
   { href: "/", label: "Início" },
   { href: "/catalogo", label: "Catálogo" },
   { href: "/mercado", label: "Mercado" },
+  { href: "/leiloes", label: "Leilões" },
   { href: "/blog", label: "Diário de Bordo" },
   { href: "/sobre-nos", label: "Sobre" },
   { href: "/contacto", label: "Contacto" },

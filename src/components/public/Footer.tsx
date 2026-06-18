@@ -8,6 +8,7 @@ const NAV_COLUMNS = [
     links: [
       { label: "Catálogo", href: "/catalogo" },
       { label: "Mercado", href: "/mercado" },
+      { label: "Leilões", href: "/leiloes" },
       { label: "Diário de Bordo", href: "/blog" },
     ],
   },
