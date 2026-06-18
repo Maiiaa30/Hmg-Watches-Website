@@ -6,6 +6,7 @@ import { watchLeadSchema } from "@/lib/validations/contacto";
 import { sanitizeText } from "@/lib/security/sanitize";
 import { contactRatelimit, getClientIp } from "@/lib/security/rate-limit";
 import { sendEmail, sendTelegram, renderEmail } from "@/lib/notify";
+import { APP_URL } from "@/lib/app-url";
 import type { ApiResponse } from "@/types";
 
 export async function POST(
@@ -101,8 +102,7 @@ async function notifyAdmin(
   lead: { name: string | null; email?: string | null; phone?: string | null; message: string },
   leadId: string
 ) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://hmgwatches.pt";
-  const watchUrl = `${appUrl}/catalogo/${watch.slug}`;
+  const watchUrl = `${APP_URL}/catalogo/${watch.slug}`;
   const dateStr = new Intl.DateTimeFormat("pt-PT", {
     timeZone: "Europe/Lisbon",
     day: "2-digit",

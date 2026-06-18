@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
+import { APP_URL } from "@/lib/app-url";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -31,9 +32,7 @@ export const metadata: Metadata = {
     template: `%s — ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
-  ),
+  metadataBase: new URL(APP_URL),
   openGraph: {
     type: "website",
     locale: "pt_PT",
