@@ -55,10 +55,12 @@ export async function middleware(request: NextRequest) {
       url.pathname = "/admin";
       return NextResponse.rewrite(url);
     }
-    // The admin lives ONLY on the subdomain: send any /admin on the main
-    // domain over to admin.<domain>.
+    // The admin lives ONLY on the subdomain: /admin on the main domain 404s
+    // (no redirect — it's hidden, not advertised).
     if (host !== adminHost && pathname.startsWith("/admin")) {
-      return NextResponse.redirect(`https://${adminHost}${pathname}${request.nextUrl.search}`);
+      const url = request.nextUrl.clone();
+      url.pathname = "/_not-found";
+      return NextResponse.rewrite(url);
     }
   }
 
