@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { logAudit } from "@/lib/auth/utils";
 
 interface TelegramUpdate {
   update_id: number;
@@ -43,6 +44,8 @@ export async function POST(request: NextRequest) {
 
   const chatId = callbackQuery.message?.chat.id;
   const messageId = callbackQuery.message?.message_id;
+  // Identify the approver for the audit trail (Telegram name, not an admin email).
+  const approver = `telegram:${callbackQuery.from.first_name ?? callbackQuery.from.id}`;
 
   if (action === "publish_post") {
     const [post] = await db
@@ -55,6 +58,9 @@ export async function POST(request: NextRequest) {
       await answerCallback(callbackQuery.id, "✅ Publicado!");
       await editMessage(chatId, messageId, `✅ *Publicado:* ${post.title}`);
     }
+    if (post) {
+      await logAudit({ action: "blog.published", entity: "blog_posts", entityId: postId, adminEmail: approver, request });
+    }
   } else if (action === "delete_post") {
     const [post] = await db
       .delete(blogPosts)
@@ -64,6 +70,9 @@ export async function POST(request: NextRequest) {
     if (chatId && messageId && post) {
       await answerCallback(callbackQuery.id, "🗑️ Eliminado.");
       await editMessage(chatId, messageId, `🗑️ *Eliminado:* ${post.title}`);
+    }
+    if (post) {
+      await logAudit({ action: "blog.deleted", entity: "blog_posts", entityId: postId, adminEmail: approver, request });
     }
   }
 

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { watches } from "@/lib/db/schema";
 import { eq, or, desc } from "drizzle-orm";
 import { CatalogBrowser } from "@/components/public/CatalogBrowser";
+import { RecentlyViewed } from "@/components/public/RecentlyViewed";
 import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
@@ -75,6 +76,8 @@ export default async function CatalogoPage() {
         ) : (
           <CatalogBrowser watches={allWatches} />
         )}
+
+        <RecentlyViewed />
       </div>
     </div>
   );
