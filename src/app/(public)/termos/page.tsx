@@ -90,10 +90,11 @@ export default function TermosPage() {
           </section>
 
           <section style={sectionStyle}>
-            <h2 style={h2Style}>Montra e processo de venda</h2>
+            <h2 style={h2Style}>Catálogo e processo de venda</h2>
             <p style={pStyle}>
-              Este site funciona como uma montra. Não processa pagamentos nem
-              encomendas online. Qualquer interesse, negociação ou venda é tratado
+              A HMG Watches é uma loja online e este site funciona como catálogo
+              das peças disponíveis. Não processa pagamentos nem encomendas
+              automáticas: qualquer interesse, negociação ou venda é tratado
               diretamente connosco, através do contacto que estabelecer a partir
               do site.
             </p>

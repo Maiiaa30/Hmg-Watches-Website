@@ -1,6 +1,6 @@
 export const SITE_NAME = "HMG Watches";
 export const SITE_DESCRIPTION =
-  "Relógios de luxo seleccionados. Compra e venda de peças certificadas.";
+  "Relojoaria de luxo, online. Peças seleccionadas e autenticadas, com curadoria pessoal — encontramos o relógio certo para cada pessoa.";
 
 export const ALLOWED_EXTERNAL_LINK_DOMAINS = [
   "vinted.pt",

@@ -132,7 +132,8 @@ export default async function HomePage() {
                 maxWidth: 400,
               }}
             >
-              Relógios de exceção. Curados, autenticados, prontos a usar.
+              Relojoaria de exceção, escolhida peça a peça. Curada,
+              autenticada e pronta para o seu pulso.
             </p>
             <div
               style={{
@@ -386,7 +387,7 @@ export default async function HomePage() {
               <span className="hmg-overline">Sobre nós</span>
             </div>
             <h2 style={{ fontSize: 46, lineHeight: 1.12 }}>
-              <TypingText startOnView segments={[{ text: "Uma montra limpa\nque serve as peças." }]} />
+              <TypingText startOnView segments={[{ text: "Paixão por relojoaria,\nlevada mais longe." }]} />
             </h2>
           </div>
           <div>
@@ -397,9 +398,10 @@ export default async function HomePage() {
                 color: "var(--text-secondary)",
               }}
             >
-              Não vendemos tempo — devolvemos-lhe valor. Cada relógio que chega
-              à HMG é estudado, autenticado e avaliado com o mesmo rigor com que
-              escolheríamos para nós próprios.
+              Começámos pela paixão pelos relógios — e decidimos ir mais fundo.
+              Hoje, mais do que vender, procuramos para cada pessoa a peça certa:
+              estudada, autenticada e escolhida com o mesmo rigor com que a
+              guardaríamos para nós.
             </p>
             <div style={{ marginTop: 34 }}>
               <Link
@@ -540,8 +542,8 @@ export default async function HomePage() {
               marginBottom: 40,
             }}
           >
-            Fale connosco — gostamos de conversar sobre relojoaria tanto quanto
-            de vender relógios.
+            Diga-nos o que procura. Gostamos de conversar sobre relojoaria
+            tanto quanto de encontrar o relógio certo para cada pessoa.
           </p>
           <ContactForm />
         </div>

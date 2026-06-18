@@ -34,7 +34,7 @@ export async function generateBlogPost(
   const categoryLabel = BLOG_CATEGORY_LABELS[category];
   const topicLine = topic ? `\nTema sugerido pelo editor: "${topic}"` : "";
 
-  const prompt = `És um editor especializado em relojoaria de luxo para a HMG Watches, uma montra portuguesa de revenda de relógios de exceção. Escreve em Português de Portugal, com um tom editorial sofisticado, honesto e próximo — como quem conhece profundamente o mundo dos relógios e respeita o leitor.
+  const prompt = `És um editor especializado em relojoaria de luxo para a HMG Watches, uma loja online portuguesa de revenda de relógios de exceção, com curadoria pessoal. Escreve em Português de Portugal, com um tom editorial sofisticado, honesto e próximo — como quem conhece profundamente o mundo dos relógios e respeita o leitor.
 
 Categoria pedida: ${categoryLabel}${topicLine}
 

@@ -159,12 +159,50 @@ Responde APENAS em JSON válido com este formato exacto:
 }
 
 /**
+ * Find a representative photo for a watch via Openverse (free, keyless,
+ * CC-licensed) — same source the blog cover images use. Best-effort: returns
+ * null if nothing suitable is found, and the UI falls back to a brand initial.
+ */
+async function findWatchImage(
+  brand: string,
+  model: string,
+  reference: string | null
+): Promise<string | null> {
+  const queries = [
+    reference ? `${brand} ${model} ${reference}` : `${brand} ${model} watch`,
+    `${brand} ${model} watch`,
+    `${brand} ${model}`,
+    `${brand} relógio`,
+  ];
+  for (const q of queries) {
+    try {
+      const res = await fetch(
+        `https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=1&mature=false`,
+        { headers: { Accept: "application/json" } }
+      );
+      if (!res.ok) continue;
+      const data = (await res.json()) as { results?: Array<{ url?: string }> };
+      const url = data.results?.[0]?.url;
+      if (typeof url === "string" && url.startsWith("https://")) return url;
+    } catch {
+      // try next query
+    }
+  }
+  return null;
+}
+
+/**
  * Generate a fresh Top-N and atomically replace the AI-managed rows in
  * watch_market_highlights. Manually-added rows (source !== AI sentinel) are
- * left untouched.
+ * left untouched. Each entry gets a best-effort photo from Openverse.
  */
 export async function refreshAndSaveMovers(count = 10): Promise<number> {
   const movers = await generateMovers(count);
+
+  // Look up a photo for each watch in parallel (best-effort, never fatal).
+  const images = await Promise.all(
+    movers.map((m) => findWatchImage(m.brand, m.model, m.reference))
+  );
 
   await db.transaction(async (tx) => {
     // Remove the previous AI batch only.
@@ -174,7 +212,7 @@ export async function refreshAndSaveMovers(count = 10): Promise<number> {
         brand: m.brand,
         model: m.model,
         reference: m.reference,
-        imageUrl: null,
+        imageUrl: images[i] ?? null,
         appreciationPct: m.appreciationPct.toString(),
         period: m.period,
         editorialNote: m.editorialNote,
