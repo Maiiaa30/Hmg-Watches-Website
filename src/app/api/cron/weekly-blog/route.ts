@@ -4,6 +4,7 @@ import { siteSettings } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { requireAdmin, logAudit } from "@/lib/auth/utils";
 import { generateAndSaveBlogPost, friendlyGenError, BLOG_CATEGORIES } from "@/lib/ai/create-post";
+import { maybeRefreshWeeklyMovers, isoWeekKey } from "@/lib/ai/movers";
 import type { ApiResponse, BlogCategory } from "@/types";
 
 const DAY_INDEX: Record<string, number> = {
@@ -45,6 +46,24 @@ export async function GET(request: NextRequest) {
   const auth = request.headers.get("authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json<ApiResponse>({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Piggyback the weekly AI "Top 10 movers" refresh on this daily cron so we stay
+  // within the Vercel Hobby 2-cron limit. It self-throttles to once per ISO week
+  // and is independent of the blog settings below. Best-effort: never let a
+  // movers failure abort the blog job.
+  try {
+    const moversResult = await maybeRefreshWeeklyMovers(isoWeekKey(new Date()));
+    if (moversResult.status === "generated") {
+      await logAudit({
+        action: "market_highlight.ai_refreshed",
+        entity: "watch_market_highlights",
+        adminEmail: "cron",
+        request,
+      });
+    }
+  } catch (err) {
+    console.error("[weekly-movers] refresh failed:", err);
   }
 
   if ((await getSetting("blog_auto_enabled")) !== "true") {

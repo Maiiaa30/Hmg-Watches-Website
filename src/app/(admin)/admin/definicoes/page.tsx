@@ -10,6 +10,7 @@ interface SettingsState {
   blog_auto_enabled: string;
   blog_auto_day: string;
   blog_auto_category: string;
+  movers_auto_enabled: string;
   site_name: string;
   site_contact_email: string;
   instagram_url: string;
@@ -22,6 +23,7 @@ const DEFAULT_SETTINGS: SettingsState = {
   blog_auto_enabled: "false",
   blog_auto_day: "random",
   blog_auto_category: "random",
+  movers_auto_enabled: "false",
   site_name: "HMG Watches",
   site_contact_email: "",
   instagram_url: "",
@@ -60,6 +62,8 @@ export default function AdminDefinicoesPage() {
   const [sendingReport, setSendingReport] = useState(false);
   const [blogStatus, setBlogStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [generatingBlog, setGeneratingBlog] = useState(false);
+  const [moversStatus, setMoversStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [generatingMovers, setGeneratingMovers] = useState(false);
 
   // Load current settings
   useEffect(() => {
@@ -122,6 +126,22 @@ export default function AdminDefinicoesPage() {
       setBlogStatus({ type: "error", text: "Erro de rede." });
     } finally {
       setGeneratingBlog(false);
+    }
+  }
+
+  async function generateMoversNow() {
+    setGeneratingMovers(true);
+    setMoversStatus(null);
+    try {
+      const res = await fetch("/api/cron/weekly-movers", { method: "POST" });
+      const data = await res.json();
+      setMoversStatus(data.success
+        ? { type: "success", text: `Top 10 atualizado pela IA (${data.data?.generated ?? 0} relógios). Já está visível em /mercado.` }
+        : { type: "error", text: data.error ?? "Falha ao gerar o Top 10." });
+    } catch {
+      setMoversStatus({ type: "error", text: "Erro de rede." });
+    } finally {
+      setGeneratingMovers(false);
     }
   }
 
@@ -302,6 +322,45 @@ export default function AdminDefinicoesPage() {
             {blogStatus && (
               <p style={{ color: blogStatus.type === "success" ? "var(--trend-up)" : "var(--hmg-down)", fontSize: 13, margin: 0 }}>
                 {blogStatus.text}
+              </p>
+            )}
+          </div>
+        </Card>
+
+        {/* Auto Top 10 movers generation */}
+        <Card title="Top 10 Mercado — Geração Automática">
+          <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 18 }}>
+            <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: 0 }}>
+              Uma vez por semana, a IA gera automaticamente o ranking de relógios que
+              mais valorizaram (a secção <em>Maiores valorizações</em> em <code style={codeStyle}>/mercado</code>).
+              Não precisas de criar nada à mão — os valores são <strong>estimativas indicativas</strong> geradas por IA.
+            </p>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={settings.movers_auto_enabled === "true"}
+                onChange={(e) => setSettings({ ...settings, movers_auto_enabled: e.target.checked ? "true" : "false" })}
+              />
+              Ativar atualização automática semanal do Top 10
+            </label>
+
+            <p style={{ fontSize: 12, color: "var(--text-tertiary)", margin: 0 }}>
+              A verificação corre diariamente (~10:00 UTC) e só atualiza uma vez por semana.
+              Carrega em “Gerar agora” para preencher já o Top 10.
+            </p>
+
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+              <button onClick={saveSettings} disabled={savingSettings} style={primaryBtn}>
+                {savingSettings ? "A guardar…" : "Guardar definições"}
+              </button>
+              <button onClick={generateMoversNow} disabled={generatingMovers} style={ghostBtn}>
+                {generatingMovers ? "A gerar…" : "Gerar Top 10 agora"}
+              </button>
+            </div>
+            {moversStatus && (
+              <p style={{ color: moversStatus.type === "success" ? "var(--trend-up)" : "var(--hmg-down)", fontSize: 13, margin: 0 }}>
+                {moversStatus.text}
               </p>
             )}
           </div>

@@ -221,7 +221,7 @@ export default async function MercadoPage() {
               Top {movers.length} — relógios que mais valorizaram
             </h2>
 
-            <MoversIndex rows={movers} period="recentes" />
+            <MoversIndex rows={movers} />
           </section>
         )}
       </div>
