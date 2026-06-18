@@ -14,6 +14,40 @@ export async function middleware(request: NextRequest) {
   // Unset in local dev → admin stays at /admin as usual.
   const adminHost = process.env.ADMIN_HOST?.trim().toLowerCase();
 
+  // ---- Maintenance gate (public pages only) ----
+  // MAINTENANCE_MODE="true" hides the public site from everyone; unlock for
+  // yourself by visiting any page with ?preview=<MAINTENANCE_SECRET> once.
+  if (process.env.MAINTENANCE_MODE === "true") {
+    const secret = process.env.MAINTENANCE_SECRET;
+    const isAdminArea =
+      pathname.startsWith("/admin") ||
+      pathname.startsWith("/api") ||
+      (!!adminHost && host === adminHost);
+
+    if (!isAdminArea && secret) {
+      // Unlock via ?preview=SECRET → set cookie, then redirect to a clean URL
+      if (request.nextUrl.searchParams.get("preview") === secret) {
+        const clean = request.nextUrl.clone();
+        clean.searchParams.delete("preview");
+        const res = NextResponse.redirect(clean);
+        res.cookies.set("hmg_preview", secret, {
+          httpOnly: true,
+          sameSite: "lax",
+          path: "/",
+          maxAge: 60 * 60 * 24 * 30,
+        });
+        return res;
+      }
+      const unlocked = request.cookies.get("hmg_preview")?.value === secret;
+      if (!unlocked) {
+        return new NextResponse(maintenanceHtml(), {
+          status: 503,
+          headers: { "content-type": "text/html; charset=utf-8", "retry-after": "3600" },
+        });
+      }
+    }
+  }
+
   if (adminHost) {
     // On the admin subdomain, the bare root serves the dashboard.
     if (host === adminHost && pathname === "/") {
@@ -88,14 +122,25 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
+function maintenanceHtml(): string {
+  return `<!doctype html>
+<html lang="pt"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Em manutenção — HMG Watches</title></head>
+<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#ece6d8;font-family:Georgia,'Times New Roman',serif;color:#2a2418;text-align:center;padding:24px;">
+  <div style="max-width:480px;">
+    <div style="font-size:30px;font-weight:bold;">HMG <span style="font-size:12px;letter-spacing:0.34em;color:#8a6a1f;font-family:Arial,Helvetica,sans-serif;">WATCHES</span></div>
+    <h1 style="font-size:28px;font-weight:normal;margin:28px 0 14px;">Em manutenção</h1>
+    <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#6f6757;margin:0;">
+      Estamos a preparar algo especial. Voltamos em breve.
+    </p>
+  </div>
+</body></html>`;
+}
+
 export const config = {
+  // Run on everything except static assets (so maintenance/admin/auth logic
+  // can gate any public page).
   matcher: [
-    "/",
-    "/admin/:path*",
-    "/api/relogios/:path*",
-    "/api/blog/:path*",
-    "/api/upload/:path*",
-    "/api/mercado/relogios-alta/:path*",
-    "/api/analytics/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|robots.txt|sitemap.xml|.*\\.(?:png|jpe?g|gif|svg|webp|ico|css|js|woff2?)$).*)",
   ],
 };
