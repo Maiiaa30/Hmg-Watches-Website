@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { watchMarketHighlights } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -66,6 +67,7 @@ export async function PUT(
     request,
   });
 
+  revalidatePath("/mercado");
   return NextResponse.json<ApiResponse>({ success: true, data: updated });
 }
 
@@ -113,6 +115,7 @@ export async function PATCH(
     request,
   });
 
+  revalidatePath("/mercado");
   return NextResponse.json<ApiResponse>({ success: true, data: updated });
 }
 
@@ -143,5 +146,6 @@ export async function DELETE(
     request,
   });
 
+  revalidatePath("/mercado");
   return NextResponse.json<ApiResponse>({ success: true });
 }

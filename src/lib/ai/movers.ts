@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { watchMarketHighlights } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -184,6 +185,10 @@ export async function refreshAndSaveMovers(count = 10): Promise<number> {
       }))
     );
   });
+
+  // The public /mercado page is ISR-cached (revalidate=3600); without this it
+  // would keep serving the stale Top 10 for up to an hour after a refresh.
+  revalidatePath("/mercado");
 
   return movers.length;
 }
