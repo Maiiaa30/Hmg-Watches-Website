@@ -270,6 +270,7 @@ export default async function WatchDetailPage({ params }: Props) {
               <span className="hmg-overline">Outras peças</span>
             </div>
             <div
+              className="hmg-stack"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(4, 1fr)",

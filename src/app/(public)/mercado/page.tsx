@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { watchMarketHighlights } from "@/lib/db/schema";
-import { eq, asc } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { MetalsChart } from "@/components/public/MetalsChart";
 import { TypingText } from "@/components/public/TypingText";
+import { MoversIndex, type MoverRow } from "@/components/public/MoversIndex";
 
 export const metadata: Metadata = {
   title: "Mercado",
@@ -88,15 +89,28 @@ async function getMetalSeries(): Promise<MetalSeries[] | null> {
 }
 
 export default async function MercadoPage() {
-  const [metalSeries, risers] = await Promise.all([
+  const [metalSeries, riserRows] = await Promise.all([
     getMetalSeries(),
     db
       .select()
       .from(watchMarketHighlights)
       .where(eq(watchMarketHighlights.active, true))
-      .orderBy(asc(watchMarketHighlights.displayOrder))
-      .limit(6),
+      // Top movers: rank by value gained (highest appreciation first).
+      .orderBy(desc(watchMarketHighlights.appreciationPct))
+      .limit(10),
   ]);
+
+  const movers: MoverRow[] = riserRows.map((r) => ({
+    id: r.id,
+    brand: r.brand,
+    model: r.model,
+    reference: r.reference,
+    imageUrl: r.imageUrl,
+    appreciationPct: r.appreciationPct,
+    period: r.period,
+    editorialNote: r.editorialNote,
+    source: r.source,
+  }));
 
   return (
     <div style={{ padding: "var(--section-y) 0" }}>
@@ -172,15 +186,15 @@ export default async function MercadoPage() {
           )}
         </section>
 
-        {/* Risers */}
-        {risers.length > 0 && (
+        {/* Top movers — Chrono24-style ranked index of biggest gainers */}
+        {movers.length > 0 && (
           <section>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 16,
-                marginBottom: 36,
+                marginBottom: 14,
               }}
             >
               <span
@@ -194,89 +208,20 @@ export default async function MercadoPage() {
                 02
               </span>
               <span style={{ height: 1, width: 44, background: "var(--accent)" }} />
-              <span className="hmg-overline">Relógios em alta</span>
+              <span className="hmg-overline">Maiores valorizações</span>
             </div>
-            <div
-              className="hmg-stack"
+            <h2
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 28,
+                fontFamily: "var(--font-display)",
+                fontSize: "var(--fs-display-s)",
+                lineHeight: "var(--lh-snug)",
+                marginBottom: 28,
               }}
             >
-              {risers.map((r) => (
-                <div
-                  key={r.id}
-                  style={{
-                    border: "1px solid var(--border-subtle)",
-                    padding: "24px",
-                    background: "var(--surface-card)",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 10,
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
-                      color: "var(--text-tertiary)",
-                      marginBottom: 6,
-                    }}
-                  >
-                    {r.brand}
-                    {r.reference && <span> · {r.reference}</span>}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 20,
-                      marginBottom: 12,
-                    }}
-                  >
-                    {r.model}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 26,
-                      fontWeight: 700,
-                      color: "var(--trend-up)",
-                      marginBottom: 4,
-                    }}
-                  >
-                    +{r.appreciationPct}%
-                  </div>
-                  <div
-                    style={{ fontSize: 12, color: "var(--text-tertiary)", marginBottom: 14 }}
-                  >
-                    em {r.period}
-                  </div>
-                  {r.editorialNote && (
-                    <p
-                      style={{
-                        fontSize: 14,
-                        lineHeight: 1.7,
-                        color: "var(--text-secondary)",
-                        borderTop: "1px solid var(--border-subtle)",
-                        paddingTop: 14,
-                      }}
-                    >
-                      {r.editorialNote}
-                    </p>
-                  )}
-                  {r.source && (
-                    <div
-                      style={{
-                        marginTop: 10,
-                        fontSize: 11,
-                        color: "var(--text-tertiary)",
-                      }}
-                    >
-                      Fonte: {r.source}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+              Top {movers.length} — relógios que mais valorizaram
+            </h2>
+
+            <MoversIndex rows={movers} period="recentes" />
           </section>
         )}
       </div>

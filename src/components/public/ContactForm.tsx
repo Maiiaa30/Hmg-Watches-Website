@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 const SUBJECTS = [
   "Questão sobre um relógio",
@@ -20,6 +20,11 @@ export function ContactForm() {
     message: "",
     website: "", // honeypot
   });
+
+  const nameId = useId();
+  const emailId = useId();
+  const subjectId = useId();
+  const messageId = useId();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +51,7 @@ export function ContactForm() {
 
   if (success) {
     return (
-      <div style={{ textAlign: "center", padding: "60px 0" }}>
+      <div role="status" aria-live="polite" style={{ textAlign: "center", padding: "60px 0" }}>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--fs-display-s)", marginBottom: 16 }}>
           Mensagem recebida.
         </h2>
@@ -67,30 +72,31 @@ export function ContactForm() {
         onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
         style={{ position: "absolute", left: -9999 }}
         tabIndex={-1}
+        aria-hidden="true"
         autoComplete="off"
       />
 
-      <FormField label="Nome *">
-        <input type="text" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} style={inputStyle} maxLength={200} />
+      <FormField label="Nome *" id={nameId}>
+        <input id={nameId} type="text" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} style={inputStyle} maxLength={200} />
       </FormField>
 
-      <FormField label="Email *">
-        <input type="email" required value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={inputStyle} maxLength={300} />
+      <FormField label="Email *" id={emailId}>
+        <input id={emailId} type="email" required value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={inputStyle} maxLength={300} />
       </FormField>
 
-      <FormField label="Assunto">
-        <select value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} style={inputStyle}>
+      <FormField label="Assunto" id={subjectId}>
+        <select id={subjectId} value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} style={inputStyle}>
           {SUBJECTS.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
       </FormField>
 
-      <FormField label="Mensagem *">
-        <textarea required value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} style={{ ...inputStyle, height: 140, resize: "vertical" }} maxLength={5000} />
+      <FormField label="Mensagem *" id={messageId}>
+        <textarea id={messageId} required value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} style={{ ...inputStyle, height: 140, resize: "vertical" }} maxLength={5000} />
       </FormField>
 
-      {error && <p style={{ color: "var(--hmg-down)", fontSize: 14 }}>{error}</p>}
+      {error && <p role="alert" style={{ color: "var(--hmg-down)", fontSize: 14 }}>{error}</p>}
 
       <button type="submit" disabled={loading} className="hmg-ghost-btn hmg-ghost-btn--gold">
         {loading ? "A enviar…" : "Enviar mensagem"}
@@ -99,10 +105,11 @@ export function ContactForm() {
   );
 }
 
-function FormField({ label, children }: { label: string; children: React.ReactNode }) {
+function FormField({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
   return (
     <div>
       <label
+        htmlFor={id}
         style={{
           display: "block",
           fontFamily: "var(--font-ui)",

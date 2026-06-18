@@ -75,6 +75,15 @@ export function TypingText({
   // Advance the typed character count
   useEffect(() => {
     if (!started || count >= total) return;
+    // Respect the user's reduced-motion preference: render the full text at
+    // once instead of scheduling per-character timers.
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setCount(total);
+      return;
+    }
     const delay = count === 0 ? startDelay : speed;
     const id = setTimeout(() => setCount((c) => c + 1), delay);
     return () => clearTimeout(id);

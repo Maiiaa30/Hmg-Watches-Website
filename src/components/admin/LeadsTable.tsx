@@ -96,6 +96,7 @@ export function LeadsTable({ leads }: { leads: LeadRow[] }) {
           return (
             <div key={lead.id} style={{ borderBottom: "1px solid var(--border-subtle)", background: !lead.read ? "rgba(182,138,46,0.04)" : "transparent" }}>
               <div
+                className="hmg-leads-row"
                 onClick={() => setExpanded(isOpen ? null : lead.id)}
                 style={{
                   display: "grid",
@@ -106,7 +107,7 @@ export function LeadsTable({ leads }: { leads: LeadRow[] }) {
                   cursor: "pointer",
                 }}
               >
-                <div>
+                <div className="hmg-leads-full">
                   <div style={{ fontWeight: 500 }}>{lead.watch.brand} {lead.watch.model}</div>
                   <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 2 }}>/catalogo/{lead.watch.slug}</div>
                 </div>

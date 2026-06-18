@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { WatchStatus } from "@/types";
 
 interface LeadFormProps {
@@ -35,6 +35,22 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
     watchStatus === "available"
       ? "Entrar em contacto"
       : "Avisem-me quando tiverem algo semelhante";
+
+  const titleId = useId();
+  const nameId = useId();
+  const emailId = useId();
+  const phoneId = useId();
+  const messageId = useId();
+
+  // Close the modal when Escape is pressed while it is open.
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -86,6 +102,9 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
           onClick={(e) => e.target === e.currentTarget && setOpen(false)}
         >
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
             style={{
               background: "var(--surface-card)",
               width: "100%",
@@ -115,8 +134,9 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
             </button>
 
             {success ? (
-              <div style={{ textAlign: "center", padding: "20px 0" }}>
+              <div role="status" aria-live="polite" style={{ textAlign: "center", padding: "20px 0" }}>
                 <div
+                  aria-hidden="true"
                   style={{
                     fontSize: 32,
                     marginBottom: 16,
@@ -125,6 +145,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   ✓
                 </div>
                 <h3
+                  id={titleId}
                   style={{
                     fontFamily: "var(--font-display)",
                     fontSize: 24,
@@ -140,6 +161,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
             ) : (
               <form onSubmit={handleSubmit} noValidate>
                 <h3
+                  id={titleId}
                   style={{
                     fontFamily: "var(--font-display)",
                     fontSize: 24,
@@ -167,11 +189,13 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
                   style={{ position: "absolute", left: -9999, width: 1, height: 1 }}
                   tabIndex={-1}
+                  aria-hidden="true"
                   autoComplete="off"
                 />
 
-                <Field label="Nome (opcional)">
+                <Field label="Nome (opcional)" id={nameId}>
                   <input
+                    id={nameId}
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -180,8 +204,9 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   />
                 </Field>
 
-                <Field label="Email">
+                <Field label="Email" id={emailId}>
                   <input
+                    id={emailId}
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
@@ -190,8 +215,9 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   />
                 </Field>
 
-                <Field label="Telemóvel">
+                <Field label="Telemóvel" id={phoneId}>
                   <input
+                    id={phoneId}
                     type="tel"
                     value={form.phone}
                     onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
@@ -200,8 +226,9 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   />
                 </Field>
 
-                <Field label="Mensagem *">
+                <Field label="Mensagem *" id={messageId}>
                   <textarea
+                    id={messageId}
                     value={form.message}
                     onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                     style={{ ...inputStyle, height: 100, resize: "vertical" }}
@@ -216,6 +243,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
 
                 {error && (
                   <p
+                    role="alert"
                     style={{
                       color: "var(--hmg-down)",
                       fontSize: 14,
@@ -245,14 +273,17 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
 
 function Field({
   label,
+  id,
   children,
 }: {
   label: string;
+  id: string;
   children: React.ReactNode;
 }) {
   return (
     <div style={{ marginBottom: 18 }}>
       <label
+        htmlFor={id}
         style={{
           display: "block",
           fontFamily: "var(--font-ui)",

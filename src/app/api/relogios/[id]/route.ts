@@ -21,6 +21,22 @@ export async function GET(
   if (!watch) {
     return NextResponse.json<ApiResponse>({ success: false, error: "Não encontrado." }, { status: 404 });
   }
+
+  // Archived watches are admin-only: hide them from the public as a 404 unless
+  // the caller is an authenticated admin. Available/sold stay public.
+  if (watch.status === "archived") {
+    let isAdmin = false;
+    try {
+      await requireAdmin();
+      isAdmin = true;
+    } catch {
+      isAdmin = false;
+    }
+    if (!isAdmin) {
+      return NextResponse.json<ApiResponse>({ success: false, error: "Não encontrado." }, { status: 404 });
+    }
+  }
+
   return NextResponse.json<ApiResponse>({ success: true, data: watch });
 }
 

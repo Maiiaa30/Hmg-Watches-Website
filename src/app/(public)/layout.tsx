@@ -9,9 +9,10 @@ export default function PublicLayout({
 }) {
   return (
     <>
+      <a href="#main" className="hmg-skip-link">Saltar para o conteúdo</a>
       <AnalyticsTracker />
       <Header />
-      <main>{children}</main>
+      <main id="main" tabIndex={-1}>{children}</main>
       <Footer />
     </>
   );
