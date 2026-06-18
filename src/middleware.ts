@@ -104,9 +104,24 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Optional email allowlist: when ADMIN_EMAILS is set, an authenticated user
+  // whose email isn't listed is treated as unauthenticated (no access), so the
+  // existing no-user redirect/deny logic below applies. Unset → any user passes.
+  const allowlistRaw = process.env.ADMIN_EMAILS;
+  let effectiveUser = user;
+  if (user && allowlistRaw && allowlistRaw.trim() !== "") {
+    const allowed = allowlistRaw
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    if (!allowed.includes(user.email?.toLowerCase() ?? "")) {
+      effectiveUser = null;
+    }
+  }
+
   // Protect all /admin routes (except /admin/login)
   if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
-    if (!user) {
+    if (!effectiveUser) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/admin/login";
       loginUrl.searchParams.set("redirect", pathname);
@@ -115,7 +130,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect logged-in admin away from login page
-  if (pathname === "/admin/login" && user) {
+  if (pathname === "/admin/login" && effectiveUser) {
     const adminUrl = request.nextUrl.clone();
     adminUrl.pathname = "/admin";
     return NextResponse.redirect(adminUrl);

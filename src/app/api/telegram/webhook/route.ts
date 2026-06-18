@@ -14,13 +14,16 @@ interface TelegramUpdate {
 }
 
 export async function POST(request: NextRequest) {
-  // Verify the Telegram webhook secret token (sent by Telegram on each call)
+  // Verify the Telegram webhook secret token (sent by Telegram on each call).
+  // Fail closed: if the secret is unset/empty we reject outright, otherwise an
+  // unconfigured deploy would accept unauthenticated POSTs from anyone.
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
-  if (secret) {
-    const signature = request.headers.get("x-telegram-bot-api-secret-token");
-    if (signature !== secret) {
-      return NextResponse.json({ ok: false }, { status: 401 });
-    }
+  if (!secret) {
+    return NextResponse.json({ ok: false }, { status: 401 });
+  }
+  const signature = request.headers.get("x-telegram-bot-api-secret-token");
+  if (signature !== secret) {
+    return NextResponse.json({ ok: false }, { status: 401 });
   }
 
   let update: TelegramUpdate;

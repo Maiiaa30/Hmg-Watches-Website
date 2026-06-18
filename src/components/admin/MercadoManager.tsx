@@ -153,8 +153,9 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <p style={{ fontSize: 13, color: "var(--text-tertiary)", margin: 0 }}>
-          Máximo recomendado: 6 entradas ativas em simultâneo.
+        <p style={{ fontSize: 13, color: "var(--text-tertiary)", margin: 0, maxWidth: 460 }}>
+          Top movers do Mercado — as entradas ativas aparecem ordenadas pela maior
+          valorização (máximo 10 visíveis no site). Usa valores negativos para quedas.
         </p>
         <button onClick={openNew} style={primaryBtn}>+ Adicionar entrada</button>
       </div>
@@ -173,6 +174,7 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
               style={{
                 display: "flex",
                 alignItems: "center",
+                flexWrap: "wrap",
                 gap: 16,
                 padding: "16px 20px",
                 background: "var(--surface-card)",
@@ -223,7 +225,7 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, marginBottom: 20 }}>
               {editingId === "new" ? "Nova entrada" : "Editar entrada"}
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="hmg-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Marca *"><input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} style={inputStyle} /></Field>
               <Field label="Modelo *"><input value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} style={inputStyle} /></Field>
               <Field label="Referência"><input value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} style={inputStyle} /></Field>

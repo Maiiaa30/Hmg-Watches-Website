@@ -43,6 +43,22 @@ export async function requireAdmin() {
   if (!user) {
     throw new Error("Unauthorized");
   }
+
+  // Optional email allowlist: only enforced when ADMIN_EMAILS is set. If a user
+  // is authenticated but their email isn't in the list, treat as unauthorized.
+  // When the env var is unset/empty, any authenticated user passes (legacy behaviour).
+  const allowlistRaw = process.env.ADMIN_EMAILS;
+  if (allowlistRaw && allowlistRaw.trim() !== "") {
+    const allowed = allowlistRaw
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    const email = user.email?.toLowerCase() ?? "";
+    if (!allowed.includes(email)) {
+      throw new Error("Unauthorized");
+    }
+  }
+
   return { user };
 }
 

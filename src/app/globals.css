@@ -15,7 +15,7 @@
 
   --hmg-ink:         #1A1814;
   --hmg-ink-2:       #5C5648;
-  --hmg-ink-3:       #938A78;
+  --hmg-ink-3:       #6F6857; /* darkened for WCAG AA contrast on ivory (~4.6:1) */
 
   --hmg-gold:        #B68A2E;
   --hmg-gold-bright: #C9A24B;
@@ -429,4 +429,134 @@ button { font-family: inherit; }
     gap: 6px;
     text-align: center;
   }
+}
+
+/* ---- Skip-to-content link (a11y) ---- */
+.hmg-skip-link {
+  position: absolute;
+  left: 16px;
+  top: -64px;
+  z-index: 2000;
+  padding: 10px 18px;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  transition: top var(--dur-base) var(--ease-out);
+}
+.hmg-skip-link:focus { top: 16px; }
+
+/* ============================================================
+   Market — Top movers ranked index (Chrono24-style)
+   ============================================================ */
+.hmg-movers {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-card);
+  overflow: hidden;
+}
+.hmg-movers-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.hmg-mover-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.hmg-mover-row:last-of-type { border-bottom: none; }
+.hmg-mover-row:hover { background: var(--surface-raised); }
+
+.hmg-mover-thumb {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface-sunken);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hmg-mover-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.hmg-mover-thumb-ph {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--text-tertiary);
+}
+.hmg-mover-id { flex: 1; min-width: 0; }
+.hmg-mover-brand {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 3px;
+}
+.hmg-mover-ref { letter-spacing: 0.1em; }
+.hmg-mover-model {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hmg-mover-source { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+.hmg-mover-spark { display: flex; align-items: center; }
+.hmg-mover-change {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 96px;
+}
+.hmg-mover-pct {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.hmg-mover-period { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+.hmg-mover-footnote {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 12px 22px;
+  background: var(--surface-sunken);
+}
+
+@media (max-width: 720px) {
+  .hmg-movers-head { display: none; }
+  .hmg-mover-row { flex-wrap: wrap; gap: 12px 14px; padding: 16px; }
+  .hmg-mover-id { flex: 1 1 auto; }
+  .hmg-mover-spark { order: 5; flex: 1 1 100%; justify-content: flex-start; }
+  .hmg-mover-change { order: 4; min-width: 0; }
+  .hmg-mover-model { white-space: normal; }
+}
+
+/* ---- Admin Leads — responsive card rows (mobile) ---- */
+@media (max-width: 760px) {
+  .hmg-leads-row {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px 12px !important;
+    padding: 14px 16px !important;
+  }
+  .hmg-leads-row > .hmg-leads-full { grid-column: 1 / -1; }
 }
