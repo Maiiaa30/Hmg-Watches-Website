@@ -10,6 +10,7 @@ import { LeadForm } from "@/components/public/LeadForm";
 import { WatchCard } from "@/components/public/WatchCard";
 import { WatchGallery } from "@/components/public/WatchGallery";
 import { DetailAnalytics } from "@/components/public/DetailAnalytics";
+import { RecentlyViewedRecorder } from "@/components/public/RecentlyViewedRecorder";
 import { APP_URL } from "@/lib/app-url";
 import {
   MOVEMENT_TYPE_LABELS,
@@ -170,6 +171,17 @@ export default async function WatchDetailPage({ params }: Props) {
   return (
     <div style={{ padding: "60px 0 120px" }}>
       <DetailAnalytics watchId={watch.id} />
+      <RecentlyViewedRecorder
+        watch={{
+          slug: watch.slug,
+          brand: watch.brand,
+          model: watch.model,
+          reference: watch.reference,
+          price: watch.price,
+          status: watch.status,
+          images: watch.images,
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
