@@ -42,6 +42,27 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
   const [editingId, setEditingId] = useState<string | null>(null); // null = closed, "new" = create
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiMsg, setAiMsg] = useState<string | null>(null);
+
+  async function refreshWithAi() {
+    setAiBusy(true);
+    setAiMsg(null);
+    try {
+      const res = await fetch("/api/cron/weekly-movers", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setAiMsg(`Top 10 atualizado pela IA (${data.data?.generated ?? 0} relógios).`);
+        router.refresh();
+      } else {
+        setAiMsg(data.error ?? "Falha ao gerar.");
+      }
+    } catch {
+      setAiMsg("Erro de rede.");
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   function openNew() {
     setForm(EMPTY_FORM);
@@ -154,12 +175,19 @@ export function MercadoManager({ highlights }: { highlights: HighlightRow[] }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <p style={{ fontSize: 13, color: "var(--text-tertiary)", margin: 0, maxWidth: 460 }}>
-          Top movers do Mercado — as entradas ativas aparecem ordenadas pela maior
-          valorização (máximo 10 visíveis no site). Usa valores negativos para quedas.
+          Top movers do Mercado — geridos automaticamente pela IA (semanalmente).
+          O ranking mostra as maiores valorizações (máx. 10). Podes editar ou
+          adicionar entradas manuais; as manuais não são substituídas pela IA.
         </p>
-        <button onClick={openNew} style={primaryBtn}>+ Adicionar entrada</button>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <button onClick={refreshWithAi} disabled={aiBusy} style={primaryBtn}>
+            {aiBusy ? "A gerar…" : "↻ Atualizar com IA"}
+          </button>
+          <button onClick={openNew} style={ghostBtn}>+ Entrada manual</button>
+        </div>
       </div>
 
+      {aiMsg && <p style={{ color: "var(--text-secondary)", fontSize: 13, margin: 0 }}>{aiMsg}</p>}
       {error && !editingId && <p style={{ color: "var(--hmg-down)", fontSize: 14, margin: 0 }}>{error}</p>}
 
       {highlights.length === 0 ? (
@@ -275,6 +303,17 @@ const primaryBtn: React.CSSProperties = {
   fontWeight: 600,
   borderRadius: 4,
   border: "none",
+  cursor: "pointer",
+};
+
+const ghostBtn: React.CSSProperties = {
+  padding: "10px 20px",
+  background: "transparent",
+  color: "var(--text-secondary)",
+  fontFamily: "var(--font-ui)",
+  fontSize: 13,
+  borderRadius: 4,
+  border: "1px solid var(--border-strong)",
   cursor: "pointer",
 };
 

@@ -139,11 +139,11 @@ export function MoversIndex({ rows, period }: { rows: MoverRow[]; period?: strin
         );
       })}
 
-      {period && (
-        <p className="hmg-mover-footnote">
-          Valorizações {period} no mercado secundário · valores indicativos de curadoria editorial.
-        </p>
-      )}
+      <p className="hmg-mover-footnote">
+        {period ? `Valorizações ${period} no mercado secundário. ` : ""}
+        Estimativas indicativas geradas por IA, actualizadas semanalmente — não constituem
+        aconselhamento de investimento.
+      </p>
     </div>
   );
 }
