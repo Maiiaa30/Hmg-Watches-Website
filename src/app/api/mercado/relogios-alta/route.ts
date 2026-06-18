@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { watchMarketHighlights } from "@/lib/db/schema";
 import { eq, asc, sql } from "drizzle-orm";
@@ -79,5 +80,6 @@ export async function POST(request: NextRequest) {
     request,
   });
 
+  revalidatePath("/mercado");
   return NextResponse.json<ApiResponse>({ success: true, data: created }, { status: 201 });
 }
