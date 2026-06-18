@@ -291,6 +291,9 @@ export default async function HomePage() {
                   {a.house && (
                     <span style={{ color: "var(--text-tertiary)", fontSize: 14 }}> · {a.house}</span>
                   )}
+                  {a.startsTime && (
+                    <span style={{ color: "var(--accent-press)", fontSize: 14 }}> · {a.startsTime}</span>
+                  )}
                 </span>
                 <span
                   style={{

@@ -107,6 +107,7 @@ function AuctionCard({ auction, isToday }: { auction: Auction; isToday: boolean 
             }}
           >
             {formatDate(auction.startsAt)}
+            {auction.startsTime && ` · ${auction.startsTime}`}
           </span>
           {isToday && <span className="hmg-auction-today">Hoje</span>}
         </div>

@@ -52,6 +52,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     description: d.description ? sanitizeText(d.description) : null,
     imageUrl: d.imageUrl ? d.imageUrl : null,
     startsAt: d.startsAt,
+    startsTime: d.startsTime ? d.startsTime : null,
     location: d.location ? sanitizeText(d.location) : null,
     active: d.active,
   };
