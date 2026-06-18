@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { cache } from "react";
 import { db } from "@/lib/db";
 import { watches } from "@/lib/db/schema";
 import { eq, ne, and } from "drizzle-orm";
@@ -8,6 +9,8 @@ import { Badge } from "@/components/ui/Badge";
 import { LeadForm } from "@/components/public/LeadForm";
 import { WatchCard } from "@/components/public/WatchCard";
 import { WatchGallery } from "@/components/public/WatchGallery";
+import { DetailAnalytics } from "@/components/public/DetailAnalytics";
+import { APP_URL } from "@/lib/app-url";
 import {
   MOVEMENT_TYPE_LABELS,
   CONDITION_LABELS,
@@ -16,6 +19,22 @@ import {
 interface Props {
   params: Promise<{ slug: string }>;
 }
+
+export const revalidate = 300;
+
+// Build an absolute URL from a site-relative path.
+const absolute = (path: string) => `${APP_URL}${path}`;
+
+// Single-watch fetch shared by generateMetadata and the page component.
+// Wrapped in React's cache() so Next dedupes the query within a request.
+const getWatch = cache(async (slug: string) => {
+  const [watch] = await db
+    .select()
+    .from(watches)
+    .where(eq(watches.slug, slug))
+    .limit(1);
+  return watch;
+});
 
 export async function generateStaticParams() {
   const all = await db
@@ -27,43 +46,108 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const [watch] = await db
-    .select()
-    .from(watches)
-    .where(eq(watches.slug, slug))
-    .limit(1);
+  const watch = await getWatch(slug);
 
   if (!watch) return { title: "Não encontrado" };
 
+  const title = `${watch.brand} ${watch.model}`;
+  const description =
+    watch.description ??
+    `${watch.brand} ${watch.model}${watch.reference ? ` (${watch.reference})` : ""}. ${watch.year ?? ""}`;
+  const url = absolute(`/catalogo/${slug}`);
+  const firstImage = watch.images[0];
+
   return {
-    title: `${watch.brand} ${watch.model}`,
-    description: watch.description ?? `${watch.brand} ${watch.model}${watch.reference ? ` (${watch.reference})` : ""}. ${watch.year ?? ""}`,
+    title,
+    description,
+    alternates: { canonical: `/catalogo/${slug}` },
     openGraph: {
-      images: watch.images[0] ? [{ url: watch.images[0] }] : [],
+      type: "website",
+      title,
+      description,
+      url,
+      images: firstImage
+        ? [{ url: firstImage, width: 1200, height: 1500 }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: firstImage ? [firstImage] : [],
     },
   };
 }
 
 export default async function WatchDetailPage({ params }: Props) {
   const { slug } = await params;
-  const [watch] = await db
-    .select()
-    .from(watches)
-    .where(eq(watches.slug, slug))
-    .limit(1);
+  const watch = await getWatch(slug);
 
   if (!watch || watch.status === "archived") notFound();
 
+  // Narrow projection — WatchCard only needs these columns. Prefer same-brand
+  // pieces (excluding the current one), non-archived, limited to 4.
   const related = await db
-    .select()
+    .select({
+      id: watches.id,
+      slug: watches.slug,
+      brand: watches.brand,
+      model: watches.model,
+      reference: watches.reference,
+      price: watches.price,
+      status: watches.status,
+      images: watches.images,
+    })
     .from(watches)
     .where(
       and(
+        eq(watches.brand, watch.brand),
         ne(watches.id, watch.id),
         ne(watches.status, "archived")
       )
     )
     .limit(4);
+
+  // JSON-LD for rich results. JSON.stringify drops undefined fields.
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${watch.brand} ${watch.model}`,
+    brand: { "@type": "Brand", name: watch.brand },
+    sku: watch.reference || undefined,
+    image: watch.images?.length ? watch.images : undefined,
+    description: watch.description || undefined,
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "EUR",
+      price: Number(watch.price),
+      availability:
+        watch.status === "available"
+          ? "https://schema.org/InStock"
+          : "https://schema.org/SoldOut",
+      url: absolute(`/catalogo/${watch.slug}`),
+    },
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: absolute("/") },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Catálogo",
+        item: absolute("/catalogo"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `${watch.brand} ${watch.model}`,
+        item: absolute(`/catalogo/${watch.slug}`),
+      },
+    ],
+  };
 
   const priceFormatted = new Intl.NumberFormat("pt-PT", {
     style: "currency",
@@ -85,6 +169,15 @@ export default async function WatchDetailPage({ params }: Props) {
 
   return (
     <div style={{ padding: "60px 0 120px" }}>
+      <DetailAnalytics watchId={watch.id} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="hmg-container">
         {/* Breadcrumb */}
         <nav

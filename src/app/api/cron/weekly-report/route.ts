@@ -3,8 +3,9 @@ import { db } from "@/lib/db";
 import { pageViews, siteSettings } from "@/lib/db/schema";
 import { eq, gte, lt, sql, and, desc } from "drizzle-orm";
 import { startOfWeek, endOfWeek, subWeeks, format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { pt } from "date-fns/locale";
 import { requireAdmin, logAudit } from "@/lib/auth/utils";
+import { getSetting } from "@/lib/db/settings";
 import type { ApiResponse } from "@/types";
 
 // GET — invoked by Vercel Cron with the CRON_SECRET. Respects enabled/day config.
@@ -15,25 +16,15 @@ export async function GET(request: NextRequest) {
   }
 
   // Check if enabled
-  const [enabledSetting] = await db
-    .select()
-    .from(siteSettings)
-    .where(eq(siteSettings.key, "weekly_report_enabled"))
-    .limit(1);
-
-  if (enabledSetting?.value !== "true") {
+  if ((await getSetting("weekly_report_enabled")) !== "true") {
     return NextResponse.json<ApiResponse>({ success: true, data: { skipped: true } });
   }
 
   // Check day
-  const [daySetting] = await db
-    .select()
-    .from(siteSettings)
-    .where(eq(siteSettings.key, "weekly_report_day"))
-    .limit(1);
+  const reportDay = await getSetting("weekly_report_day");
 
   const dayOfWeek = new Date().getDay(); // 0=Sun, 5=Fri, 6=Sat
-  const configuredDay = daySetting?.value === "friday" ? 5 : 6;
+  const configuredDay = reportDay === "friday" ? 5 : 6;
   if (dayOfWeek !== configuredDay) {
     return NextResponse.json<ApiResponse>({ success: true, data: { skipped: true, reason: "wrong day" } });
   }
@@ -102,7 +93,7 @@ async function buildAndSendReport() {
     return { sent: true, total: 0 };
   }
 
-  const weekLabel = `${format(weekStart, "EEEE, dd/MM", { locale: ptBR })} — ${format(weekEnd, "EEEE, dd/MM", { locale: ptBR })}`;
+  const weekLabel = `${format(weekStart, "EEEE, dd/MM", { locale: pt })} — ${format(weekEnd, "EEEE, dd/MM", { locale: pt })}`;
   const changeStr = changePercent !== null
     ? ` _(${changePercent > 0 ? "+" : ""}${changePercent}% vs semana anterior)_`
     : "";

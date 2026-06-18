@@ -37,11 +37,25 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_PT",
     siteName: SITE_NAME,
+    images: [{ url: "/uploads/logoFinal.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/uploads/logoFinal.png"],
   },
   robots: {
     index: true,
     follow: true,
   },
+};
+
+// Global Organization structured data.
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE_NAME,
+  url: APP_URL,
+  logo: `${APP_URL}/uploads/logoFinal.png`,
 };
 
 export default function RootLayout({
@@ -67,7 +81,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

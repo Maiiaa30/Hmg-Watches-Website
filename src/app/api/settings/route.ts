@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { siteSettings } from "@/lib/db/schema";
 import { requireAdmin, logAudit } from "@/lib/auth/utils";
 import { sanitizeText } from "@/lib/security/sanitize";
+import { setSetting } from "@/lib/db/settings";
 import type { ApiResponse } from "@/types";
 
 // Keys the admin is allowed to read/write through this endpoint
@@ -17,6 +18,7 @@ const ALLOWED_KEYS = [
   "site_name",
   "site_contact_email",
   "instagram_url",
+  "whatsapp_number",
 ] as const;
 
 type SettingKey = (typeof ALLOWED_KEYS)[number];
@@ -69,10 +71,7 @@ export async function PUT(request: NextRequest) {
 
   for (const [key, rawValue] of entries) {
     const value = sanitizeText(String(rawValue));
-    await db
-      .insert(siteSettings)
-      .values({ key, value, updatedAt: new Date() })
-      .onConflictDoUpdate({ target: siteSettings.key, set: { value, updatedAt: new Date() } });
+    await setSetting(key, value);
   }
 
   await logAudit({

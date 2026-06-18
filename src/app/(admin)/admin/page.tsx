@@ -49,6 +49,7 @@ export default async function AdminDashboardPage() {
     { label: "Vendidos", value: data.soldCount, icon: "✅" },
     { label: "Artigos", value: data.publishedCount, icon: "📝" },
     { label: "Leads não lidas", value: data.unreadLeads, icon: "🔔", href: "/admin/leads" },
+    { label: "Mensagens não lidas", value: data.unreadMessages, icon: "✉️", href: "/admin/mensagens" },
   ];
 
   return (

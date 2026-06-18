@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { watches } from "@/lib/db/schema";
 import { eq, or, desc } from "drizzle-orm";
-import { WatchCard } from "@/components/public/WatchCard";
+import { CatalogBrowser } from "@/components/public/CatalogBrowser";
 import { TypingText } from "@/components/public/TypingText";
 
 export const metadata: Metadata = {
@@ -13,20 +13,28 @@ export const metadata: Metadata = {
 export const revalidate = 120;
 
 export default async function CatalogoPage() {
+  // Only the columns the cards + filter/sort need (no description / image_order).
   const allWatches = await db
-    .select()
+    .select({
+      id: watches.id,
+      slug: watches.slug,
+      brand: watches.brand,
+      model: watches.model,
+      reference: watches.reference,
+      price: watches.price,
+      status: watches.status,
+      images: watches.images,
+      createdAt: watches.createdAt,
+    })
     .from(watches)
     .where(or(eq(watches.status, "available"), eq(watches.status, "sold")))
     .orderBy(desc(watches.createdAt));
-
-  const available = allWatches.filter((w) => w.status === "available");
-  const sold = allWatches.filter((w) => w.status === "sold");
 
   return (
     <div style={{ padding: "var(--section-y) 0" }}>
       <div className="hmg-container">
         {/* Header */}
-        <div className="hmg-fade-up" style={{ marginBottom: 72 }}>
+        <div className="hmg-fade-up" style={{ marginBottom: 64 }}>
           <span className="hmg-overline">Coleção</span>
           <h1
             aria-label="Catálogo"
@@ -51,98 +59,7 @@ export default async function CatalogoPage() {
           </p>
         </div>
 
-        {/* Available */}
-        {available.length > 0 && (
-          <section style={{ marginBottom: 80 }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-                marginBottom: 40,
-                paddingBottom: 20,
-                borderBottom: "1px solid var(--border-subtle)",
-              }}
-            >
-              <h2
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--status-available-fg)",
-                }}
-              >
-                Disponíveis
-              </h2>
-              <span
-                style={{
-                  fontSize: 12,
-                  color: "var(--text-tertiary)",
-                }}
-              >
-                {available.length} {available.length === 1 ? "peça" : "peças"}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-                gap: "var(--gap-card)",
-              }}
-            >
-              {available.map((w) => (
-                <WatchCard key={w.id} watch={w} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Sold (portfolio) */}
-        {sold.length > 0 && (
-          <section>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-                marginBottom: 40,
-                paddingBottom: 20,
-                borderBottom: "1px solid var(--border-subtle)",
-              }}
-            >
-              <h2
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--text-tertiary)",
-                }}
-              >
-                Vendidos
-              </h2>
-              <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
-                {sold.length} {sold.length === 1 ? "peça" : "peças"}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-                gap: "var(--gap-card)",
-              }}
-            >
-              {sold.map((w) => (
-                <WatchCard key={w.id} watch={w} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {allWatches.length === 0 && (
+        {allWatches.length === 0 ? (
           <div
             style={{
               textAlign: "center",
@@ -155,6 +72,8 @@ export default async function CatalogoPage() {
           >
             Em breve, novos relógios.
           </div>
+        ) : (
+          <CatalogBrowser watches={allWatches} />
         )}
       </div>
     </div>
