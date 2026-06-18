@@ -2,12 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const host = request.headers.get("host") ?? "";
+  // Vercel routes through a proxy, so the public host is in x-forwarded-host.
+  const host = (
+    request.headers.get("x-forwarded-host") ??
+    request.headers.get("host") ??
+    ""
+  ).toLowerCase();
   const { pathname } = request.nextUrl;
 
   // Optional dedicated admin subdomain, e.g. ADMIN_HOST="admin.hmgwatches.com".
   // Unset in local dev → admin stays at /admin as usual.
-  const adminHost = process.env.ADMIN_HOST;
+  const adminHost = process.env.ADMIN_HOST?.trim().toLowerCase();
 
   // On the admin subdomain (when configured), the bare root serves the
   // dashboard. /admin keeps working on the main domain — no redirect.
