@@ -340,6 +340,10 @@ button { font-family: inherit; }
   padding: 14px 18px;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
+  transition: border-color 240ms var(--ease-out), background 240ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hmg-watch-card { transition: none; }
 }
 .hmg-admin-metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
 @media (max-width: 1000px) { .hmg-admin-metrics { grid-template-columns: repeat(3, 1fr); } }

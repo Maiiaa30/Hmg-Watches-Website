@@ -159,11 +159,12 @@ export function Header({ locale = "en" }: { locale?: Locale }) {
               </Link>
             );
           })}
-          <span
-            aria-hidden="true"
-            style={{ width: 1, height: 18, background: "var(--border-strong)", marginLeft: -8 }}
-          />
-          <LanguageToggle locale={locale} aria={t.toggle.ariaTo} />
+          {/* marginBottom matches the nav links' 5px paddingBottom so the pill
+              lines up with the link text rather than sitting lower. */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 5 }}>
+            <span aria-hidden="true" style={{ width: 1, height: 16, background: "var(--border-strong)" }} />
+            <LanguageToggle locale={locale} aria={t.toggle.ariaTo} />
+          </div>
         </nav>
 
         {/* Mobile hamburger */}
