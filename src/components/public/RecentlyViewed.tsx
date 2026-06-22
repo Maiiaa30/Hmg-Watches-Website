@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getRecentWatches, type RecentWatch } from "@/lib/recently-viewed";
 import { WatchCard } from "@/components/public/WatchCard";
+import { getDict, type Locale } from "@/lib/i18n";
 
 /**
  * A discreet "recently viewed" strip rendered from localStorage. Renders nothing
@@ -10,11 +11,15 @@ import { WatchCard } from "@/components/public/WatchCard";
  */
 export function RecentlyViewed({
   excludeSlug,
-  title = "Vistos recentemente",
+  title,
+  locale = "en",
 }: {
   excludeSlug?: string;
   title?: string;
+  locale?: Locale;
 }) {
+  const t = getDict(locale);
+  const resolvedTitle = title ?? t.catalog.recentlyViewed;
   const [items, setItems] = useState<RecentWatch[] | null>(null);
 
   useEffect(() => {
@@ -45,7 +50,7 @@ export function RecentlyViewed({
             color: "var(--text-tertiary)",
           }}
         >
-          {title}
+          {resolvedTitle}
         </h2>
       </div>
       <div

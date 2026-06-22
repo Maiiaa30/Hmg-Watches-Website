@@ -3,21 +3,24 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getDict, type Locale } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/public/LanguageToggle";
 
-const NAV = [
-  { href: "/", label: "Início" },
-  { href: "/catalogo", label: "Catálogo" },
-  { href: "/mercado", label: "Mercado" },
-  { href: "/leiloes", label: "Leilões" },
-  { href: "/blog", label: "Diário de Bordo" },
-  { href: "/sobre-nos", label: "Sobre" },
-  { href: "/contacto", label: "Contacto" },
-] as const;
-
-export function Header() {
+export function Header({ locale = "en" }: { locale?: Locale }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const t = getDict(locale);
+  const NAV = [
+    { href: "/", label: t.nav.home },
+    { href: "/catalogo", label: t.nav.catalogue },
+    { href: "/mercado", label: t.nav.market },
+    { href: "/leiloes", label: t.nav.auctions },
+    { href: "/blog", label: t.nav.journal },
+    { href: "/sobre-nos", label: t.nav.about },
+    { href: "/contacto", label: t.nav.contact },
+  ] as const;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -156,6 +159,7 @@ export function Header() {
               </Link>
             );
           })}
+          <LanguageToggle locale={locale} label={t.toggle.switchTo} aria={t.toggle.ariaTo} />
         </nav>
 
         {/* Mobile hamburger */}
@@ -218,6 +222,9 @@ export function Header() {
               {n.label}
             </Link>
           ))}
+          <div style={{ paddingTop: 14 }}>
+            <LanguageToggle locale={locale} label={t.toggle.switchTo} aria={t.toggle.ariaTo} block />
+          </div>
         </div>
       )}
     </header>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { TypingText } from "@/components/public/TypingText";
 import { getUpcomingAuctions, todayLisbon, type Auction } from "@/lib/leiloes";
+import { getT } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "Leilões",
@@ -20,6 +21,7 @@ function formatDate(iso: string): string {
 }
 
 export default async function LeiloesPage() {
+  const { t } = await getT();
   const auctions = await getUpcomingAuctions();
   const today = todayLisbon();
 
@@ -27,9 +29,9 @@ export default async function LeiloesPage() {
     <div style={{ padding: "var(--section-y) 0" }}>
       <div className="hmg-container" style={{ maxWidth: "var(--container-narrow)" }}>
         <div className="hmg-fade-up" style={{ marginBottom: 64 }}>
-          <span className="hmg-overline">Leilões</span>
+          <span className="hmg-overline">{t.auctions.overline}</span>
           <h1
-            aria-label="Próximos leilões"
+            aria-label={t.auctions.title}
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -37,12 +39,10 @@ export default async function LeiloesPage() {
               marginBottom: 16,
             }}
           >
-            <TypingText segments={[{ text: "Próximos leilões" }]} />
+            <TypingText segments={[{ text: t.auctions.title }]} />
           </h1>
           <p style={{ fontSize: "var(--fs-body-l)", color: "var(--text-secondary)", maxWidth: 540, lineHeight: "var(--lh-relaxed)" }}>
-            Acompanhamos os leilões de relojoaria que vale a pena conhecer. Cada
-            entrada liga diretamente à casa leiloeira — a licitação decorre no
-            site da casa, não aqui.
+            {t.auctions.subtitle}
           </p>
         </div>
 
@@ -65,16 +65,22 @@ export default async function LeiloesPage() {
                 marginBottom: 10,
               }}
             >
-              De momento, não há leilões agendados.
+              {t.auctions.emptyTitle}
             </div>
             <p style={{ fontSize: 15, color: "var(--text-tertiary)", margin: 0 }}>
-              Volte em breve — anunciamos aqui os próximos leilões de referência.
+              {t.auctions.emptyText}
             </p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {auctions.map((a) => (
-              <AuctionCard key={a.id} auction={a} isToday={a.startsAt === today} />
+              <AuctionCard
+                key={a.id}
+                auction={a}
+                isToday={a.startsAt === today}
+                viewAuctionLabel={t.auctions.viewAuction}
+                todayLabel={t.auctions.today}
+              />
             ))}
           </div>
         )}
@@ -83,7 +89,17 @@ export default async function LeiloesPage() {
   );
 }
 
-function AuctionCard({ auction, isToday }: { auction: Auction; isToday: boolean }) {
+function AuctionCard({
+  auction,
+  isToday,
+  viewAuctionLabel,
+  todayLabel,
+}: {
+  auction: Auction;
+  isToday: boolean;
+  viewAuctionLabel: string;
+  todayLabel: string;
+}) {
   return (
     <a
       href={auction.url}
@@ -109,7 +125,7 @@ function AuctionCard({ auction, isToday }: { auction: Auction; isToday: boolean 
             {formatDate(auction.startsAt)}
             {auction.startsTime && ` · ${auction.startsTime}`}
           </span>
-          {isToday && <span className="hmg-auction-today">Hoje</span>}
+          {isToday && <span className="hmg-auction-today">{todayLabel}</span>}
         </div>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: 23, lineHeight: 1.25, marginBottom: 6 }}>
           {auction.title}
@@ -126,7 +142,7 @@ function AuctionCard({ auction, isToday }: { auction: Auction; isToday: boolean 
         )}
       </div>
       <span className="hmg-auction-cta" aria-hidden="true">
-        Ver leilão
+        {viewAuctionLabel}
         <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
           <path d="M7 17L17 7M17 7H7M17 7v10" />
         </svg>

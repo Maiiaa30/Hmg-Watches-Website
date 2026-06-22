@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { WatchCard } from "@/components/public/WatchCard";
 import type { Watch } from "@/types";
+import { getDict, type Locale } from "@/lib/i18n";
 
 type CatalogWatch = Pick<
   Watch,
@@ -11,15 +12,22 @@ type CatalogWatch = Pick<
 
 type SortKey = "recent" | "price-desc" | "price-asc";
 
-const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: "recent", label: "Mais recentes" },
-  { value: "price-desc", label: "Preço: maior primeiro" },
-  { value: "price-asc", label: "Preço: menor primeiro" },
-];
-
-export function CatalogBrowser({ watches }: { watches: CatalogWatch[] }) {
+export function CatalogBrowser({
+  watches,
+  locale = "en",
+}: {
+  watches: CatalogWatch[];
+  locale?: Locale;
+}) {
+  const t = getDict(locale);
   const [brand, setBrand] = useState<string | null>(null);
   const [sort, setSort] = useState<SortKey>("recent");
+
+  const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+    { value: "recent", label: t.catalog.sortRecent },
+    { value: "price-desc", label: t.catalog.sortPriceDesc },
+    { value: "price-asc", label: t.catalog.sortPriceAsc },
+  ];
 
   const brands = useMemo(
     () => Array.from(new Set(watches.map((w) => w.brand))).sort((a, b) => a.localeCompare(b, "pt")),
@@ -49,7 +57,7 @@ export function CatalogBrowser({ watches }: { watches: CatalogWatch[] }) {
           aria-pressed={brand === null}
           onClick={() => setBrand(null)}
         >
-          Todas
+          {t.catalog.all}
         </button>
         {brands.map((b) => (
           <button
@@ -66,10 +74,10 @@ export function CatalogBrowser({ watches }: { watches: CatalogWatch[] }) {
         <span className="hmg-filter-spacer" />
 
         <span className="hmg-filter-count">
-          {sorted.length} {sorted.length === 1 ? "peça" : "peças"}
+          {sorted.length} {sorted.length === 1 ? t.catalog.piece : t.catalog.pieces}
         </span>
         <label className="hmg-filter-count" htmlFor="catalog-sort" style={{ marginLeft: 4 }}>
-          Ordenar
+          {t.catalog.sortLabel}
         </label>
         <select
           id="catalog-sort"
@@ -87,7 +95,13 @@ export function CatalogBrowser({ watches }: { watches: CatalogWatch[] }) {
 
       {available.length > 0 && (
         <section style={{ marginBottom: 80 }}>
-          <SectionHeader label="Disponíveis" count={available.length} color="var(--status-available-fg)" />
+          <SectionHeader
+            label={t.catalog.available}
+            count={available.length}
+            color="var(--status-available-fg)"
+            piece={t.catalog.piece}
+            pieces={t.catalog.pieces}
+          />
           <Grid>
             {available.map((w) => (
               <WatchCard key={w.id} watch={w} />
@@ -98,7 +112,13 @@ export function CatalogBrowser({ watches }: { watches: CatalogWatch[] }) {
 
       {sold.length > 0 && (
         <section>
-          <SectionHeader label="Vendidos" count={sold.length} color="var(--text-tertiary)" />
+          <SectionHeader
+            label={t.catalog.sold}
+            count={sold.length}
+            color="var(--text-tertiary)"
+            piece={t.catalog.piece}
+            pieces={t.catalog.pieces}
+          />
           <Grid>
             {sold.map((w) => (
               <WatchCard key={w.id} watch={w} />
@@ -118,14 +138,26 @@ export function CatalogBrowser({ watches }: { watches: CatalogWatch[] }) {
             fontStyle: "italic",
           }}
         >
-          Nenhuma peça corresponde aos filtros.
+          {t.catalog.noMatch}
         </div>
       )}
     </>
   );
 }
 
-function SectionHeader({ label, count, color }: { label: string; count: number; color: string }) {
+function SectionHeader({
+  label,
+  count,
+  color,
+  piece,
+  pieces,
+}: {
+  label: string;
+  count: number;
+  color: string;
+  piece: string;
+  pieces: string;
+}) {
   return (
     <div
       style={{
@@ -150,7 +182,7 @@ function SectionHeader({ label, count, color }: { label: string; count: number; 
         {label}
       </h2>
       <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
-        {count} {count === 1 ? "peça" : "peças"}
+        {count} {count === 1 ? piece : pieces}
       </span>
     </div>
   );

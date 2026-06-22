@@ -8,6 +8,7 @@ import { WatchCard } from "@/components/public/WatchCard";
 import { ContactForm } from "@/components/public/ContactForm";
 import { TypingText } from "@/components/public/TypingText";
 import { getTodaysAuctions } from "@/lib/leiloes";
+import { getT } from "@/lib/i18n-server";
 import { SITE_NAME, SITE_DESCRIPTION, BLOG_CATEGORY_LABELS } from "@/constants";
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ async function getHeroWatch() {
 }
 
 export default async function HomePage() {
+  const { t } = await getT();
   const [featured, posts, featuredHero, todaysAuctions] = await Promise.all([
     getFeaturedWatches(),
     getLatestPosts(),
@@ -106,10 +108,10 @@ export default async function HomePage() {
               <span
                 style={{ height: 1, width: 46, background: "var(--accent)" }}
               />
-              <span className="hmg-overline">Em destaque</span>
+              <span className="hmg-overline">{t.home.featured}</span>
             </div>
             <h1
-              aria-label="Tempo que não se perde."
+              aria-label={`${t.home.heroA}${t.home.heroNot}${t.home.heroB}`.replace(/\n/g, " ").trim()}
               style={{
                 fontSize: "clamp(46px, 6vw, 78px)",
                 lineHeight: 1.02,
@@ -119,9 +121,9 @@ export default async function HomePage() {
             >
               <TypingText
                 segments={[
-                  { text: "Tempo que\n" },
-                  { text: "não", style: { fontStyle: "italic", color: "var(--accent-press)" } },
-                  { text: " se perde." },
+                  { text: t.home.heroA },
+                  { text: t.home.heroNot, style: { fontStyle: "italic", color: "var(--accent-press)" } },
+                  { text: t.home.heroB },
                 ]}
               />
             </h1>
@@ -134,8 +136,7 @@ export default async function HomePage() {
                 maxWidth: 400,
               }}
             >
-              Relojoaria de exceção, escolhida peça a peça. Curada,
-              autenticada e pronta para o seu pulso.
+              {t.home.heroSubtitle}
             </p>
             <div
               style={{
@@ -146,13 +147,13 @@ export default async function HomePage() {
               }}
             >
               <Link href="/catalogo" className="hmg-ghost-btn hmg-ghost-btn--gold">
-                Ver Coleção
+                {t.home.viewCollection}
                 <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </Link>
               <Link href="/sobre-nos" className="hmg-ghost-btn hmg-ghost-btn--dark">
-                A nossa história
+                {t.home.ourStory}
               </Link>
             </div>
           </div>
@@ -286,7 +287,7 @@ export default async function HomePage() {
                 </span>
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ fontFamily: "var(--font-display)", fontSize: 18 }}>
-                    Leilão a decorrer: {a.title}
+                    {t.home.auctionToday} {a.title}
                   </span>
                   {a.house && (
                     <span style={{ color: "var(--text-tertiary)", fontSize: 14 }}> · {a.house}</span>
@@ -309,7 +310,7 @@ export default async function HomePage() {
                   }}
                   aria-hidden="true"
                 >
-                  Ver leilão
+                  {t.home.viewAuction}
                   <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                     <path d="M7 17L17 7M17 7H7M17 7v10" />
                   </svg>
@@ -355,7 +356,7 @@ export default async function HomePage() {
                     background: "var(--accent)",
                   }}
                 />
-                <span className="hmg-overline">Coleção em destaque</span>
+                <span className="hmg-overline">{t.home.selectionOverline}</span>
               </div>
               <div
                 style={{
@@ -367,7 +368,7 @@ export default async function HomePage() {
               >
                 <div>
                   <h2 style={{ fontSize: 44, lineHeight: 1.1 }}>
-                    <TypingText startOnView segments={[{ text: "Peças selecionadas" }]} />
+                    <TypingText startOnView segments={[{ text: t.home.selectionTitle }]} />
                   </h2>
                   <p
                     style={{
@@ -378,8 +379,7 @@ export default async function HomePage() {
                       maxWidth: 520,
                     }}
                   >
-                    Uma curadoria breve do que está disponível agora — cada
-                    relógio autenticado e pronto a usar.
+                    {t.home.selectionText}
                   </p>
                 </div>
                 <Link
@@ -387,7 +387,7 @@ export default async function HomePage() {
                   className="hmg-ghost-btn hmg-ghost-btn--dark"
                   style={{ whiteSpace: "nowrap", flexShrink: 0 }}
                 >
-                  Ver tudo
+                  {t.home.viewAll}
                   <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -450,10 +450,10 @@ export default async function HomePage() {
               <span
                 style={{ height: 1, width: 44, background: "var(--accent)" }}
               />
-              <span className="hmg-overline">Sobre nós</span>
+              <span className="hmg-overline">{t.home.aboutOverline}</span>
             </div>
             <h2 style={{ fontSize: 46, lineHeight: 1.12 }}>
-              <TypingText startOnView segments={[{ text: "Paixão por relojoaria,\nlevada mais longe." }]} />
+              <TypingText startOnView segments={[{ text: t.home.aboutTitle }]} />
             </h2>
           </div>
           <div>
@@ -464,17 +464,14 @@ export default async function HomePage() {
                 color: "var(--text-secondary)",
               }}
             >
-              Começámos pela paixão pelos relógios — e decidimos ir mais fundo.
-              Hoje, mais do que vender, procuramos para cada pessoa a peça certa:
-              estudada, autenticada e escolhida com o mesmo rigor com que a
-              guardaríamos para nós.
+              {t.home.aboutText}
             </p>
             <div style={{ marginTop: 34 }}>
               <Link
                 href="/sobre-nos"
                 className="hmg-ghost-btn hmg-ghost-btn--gold"
               >
-                Saber mais
+                {t.home.learnMore}
                 <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
@@ -522,10 +519,10 @@ export default async function HomePage() {
                       background: "var(--accent)",
                     }}
                   />
-                  <span className="hmg-overline">Diário de Bordo</span>
+                  <span className="hmg-overline">{t.home.journalOverline}</span>
                 </div>
                 <h2 style={{ fontSize: 44, lineHeight: 1.1 }}>
-                  <TypingText startOnView segments={[{ text: "Do nosso caderno" }]} />
+                  <TypingText startOnView segments={[{ text: t.home.journalTitle }]} />
                 </h2>
               </div>
               <Link
@@ -533,7 +530,7 @@ export default async function HomePage() {
                 className="hmg-ghost-btn hmg-ghost-btn--dark"
                 style={{ whiteSpace: "nowrap", flexShrink: 0 }}
               >
-                Todos os artigos
+                {t.home.allArticles}
                 <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
@@ -560,7 +557,7 @@ export default async function HomePage() {
                       {BLOG_CATEGORY_LABELS[post.category]}
                     </span>
                     <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--text-tertiary)" }} />
-                    <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{post.readingTimeMinutes} min de leitura</span>
+                    <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{post.readingTimeMinutes} {t.catalog.readingMins}</span>
                   </div>
                   <h3 className="hmg-article-title" style={{ fontFamily: "var(--font-display)", fontSize: 23, lineHeight: 1.25 }}>
                     {post.title}
@@ -589,7 +586,7 @@ export default async function HomePage() {
         }}
       >
         <div className="hmg-container" style={{ maxWidth: 560 }}>
-          <span className="hmg-overline">Contacto</span>
+          <span className="hmg-overline">{t.home.contactOverline}</span>
           <h2
             style={{
               fontSize: "clamp(32px, 4vw, 52px)",
@@ -598,7 +595,7 @@ export default async function HomePage() {
               marginBottom: 20,
             }}
           >
-            <TypingText startOnView segments={[{ text: "Tem interesse num relógio?" }]} />
+            <TypingText startOnView segments={[{ text: t.home.contactTitle }]} />
           </h2>
           <p
             style={{
@@ -608,8 +605,7 @@ export default async function HomePage() {
               marginBottom: 40,
             }}
           >
-            Diga-nos o que procura. Gostamos de conversar sobre relojoaria
-            tanto quanto de encontrar o relógio certo para cada pessoa.
+            {t.home.contactText}
           </p>
           <ContactForm />
         </div>

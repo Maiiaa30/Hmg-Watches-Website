@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { getT } from "@/lib/i18n-server";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const { t } = await getT();
   return (
     <div
       style={{
@@ -26,7 +28,7 @@ export default function NotFound() {
           color: "var(--text-primary)",
         }}
       >
-        Não encontrado.
+        {t.notFound.title}
       </h1>
       <p
         style={{
@@ -36,8 +38,7 @@ export default function NotFound() {
           marginBottom: 40,
         }}
       >
-        A página que procura não existe ou foi movida. Talvez encontre o que
-        procura na nossa coleção.
+        {t.notFound.text}
       </p>
       <div
         style={{
@@ -48,10 +49,10 @@ export default function NotFound() {
         }}
       >
         <Link href="/" className="hmg-ghost-btn hmg-ghost-btn--gold">
-          Voltar ao início
+          {t.notFound.home}
         </Link>
         <Link href="/catalogo" className="hmg-ghost-btn hmg-ghost-btn--gold">
-          Ver coleção
+          {t.notFound.collection}
         </Link>
       </div>
     </div>

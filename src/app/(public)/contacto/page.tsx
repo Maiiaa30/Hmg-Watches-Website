@@ -1,13 +1,32 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/public/ContactForm";
 import { TypingText } from "@/components/public/TypingText";
+import { getT } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "Contacto",
   description: "Fale connosco sobre compra, venda ou avaliação de relógios.",
 };
 
-export default function ContactoPage() {
+const CONTENT = {
+  pt: {
+    overline: "Contacto",
+    title: "Fale connosco.",
+    intro:
+      "Gostamos de conversar sobre relojoaria tanto quanto de encontrar o relógio certo. Para comprar, vender ou apenas trocar impressões — estamos a uma mensagem de distância.",
+  },
+  en: {
+    overline: "Contact",
+    title: "Talk to us.",
+    intro:
+      "We enjoy talking about watchmaking as much as finding the right watch. To buy, sell or simply share thoughts — we're just one message away.",
+  },
+} as const;
+
+export default async function ContactoPage() {
+  const { locale } = await getT();
+  const copy = CONTENT[locale];
+
   return (
     <div style={{ padding: "var(--section-y) 0" }}>
       <div
@@ -21,9 +40,9 @@ export default function ContactoPage() {
       >
         {/* Left */}
         <div className="hmg-fade-up">
-          <span className="hmg-overline">Contacto</span>
+          <span className="hmg-overline">{copy.overline}</span>
           <h1
-            aria-label="Fale connosco."
+            aria-label={copy.title}
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -31,7 +50,7 @@ export default function ContactoPage() {
               marginBottom: 24,
             }}
           >
-            <TypingText segments={[{ text: "Fale connosco." }]} />
+            <TypingText segments={[{ text: copy.title }]} />
           </h1>
           <p
             style={{
@@ -41,9 +60,7 @@ export default function ContactoPage() {
               maxWidth: 400,
             }}
           >
-            Gostamos de conversar sobre relojoaria tanto quanto de encontrar o
-            relógio certo. Para comprar, vender ou apenas trocar impressões —
-            estamos a uma mensagem de distância.
+            {copy.intro}
           </p>
         </div>
 

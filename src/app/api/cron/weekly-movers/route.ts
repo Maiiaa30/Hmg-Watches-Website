@@ -18,8 +18,10 @@ function friendlyError(err: unknown): string {
 // schedule, which also calls maybeRefreshWeeklyMovers). Exposed standalone too
 // so the job can be triggered/monitored directly. Respects enabled + once/week.
 export async function GET(request: NextRequest) {
-  const auth = request.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  const authed = secret && request.headers.get("authorization") === `Bearer ${secret}`;
+  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
+  if (!authed && !isVercelCron) {
     return NextResponse.json<ApiResponse>({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
