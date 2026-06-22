@@ -159,7 +159,11 @@ export function Header({ locale = "en" }: { locale?: Locale }) {
               </Link>
             );
           })}
-          <LanguageToggle locale={locale} label={t.toggle.switchTo} aria={t.toggle.ariaTo} />
+          <span
+            aria-hidden="true"
+            style={{ width: 1, height: 18, background: "var(--border-strong)", marginLeft: -8 }}
+          />
+          <LanguageToggle locale={locale} aria={t.toggle.ariaTo} />
         </nav>
 
         {/* Mobile hamburger */}
@@ -223,7 +227,7 @@ export function Header({ locale = "en" }: { locale?: Locale }) {
             </Link>
           ))}
           <div style={{ paddingTop: 14 }}>
-            <LanguageToggle locale={locale} label={t.toggle.switchTo} aria={t.toggle.ariaTo} block />
+            <LanguageToggle locale={locale} aria={t.toggle.ariaTo} block />
           </div>
         </div>
       )}
