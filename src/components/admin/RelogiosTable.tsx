@@ -40,11 +40,16 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
   const [error, setError] = useState<string | null>(null);
 
   // Optimistic featured state: undefined = trust the server data; null = none
-  // featured; string = that id is featured. Cleared whenever fresh server data
-  // arrives (the watches prop changes after router.refresh).
+  // featured; string = that id is featured. It stays "sticky" until the server
+  // data actually AGREES with it — so a slow/stale router.refresh can't wipe the
+  // optimistic change and momentarily show the old featured watch again.
   const [featuredOverride, setFeaturedOverride] = useState<string | null | undefined>(undefined);
   useEffect(() => {
-    setFeaturedOverride(undefined);
+    setFeaturedOverride((prev) => {
+      if (prev === undefined) return undefined;
+      const serverFeatured = watches.find((w) => w.featured)?.id ?? null;
+      return serverFeatured === prev ? undefined : prev; // clear only once it matches
+    });
   }, [watches]);
   const isFeatured = (w: WatchRow) =>
     featuredOverride !== undefined ? featuredOverride === w.id : w.featured;
