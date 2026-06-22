@@ -12,6 +12,7 @@ import { WatchGallery } from "@/components/public/WatchGallery";
 import { DetailAnalytics } from "@/components/public/DetailAnalytics";
 import { RecentlyViewedRecorder } from "@/components/public/RecentlyViewedRecorder";
 import { APP_URL } from "@/lib/app-url";
+import { getT } from "@/lib/i18n-server";
 import {
   MOVEMENT_TYPE_LABELS,
   CONDITION_LABELS,
@@ -81,6 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function WatchDetailPage({ params }: Props) {
+  const { t } = await getT();
   const { slug } = await params;
   const watch = await getWatch(slug);
 
@@ -196,7 +198,7 @@ export default async function WatchDetailPage({ params }: Props) {
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true" focusable="false">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
-          Voltar ao catálogo
+          {t.watch.back}
         </Link>
         {/* Breadcrumb */}
         <nav
@@ -359,7 +361,7 @@ export default async function WatchDetailPage({ params }: Props) {
                   className="hmg-ghost-btn hmg-ghost-btn--dark"
                   style={{ width: "100%" }}
                 >
-                  Ver anúncio externo
+                  {t.watch.viewExternal}
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                     <path d="M7 17L17 7M17 7H7M17 7v10" />
                   </svg>

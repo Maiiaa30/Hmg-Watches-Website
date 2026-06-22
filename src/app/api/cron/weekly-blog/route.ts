@@ -16,8 +16,12 @@ function pickCategory(pref: string | null, week: number): BlogCategory {
 
 // GET — invoked by Vercel Cron (daily). Respects enabled/day/once-per-week.
 export async function GET(request: NextRequest) {
-  const auth = request.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  // CRON_SECRET bearer (if set) OR Vercel's cron header — so the job still runs
+  // when CRON_SECRET isn't configured. Generation self-throttles to once/week.
+  const secret = process.env.CRON_SECRET;
+  const authed = secret && request.headers.get("authorization") === `Bearer ${secret}`;
+  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
+  if (!authed && !isVercelCron) {
     return NextResponse.json<ApiResponse>({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

@@ -8,10 +8,19 @@ import { requireAdmin, logAudit } from "@/lib/auth/utils";
 import { getSetting } from "@/lib/db/settings";
 import type { ApiResponse } from "@/types";
 
-// GET — invoked by Vercel Cron with the CRON_SECRET. Respects enabled/day config.
+// Authorize a cron invocation: the CRON_SECRET bearer (if configured) OR
+// Vercel's own cron header (set on every cron run). The latter keeps the job
+// working even when CRON_SECRET hasn't been set in the project env.
+function cronAuthorized(request: NextRequest): boolean {
+  const secret = process.env.CRON_SECRET;
+  if (secret && request.headers.get("authorization") === `Bearer ${secret}`) return true;
+  if (request.headers.get("x-vercel-cron") === "1") return true;
+  return false;
+}
+
+// GET — invoked by Vercel Cron. Respects enabled/day config.
 export async function GET(request: NextRequest) {
-  const auth = request.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!cronAuthorized(request)) {
     return NextResponse.json<ApiResponse>({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

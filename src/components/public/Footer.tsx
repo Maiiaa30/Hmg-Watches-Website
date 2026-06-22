@@ -1,32 +1,34 @@
 "use client";
 
 import Link from "next/link";
-
-const NAV_COLUMNS = [
-  {
-    title: "Navegar",
-    links: [
-      { label: "Catálogo", href: "/catalogo" },
-      { label: "Mercado", href: "/mercado" },
-      { label: "Leilões", href: "/leiloes" },
-      { label: "Diário de Bordo", href: "/blog" },
-    ],
-  },
-  {
-    title: "Empresa",
-    links: [
-      { label: "Sobre Nós", href: "/sobre-nos" },
-      { label: "Contacto", href: "/contacto" },
-    ],
-  },
-];
+import { getDict, type Locale } from "@/lib/i18n";
 
 export interface FooterProps {
   instagramUrl?: string;
   contactEmail?: string;
+  locale?: Locale;
 }
 
-export function Footer({ instagramUrl, contactEmail }: FooterProps = {}) {
+export function Footer({ instagramUrl, contactEmail, locale = "en" }: FooterProps = {}) {
+  const t = getDict(locale);
+  const NAV_COLUMNS = [
+    {
+      title: t.footer.navigate,
+      links: [
+        { label: t.nav.catalogue, href: "/catalogo" },
+        { label: t.nav.market, href: "/mercado" },
+        { label: t.nav.auctions, href: "/leiloes" },
+        { label: t.nav.journal, href: "/blog" },
+      ],
+    },
+    {
+      title: t.footer.company,
+      links: [
+        { label: t.footer.about, href: "/sobre-nos" },
+        { label: t.footer.contact, href: "/contacto" },
+      ],
+    },
+  ];
   return (
     <footer
       className="hmg-footer"
@@ -87,8 +89,7 @@ export function Footer({ instagramUrl, contactEmail }: FooterProps = {}) {
               maxWidth: 300,
             }}
           >
-            Relojoaria de luxo, online. Peças seleccionadas e autenticadas,
-            com curadoria pessoal para cada cliente.
+            {t.footer.blurb}
           </p>
           {contactEmail && (
             <p style={{ fontSize: 14, marginTop: 14 }}>
@@ -220,10 +221,9 @@ export function Footer({ instagramUrl, contactEmail }: FooterProps = {}) {
         }}
       >
         <span>
-          © {new Date().getFullYear()} HMG Watches. Todos os direitos
-          reservados.
+          © {new Date().getFullYear()} HMG Watches. {t.footer.rights}
         </span>
-        <span>Loja online · Portugal</span>
+        <span>{t.footer.online}</span>
       </div>
     </footer>
   );

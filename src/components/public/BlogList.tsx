@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BLOG_CATEGORY_LABELS } from "@/constants";
 import { TypingText } from "@/components/public/TypingText";
+import { getDict, BLOG_CATEGORY_I18N, type Locale } from "@/lib/i18n";
 
 export interface BlogListItem {
   id: string;
@@ -16,28 +16,28 @@ export interface BlogListItem {
   publishedAt: string | Date | null;
 }
 
-const FILTERS = [
-  { key: "all", label: "Todos" },
-  { key: "novidades", label: "Novidades" },
-  { key: "curiosidades", label: "Curiosidades" },
-  { key: "guias", label: "Guias" },
-  { key: "mercado", label: "Mercado" },
-] as const;
+const CATEGORY_KEYS = ["novidades", "curiosidades", "guias", "mercado"] as const;
 
-export function BlogList({ posts }: { posts: BlogListItem[] }) {
+export function BlogList({ posts, locale = "en" }: { posts: BlogListItem[]; locale?: Locale }) {
   const [cat, setCat] = useState<string>("all");
   const list = cat === "all" ? posts : posts.filter((p) => p.category === cat);
+  const t = getDict(locale);
+  const cats = BLOG_CATEGORY_I18N[locale];
+  const FILTERS = [
+    { key: "all", label: t.blog.filterAll },
+    ...CATEGORY_KEYS.map((k) => ({ key: k, label: cats[k] ?? k })),
+  ];
 
   return (
     <div>
       {/* Centered hero */}
       <div className="hmg-fade-up" style={{ textAlign: "center", marginBottom: 44 }}>
-        <span className="hmg-overline">Diário de Bordo</span>
+        <span className="hmg-overline">{t.blog.overline}</span>
         <h1
-          aria-label="Notas de relojoaria"
+          aria-label={t.blog.heroTitle}
           style={{ fontSize: "var(--fs-display-l)", lineHeight: "var(--lh-tight)", marginTop: 20, marginBottom: 18 }}
         >
-          <TypingText segments={[{ text: "Notas de relojoaria" }]} />
+          <TypingText segments={[{ text: t.blog.heroTitle }]} />
         </h1>
         <p
           style={{
@@ -48,7 +48,7 @@ export function BlogList({ posts }: { posts: BlogListItem[] }) {
             margin: "0 auto",
           }}
         >
-          Guias, leituras de mercado e curiosidades — escrito por quem vive o ofício.
+          {t.blog.subtitle}
         </p>
       </div>
 
@@ -93,7 +93,7 @@ export function BlogList({ posts }: { posts: BlogListItem[] }) {
             fontStyle: "italic",
           }}
         >
-          Em breve, novos artigos.
+          {t.blog.empty}
         </div>
       ) : (
         <div className="hmg-blog-grid">
@@ -114,10 +114,10 @@ export function BlogList({ posts }: { posts: BlogListItem[] }) {
               />
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <span style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent-press)" }}>
-                  {BLOG_CATEGORY_LABELS[p.category]}
+                  {cats[p.category] ?? p.category}
                 </span>
                 <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--text-tertiary)" }} />
-                <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{p.readingTimeMinutes} min de leitura</span>
+                <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{p.readingTimeMinutes} {t.catalog.readingMins}</span>
               </div>
               <h3 className="hmg-article-title" style={{ fontFamily: "var(--font-display)", fontSize: 23, lineHeight: 1.25 }}>
                 {p.title}

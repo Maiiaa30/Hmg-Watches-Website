@@ -3,15 +3,20 @@ import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, desc, lte, and } from "drizzle-orm";
 import { BlogList, type BlogListItem } from "@/components/public/BlogList";
+import { getT } from "@/lib/i18n-server";
 
-export const metadata: Metadata = {
-  title: "Diário de Bordo",
-  description: "Reflexões, guias e curiosidades sobre relojoaria.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT();
+  return {
+    title: t.blog.title,
+    description: t.blog.subtitle,
+  };
+}
 
 export const revalidate = 300;
 
 export default async function BlogPage() {
+  const { locale } = await getT();
   const now = new Date();
   const rows = await db
     .select()
@@ -33,7 +38,7 @@ export default async function BlogPage() {
   return (
     <div style={{ padding: "var(--section-y) 0" }}>
       <div className="hmg-container">
-        <BlogList posts={posts} />
+        <BlogList posts={posts} locale={locale} />
       </div>
     </div>
   );

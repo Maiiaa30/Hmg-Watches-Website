@@ -5,6 +5,7 @@ import { eq, desc } from "drizzle-orm";
 import { MetalsChart } from "@/components/public/MetalsChart";
 import { TypingText } from "@/components/public/TypingText";
 import { MoversIndex, type MoverRow } from "@/components/public/MoversIndex";
+import { getT } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "Mercado",
@@ -89,6 +90,7 @@ async function getMetalSeries(): Promise<MetalSeries[] | null> {
 }
 
 export default async function MercadoPage() {
+  const { t } = await getT();
   const [metalSeries, riserRows] = await Promise.all([
     getMetalSeries(),
     db
@@ -116,9 +118,9 @@ export default async function MercadoPage() {
     <div style={{ padding: "var(--section-y) 0" }}>
       <div className="hmg-container">
         <div className="hmg-fade-up" style={{ marginBottom: 72 }}>
-          <span className="hmg-overline">Mercado</span>
+          <span className="hmg-overline">{t.market.overline}</span>
           <h1
-            aria-label="Pulso do mercado"
+            aria-label={t.market.title}
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -126,10 +128,10 @@ export default async function MercadoPage() {
               marginBottom: 16,
             }}
           >
-            <TypingText segments={[{ text: "Pulso do mercado" }]} />
+            <TypingText segments={[{ text: t.market.title }]} />
           </h1>
           <p style={{ fontSize: "var(--fs-body-l)", color: "var(--text-secondary)", maxWidth: 520 }}>
-            Metais preciosos e relógios em destaque no mercado secundário.
+            {t.market.subtitle}
           </p>
         </div>
 
@@ -154,7 +156,7 @@ export default async function MercadoPage() {
               01
             </span>
             <span style={{ height: 1, width: 44, background: "var(--accent)" }} />
-            <span className="hmg-overline">Metais preciosos</span>
+            <span className="hmg-overline">{t.market.metals}</span>
           </div>
 
           {metalSeries ? (
@@ -167,7 +169,7 @@ export default async function MercadoPage() {
                   color: "var(--text-tertiary)",
                 }}
               >
-                Preços por onça (oz) em EUR · últimos 3 meses · actualizado de hora em hora. Fonte: Yahoo Finance.
+                {t.market.metalsNote}
               </p>
             </>
           ) : (
@@ -181,7 +183,7 @@ export default async function MercadoPage() {
                 fontSize: 14,
               }}
             >
-              Cotações de metais temporariamente indisponíveis.
+              {t.market.metalsUnavailable}
             </div>
           )}
         </section>
@@ -208,7 +210,7 @@ export default async function MercadoPage() {
                 02
               </span>
               <span style={{ height: 1, width: 44, background: "var(--accent)" }} />
-              <span className="hmg-overline">Maiores valorizações</span>
+              <span className="hmg-overline">{t.market.risers}</span>
             </div>
             <h2
               style={{
@@ -218,7 +220,7 @@ export default async function MercadoPage() {
                 marginBottom: 28,
               }}
             >
-              Top {movers.length} — relógios que mais valorizaram
+              Top {movers.length} — {t.market.topN}
             </h2>
 
             <MoversIndex rows={movers} />

@@ -5,6 +5,7 @@ import { eq, or, desc } from "drizzle-orm";
 import { CatalogBrowser } from "@/components/public/CatalogBrowser";
 import { RecentlyViewed } from "@/components/public/RecentlyViewed";
 import { TypingText } from "@/components/public/TypingText";
+import { getT } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "Catálogo",
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
 export const revalidate = 120;
 
 export default async function CatalogoPage() {
+  const { locale, t } = await getT();
+
   // Only the columns the cards + filter/sort need (no description / image_order).
   const allWatches = await db
     .select({
@@ -36,9 +39,9 @@ export default async function CatalogoPage() {
       <div className="hmg-container">
         {/* Header */}
         <div className="hmg-fade-up" style={{ marginBottom: 64 }}>
-          <span className="hmg-overline">Coleção</span>
+          <span className="hmg-overline">{t.catalog.overline}</span>
           <h1
-            aria-label="Catálogo"
+            aria-label={t.catalog.title}
             style={{
               fontSize: "var(--fs-display-l)",
               lineHeight: "var(--lh-tight)",
@@ -46,7 +49,7 @@ export default async function CatalogoPage() {
               marginBottom: 16,
             }}
           >
-            <TypingText segments={[{ text: "Catálogo" }]} />
+            <TypingText segments={[{ text: t.catalog.title }]} />
           </h1>
           <p
             style={{
@@ -56,7 +59,7 @@ export default async function CatalogoPage() {
               lineHeight: "var(--lh-relaxed)",
             }}
           >
-            Relógios disponíveis e histórico de vendas. Cada peça autenticada.
+            {t.catalog.subtitle}
           </p>
         </div>
 
@@ -71,13 +74,13 @@ export default async function CatalogoPage() {
               fontStyle: "italic",
             }}
           >
-            Em breve, novos relógios.
+            {t.catalog.comingSoon}
           </div>
         ) : (
-          <CatalogBrowser watches={allWatches} />
+          <CatalogBrowser watches={allWatches} locale={locale} />
         )}
 
-        <RecentlyViewed />
+        <RecentlyViewed locale={locale} />
       </div>
     </div>
   );
