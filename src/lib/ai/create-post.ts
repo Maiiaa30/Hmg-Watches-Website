@@ -7,24 +7,46 @@ import slugify from "slugify";
 
 export const BLOG_CATEGORIES: BlogCategory[] = ["novidades", "curiosidades", "guias", "mercado"];
 
-/** Search Openverse (free, no API key) for a themed, CC-licensed cover image. */
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+/**
+ * Search Openverse (free, no API key) for a themed, CC-licensed cover image.
+ * Builds a pool of candidates (page_size 20, varied page) and picks one
+ * deterministically from the article title — so different articles get
+ * different images instead of always landing on the same first result.
+ */
 async function findCoverImage(title: string): Promise<string | null> {
-  const queries = [title, `${title} relógio`, "luxury watch"];
+  const seed = hashString(title);
+  const queries = [title, `${title} relógio`, "relógio de luxo", "luxury watch", "wristwatch"];
+  const candidates: string[] = [];
+
   for (const q of queries) {
     try {
+      const page = (seed % 3) + 1; // vary the page so the pool isn't always identical
       const res = await fetch(
-        `https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=1&mature=false`,
+        `https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=20&page=${page}&mature=false`,
         { headers: { Accept: "application/json" } }
       );
       if (!res.ok) continue;
       const data = (await res.json()) as { results?: Array<{ url?: string }> };
-      const url = data.results?.[0]?.url;
-      if (typeof url === "string" && url.startsWith("https://")) return url;
+      for (const r of data.results ?? []) {
+        if (typeof r.url === "string" && r.url.startsWith("https://") && !candidates.includes(r.url)) {
+          candidates.push(r.url);
+        }
+      }
+      // A specific (title-based) query that returned enough is preferred.
+      if (candidates.length >= 6) break;
     } catch {
       // try next query
     }
   }
-  return null;
+
+  if (candidates.length === 0) return null;
+  return candidates[seed % candidates.length] ?? candidates[0]!;
 }
 
 /**
