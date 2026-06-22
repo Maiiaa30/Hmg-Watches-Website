@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { siteSettings } from "@/lib/db/schema";
 import { requireAdmin, logAudit } from "@/lib/auth/utils";
@@ -81,6 +82,10 @@ export async function PUT(request: NextRequest) {
     adminEmail: session.user.email ?? "admin",
     request,
   });
+
+  // Site info (footer Instagram/email, etc.) is read in the shared public
+  // layout, so refresh every public page so changes show immediately.
+  revalidatePath("/", "layout");
 
   return NextResponse.json<ApiResponse>({ success: true });
 }

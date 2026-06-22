@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ALLOWED_EXTERNAL_LINK_DOMAINS } from "@/constants";
 
 export const watchSchema = z.object({
   brand: z.string().min(1, "Marca obrigatória").max(100),
@@ -21,24 +20,18 @@ export const watchSchema = z.object({
   hasPapers: z.boolean().default(false),
   description: z.string().max(5000).optional().nullable(),
   price: z.number().positive("Preço deve ser positivo"),
+  // Any marketplace/auction link (Chrono24, Vinted, eBay, an auction house, …).
+  // It's only ever rendered as a click-out <a target="_blank">, never fetched
+  // server-side, so a domain allowlist isn't needed — just require http(s).
   externalLink: z
     .string()
     .url()
-    .refine(
-      (url) => {
-        try {
-          const hostname = new URL(url).hostname.replace(/^www\./, "");
-          return ALLOWED_EXTERNAL_LINK_DOMAINS.some(
-            (d) => hostname === d || hostname.endsWith(`.${d}`)
-          );
-        } catch {
-          return false;
-        }
-      },
-      { message: "Domínio externo não permitido" }
-    )
+    .refine((url) => /^https?:\/\//i.test(url), {
+      message: "A ligação deve começar por http(s)://",
+    })
     .optional()
-    .nullable(),
+    .nullable()
+    .or(z.literal("")),
 });
 
 export const watchStatusSchema = z.object({

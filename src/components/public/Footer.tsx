@@ -19,16 +19,14 @@ const NAV_COLUMNS = [
       { label: "Contacto", href: "/contacto" },
     ],
   },
-  {
-    title: "Legal",
-    links: [
-      { label: "Política de Privacidade", href: "/privacidade" },
-      { label: "Termos de Utilização", href: "/termos" },
-    ],
-  },
 ];
 
-export function Footer() {
+export interface FooterProps {
+  instagramUrl?: string;
+  contactEmail?: string;
+}
+
+export function Footer({ instagramUrl, contactEmail }: FooterProps = {}) {
   return (
     <footer
       className="hmg-footer"
@@ -92,10 +90,17 @@ export function Footer() {
             Relojoaria de luxo, online. Peças seleccionadas e autenticadas,
             com curadoria pessoal para cada cliente.
           </p>
+          {contactEmail && (
+            <p style={{ fontSize: 14, marginTop: 14 }}>
+              <a href={`mailto:${contactEmail}`} style={{ color: "var(--text-secondary)" }}>
+                {contactEmail}
+              </a>
+            </p>
+          )}
           <div style={{ display: "flex", gap: 12, marginTop: 22 }}>
             {/* Instagram */}
             <a
-              href="https://instagram.com"
+              href={instagramUrl || "https://instagram.com"}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -143,7 +148,7 @@ export function Footer() {
             </a>
             {/* Email */}
             <a
-              href="/contacto"
+              href={contactEmail ? `mailto:${contactEmail}` : "/contacto"}
               aria-label="Email"
               style={socialIconStyle}
               onMouseEnter={(e) => applyHover(e)}

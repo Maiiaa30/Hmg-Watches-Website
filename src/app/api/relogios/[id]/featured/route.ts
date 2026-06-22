@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { watches } from "@/lib/db/schema";
 import { eq, ne } from "drizzle-orm";
@@ -55,6 +56,9 @@ export async function PATCH(
     adminEmail: session.user.email ?? "admin",
     request,
   });
+
+  // The homepage hero is ISR-cached — refresh it so the new featured piece shows.
+  revalidatePath("/");
 
   return NextResponse.json<ApiResponse>({ success: true, data: updated });
 }

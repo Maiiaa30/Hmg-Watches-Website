@@ -4,11 +4,21 @@ import { AnalyticsTracker } from "@/components/public/AnalyticsTracker";
 import { WhatsAppButton } from "@/components/public/WhatsAppButton";
 import { getSetting } from "@/lib/db/settings";
 
-async function getWhatsAppNumber(): Promise<string | null> {
+// Read the public-facing site settings (best-effort — never crash the layout).
+async function getPublicSettings() {
   try {
-    return await getSetting("whatsapp_number");
+    const [whatsapp, instagram, contactEmail] = await Promise.all([
+      getSetting("whatsapp_number"),
+      getSetting("instagram_url"),
+      getSetting("site_contact_email"),
+    ]);
+    return {
+      whatsapp: whatsapp?.trim() || "",
+      instagram: instagram?.trim() || "",
+      contactEmail: contactEmail?.trim() || "",
+    };
   } catch {
-    return null;
+    return { whatsapp: "", instagram: "", contactEmail: "" };
   }
 }
 
@@ -17,7 +27,7 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const whatsappNumber = await getWhatsAppNumber();
+  const settings = await getPublicSettings();
 
   return (
     <>
@@ -25,10 +35,8 @@ export default async function PublicLayout({
       <AnalyticsTracker />
       <Header />
       <main id="main" tabIndex={-1}>{children}</main>
-      <Footer />
-      {whatsappNumber && whatsappNumber.trim() !== "" && (
-        <WhatsAppButton phone={whatsappNumber.trim()} />
-      )}
+      <Footer instagramUrl={settings.instagram} contactEmail={settings.contactEmail} />
+      {settings.whatsapp && <WhatsAppButton phone={settings.whatsapp} />}
     </>
   );
 }
