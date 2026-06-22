@@ -38,16 +38,32 @@ export async function PATCH(
     return NextResponse.json<ApiResponse>({ success: false, error: "Não encontrado." }, { status: 404 });
   }
 
-  if (featured) {
-    // Clear any other featured watch first, then mark this one
-    await db.update(watches).set({ featured: false }).where(ne(watches.id, id));
+  // Do the clear-others + set-this in ONE transaction so we never end up with
+  // the old one cleared but the new one not set (which looked like a rollback).
+  let updated;
+  try {
+    updated = await db.transaction(async (tx) => {
+      if (featured) {
+        await tx.update(watches).set({ featured: false, updatedAt: new Date() }).where(ne(watches.id, id));
+      }
+      const [row] = await tx
+        .update(watches)
+        .set({ featured, updatedAt: new Date() })
+        .where(eq(watches.id, id))
+        .returning();
+      return row;
+    });
+  } catch (err) {
+    console.error("[featured] update failed:", err);
+    return NextResponse.json<ApiResponse>(
+      { success: false, error: "Não foi possível guardar o destaque. Tente novamente." },
+      { status: 500 }
+    );
   }
 
-  const [updated] = await db
-    .update(watches)
-    .set({ featured, updatedAt: new Date() })
-    .where(eq(watches.id, id))
-    .returning();
+  if (!updated) {
+    return NextResponse.json<ApiResponse>({ success: false, error: "Não encontrado." }, { status: 404 });
+  }
 
   await logAudit({
     action: "watch.featured_changed",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
@@ -39,6 +39,16 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Optimistic featured state: undefined = trust the server data; null = none
+  // featured; string = that id is featured. Cleared whenever fresh server data
+  // arrives (the watches prop changes after router.refresh).
+  const [featuredOverride, setFeaturedOverride] = useState<string | null | undefined>(undefined);
+  useEffect(() => {
+    setFeaturedOverride(undefined);
+  }, [watches]);
+  const isFeatured = (w: WatchRow) =>
+    featuredOverride !== undefined ? featuredOverride === w.id : w.featured;
+
   const filtered = watches.filter((w) => {
     if (filter !== "all" && w.status !== filter) return false;
     if (query) {
@@ -67,17 +77,27 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
   }
 
   async function toggleFeatured(w: WatchRow) {
+    const turningOn = !isFeatured(w);
+    // Optimistic: move the star immediately (setting one featured clears the rest).
+    setFeaturedOverride(turningOn ? w.id : null);
     setBusy(w.id);
     setError(null);
     try {
       const res = await fetch(`/api/relogios/${w.id}/featured`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ featured: !w.featured }),
+        body: JSON.stringify({ featured: turningOn }),
       });
       const data = await res.json();
-      if (!data.success) setError(data.error ?? "Erro ao definir destaque.");
-      else router.refresh();
+      if (!data.success) {
+        setError(data.error ?? "Erro ao definir destaque.");
+        setFeaturedOverride(undefined); // revert to server truth
+      } else {
+        router.refresh(); // fresh data clears the override via the effect
+      }
+    } catch {
+      setError("Erro de rede ao definir destaque.");
+      setFeaturedOverride(undefined);
     } finally {
       setBusy(null);
     }
@@ -148,14 +168,16 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
           </div>
         )}
 
-        {filtered.map((w) => (
+        {filtered.map((w) => {
+          const feat = isFeatured(w);
+          return (
           <div
             key={w.id}
             className="hmg-watch-card"
             style={{
               fontSize: 13,
-              borderColor: w.featured ? "var(--accent)" : "var(--border-subtle)",
-              background: w.featured ? "rgba(182,138,46,0.06)" : "var(--surface-card)",
+              borderColor: feat ? "var(--accent)" : "var(--border-subtle)",
+              background: feat ? "rgba(182,138,46,0.06)" : "var(--surface-card)",
             }}
           >
             {/* Thumb */}
@@ -169,7 +191,7 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
             {/* Name + ref */}
             <div style={{ flex: "1 1 180px", minWidth: 0 }}>
               <div style={{ fontWeight: 500, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 8 }}>
-                {w.featured && <span title="Em destaque na homepage" style={{ color: "var(--accent)" }}>★</span>}
+                {feat && <span title="Em destaque na homepage" style={{ color: "var(--accent)" }}>★</span>}
                 {w.brand} {w.model}
               </div>
               <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 2 }}>
@@ -190,10 +212,10 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
               <button
                 onClick={() => toggleFeatured(w)}
                 disabled={busy === w.id}
-                title={w.featured ? "Remover destaque" : "Definir como destaque na homepage"}
-                style={miniBtn(w.featured ? "gold" : undefined)}
+                title={feat ? "Remover destaque" : "Definir como destaque na homepage"}
+                style={miniBtn(feat ? "gold" : undefined)}
               >
-                {w.featured ? "★ Destaque" : "☆ Destacar"}
+                {feat ? "★ Destaque" : "☆ Destacar"}
               </button>
               {w.status !== "sold" ? (
                 <button onClick={() => setStatus(w.id, "sold")} disabled={busy === w.id} style={miniBtn()}>Vendido</button>
@@ -204,7 +226,8 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
               <button onClick={() => remove(w)} disabled={busy === w.id} style={miniBtn("danger")}>Eliminar</button>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
