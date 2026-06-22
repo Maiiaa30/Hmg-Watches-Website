@@ -1,29 +1,35 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n";
 
 /**
- * Switches the site language by setting the locale cookie and refreshing so the
- * server re-renders in the new language. Shows the language it will switch TO.
+ * Switches the site language: sets the locale cookie and refreshes so the
+ * server re-renders. Shows the language it will switch TO. The label flips
+ * optimistically (instant feedback) while the refresh runs in a transition.
  */
 export function LanguageToggle({
   locale,
-  label,
   aria,
   block,
 }: {
   locale: Locale;
-  label: string;
+  label?: string; // kept for compatibility; label is derived from locale
   aria: string;
   block?: boolean;
 }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  // The code shown is the OTHER language. Optimistic value flips on click.
+  const [shown, setShown] = useState<Locale>(locale);
+  const code = shown === "en" ? "PT" : "EN";
 
   function toggle() {
-    const next: Locale = locale === "en" ? "pt" : "en";
+    const next: Locale = shown === "en" ? "pt" : "en";
+    setShown(next); // instant label flip
     document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
-    router.refresh();
+    startTransition(() => router.refresh());
   }
 
   return (
@@ -31,21 +37,10 @@ export function LanguageToggle({
       type="button"
       onClick={toggle}
       aria-label={aria}
-      style={{
-        background: "none",
-        border: "1px solid var(--border-strong)",
-        borderRadius: 100,
-        cursor: "pointer",
-        color: "var(--text-secondary)",
-        fontFamily: "var(--font-ui)",
-        fontSize: 11,
-        letterSpacing: "0.1em",
-        padding: "6px 12px",
-        width: block ? "100%" : undefined,
-        transition: "color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out)",
-      }}
+      data-pending={isPending ? "true" : undefined}
+      className={`hmg-lang-toggle${block ? " hmg-lang-toggle--block" : ""}`}
     >
-      {label}
+      {code}
     </button>
   );
 }
