@@ -146,14 +146,14 @@ export async function middleware(request: NextRequest) {
 
 function maintenanceHtml(): string {
   return `<!doctype html>
-<html lang="pt"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Em manutenção — HMG Watches</title></head>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Under maintenance — HMG Watches</title></head>
 <body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#ece6d8;font-family:Georgia,'Times New Roman',serif;color:#2a2418;text-align:center;padding:24px;">
   <div style="max-width:480px;">
     <div style="font-size:30px;font-weight:bold;">HMG <span style="font-size:12px;letter-spacing:0.34em;color:#8a6a1f;font-family:Arial,Helvetica,sans-serif;">WATCHES</span></div>
-    <h1 style="font-size:28px;font-weight:normal;margin:28px 0 14px;">Em manutenção</h1>
+    <h1 style="font-size:28px;font-weight:normal;margin:28px 0 14px;">Under maintenance</h1>
     <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#6f6757;margin:0;">
-      Estamos a preparar algo especial. Voltamos em breve.
+      We&rsquo;re preparing something special. We&rsquo;ll be back shortly.
     </p>
   </div>
 </body></html>`;

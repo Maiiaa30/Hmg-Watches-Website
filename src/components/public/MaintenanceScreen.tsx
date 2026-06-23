@@ -39,12 +39,10 @@ export function MaintenanceScreen() {
             margin: "28px 0 14px",
           }}
         >
-          Em manutenção
+          Under maintenance
         </h1>
         <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--text-secondary)", margin: 0 }}>
-          Estamos a preparar algo especial. Voltamos em breve.
-          <br />
-          <span style={{ color: "var(--text-tertiary)" }}>We&rsquo;re polishing things up — back shortly.</span>
+          We&rsquo;re preparing something special. We&rsquo;ll be back shortly.
         </p>
       </div>
     </div>
