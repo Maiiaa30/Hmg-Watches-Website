@@ -50,7 +50,7 @@ export function CatalogBrowser({
   return (
     <>
       {/* Filter / sort bar */}
-      <div className="hmg-filterbar" role="region" aria-label="Filtrar catálogo">
+      <div className="hmg-filterbar" role="region" aria-label={t.a11y.filterCatalog}>
         <button
           type="button"
           className="hmg-filter-pill"

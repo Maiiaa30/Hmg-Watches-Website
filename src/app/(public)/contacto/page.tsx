@@ -3,11 +3,6 @@ import { ContactForm } from "@/components/public/ContactForm";
 import { TypingText } from "@/components/public/TypingText";
 import { getT } from "@/lib/i18n-server";
 
-export const metadata: Metadata = {
-  title: "Contacto",
-  description: "Fale connosco sobre compra, venda ou avaliação de relógios.",
-};
-
 const CONTENT = {
   pt: {
     overline: "Contacto",
@@ -22,6 +17,14 @@ const CONTENT = {
       "We enjoy talking about watchmaking as much as finding the right watch. To buy, sell or simply share thoughts — we're just one message away.",
   },
 } as const;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale, t } = await getT();
+  return {
+    title: t.nav.contact,
+    description: CONTENT[locale].intro,
+  };
+}
 
 export default async function ContactoPage() {
   const { locale } = await getT();

@@ -7,10 +7,13 @@ import { RecentlyViewed } from "@/components/public/RecentlyViewed";
 import { TypingText } from "@/components/public/TypingText";
 import { getT } from "@/lib/i18n-server";
 
-export const metadata: Metadata = {
-  title: "Catálogo",
-  description: "Todos os relógios disponíveis e histórico de vendas da HMG Watches.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT();
+  return {
+    title: t.catalog.title,
+    description: t.catalog.subtitle,
+  };
+}
 
 export const revalidate = 120;
 

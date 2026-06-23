@@ -16,7 +16,7 @@ export default async function NotFound() {
         padding: "0 20px",
       }}
     >
-      <span className="hmg-overline">Erro 404</span>
+      <span className="hmg-overline">{t.notFound.overline}</span>
       <h1
         style={{
           fontFamily: "var(--font-display)",

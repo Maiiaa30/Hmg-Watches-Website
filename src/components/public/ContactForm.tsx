@@ -33,12 +33,12 @@ export function ContactForm({ locale = "en" }: { locale?: Locale }) {
       });
       const data = (await res.json()) as { success: boolean; error?: string };
       if (!res.ok || !data.success) {
-        setError(data.error ?? "Erro ao enviar mensagem.");
+        setError(data.error ?? t.contactForm.errSend);
       } else {
         setSuccess(true);
       }
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(t.contactForm.errNetwork);
     } finally {
       setLoading(false);
     }

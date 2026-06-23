@@ -62,12 +62,12 @@ export function LeadForm({ watchId, watchStatus, watchName, locale = "en" }: Lea
       });
       const data = (await res.json()) as { success: boolean; error?: string };
       if (!res.ok || !data.success) {
-        setError(data.error ?? "Erro ao enviar mensagem.");
+        setError(data.error ?? t.lead.errSend);
       } else {
         setSuccess(true);
       }
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(t.lead.errNetwork);
     } finally {
       setLoading(false);
     }

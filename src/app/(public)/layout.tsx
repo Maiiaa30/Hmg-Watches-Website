@@ -6,6 +6,7 @@ import { WhatsAppButton } from "@/components/public/WhatsAppButton";
 import { MaintenanceScreen } from "@/components/public/MaintenanceScreen";
 import { getSettings } from "@/lib/db/settings";
 import { getLocale } from "@/lib/i18n-server";
+import { getDict } from "@/lib/i18n";
 
 // Read the public-facing site settings in ONE query (best-effort — never crash
 // the layout).
@@ -47,6 +48,7 @@ export default async function PublicLayout({
   children: React.ReactNode;
 }) {
   const [settings, locale] = await Promise.all([getPublicSettings(), getLocale()]);
+  const t = getDict(locale);
 
   if (settings.maintenance && !(await isPreviewUnlocked())) {
     return <MaintenanceScreen />;
@@ -54,7 +56,7 @@ export default async function PublicLayout({
 
   return (
     <>
-      <a href="#main" className="hmg-skip-link">Saltar para o conteúdo</a>
+      <a href="#main" className="hmg-skip-link">{t.a11y.skip}</a>
       <AnalyticsTracker />
       <Header locale={locale} />
       <main id="main" tabIndex={-1}>{children}</main>

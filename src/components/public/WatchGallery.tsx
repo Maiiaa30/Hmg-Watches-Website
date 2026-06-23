@@ -2,8 +2,18 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
+import { getDict, type Locale } from "@/lib/i18n";
 
-export function WatchGallery({ images, alt }: { images: string[]; alt: string }) {
+export function WatchGallery({
+  images,
+  alt,
+  locale = "en",
+}: {
+  images: string[];
+  alt: string;
+  locale?: Locale;
+}) {
+  const t = getDict(locale);
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const [zoomed, setZoomed] = useState(false);
@@ -74,7 +84,7 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
           fontStyle: "italic",
         }}
       >
-        Sem imagem
+        {t.gallery.noImage}
       </div>
     );
   }
@@ -111,14 +121,14 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
           <>
             <button
               onClick={(e) => { e.stopPropagation(); go(-1); }}
-              aria-label="Foto anterior"
+              aria-label={t.gallery.prev}
               style={mainNavBtn("left")}
             >
               ‹
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); go(1); }}
-              aria-label="Foto seguinte"
+              aria-label={t.gallery.next}
               style={mainNavBtn("right")}
             >
               ›
@@ -160,7 +170,7 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
           <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3M11 8v6M8 11h6" />
           </svg>
-          Ampliar
+          {t.gallery.zoom}
         </div>
       </div>
 
@@ -171,7 +181,7 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
             <button
               key={i}
               onClick={() => setActive(i)}
-              aria-label={`Ver imagem ${i + 1}`}
+              aria-label={`${t.gallery.viewImage} ${i + 1}`}
               style={{
                 width: 72,
                 height: 72,
@@ -184,7 +194,7 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
                 background: "none",
               }}
             >
-              <Image src={img} alt={`Vista ${i + 1}`} fill style={{ objectFit: "cover" }} sizes="72px" />
+              <Image src={img} alt={`${t.gallery.view} ${i + 1}`} fill style={{ objectFit: "cover" }} sizes="72px" />
             </button>
           ))}
         </div>
@@ -194,6 +204,9 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
       {lightbox && (
         <div
           onClick={() => setLightbox(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t.gallery.zoom}
           style={{
             position: "fixed",
             inset: 0,
@@ -208,7 +221,7 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
           {/* Close */}
           <button
             onClick={(e) => { e.stopPropagation(); setLightbox(false); }}
-            aria-label="Fechar"
+            aria-label={t.gallery.close}
             style={{ position: "absolute", top: 18, right: 22, background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: 30, lineHeight: 1 }}
           >
             ×
@@ -217,8 +230,8 @@ export function WatchGallery({ images, alt }: { images: string[]; alt: string })
           {/* Prev / Next */}
           {count > 1 && (
             <>
-              <button onClick={(e) => { e.stopPropagation(); setZoomed(false); go(-1); }} aria-label="Anterior" style={navBtn("left")}>‹</button>
-              <button onClick={(e) => { e.stopPropagation(); setZoomed(false); go(1); }} aria-label="Seguinte" style={navBtn("right")}>›</button>
+              <button onClick={(e) => { e.stopPropagation(); setZoomed(false); go(-1); }} aria-label={t.gallery.prev} style={navBtn("left")}>‹</button>
+              <button onClick={(e) => { e.stopPropagation(); setZoomed(false); go(1); }} aria-label={t.gallery.next} style={navBtn("right")}>›</button>
             </>
           )}
 

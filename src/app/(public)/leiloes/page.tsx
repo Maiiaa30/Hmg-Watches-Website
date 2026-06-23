@@ -3,11 +3,13 @@ import { TypingText } from "@/components/public/TypingText";
 import { getUpcomingAuctions, todayLisbon, type Auction } from "@/lib/leiloes";
 import { getT } from "@/lib/i18n-server";
 
-export const metadata: Metadata = {
-  title: "Leilões",
-  description:
-    "Leilões de relojoaria a acompanhar. Selecionamos os próximos leilões de referência e ligamos diretamente à casa leiloeira.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT();
+  return {
+    title: t.auctions.title,
+    description: t.auctions.subtitle,
+  };
+}
 
 export const revalidate = 600; // 10 min — also revalidated on admin changes
 

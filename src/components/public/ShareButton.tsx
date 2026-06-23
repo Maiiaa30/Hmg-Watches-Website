@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { getDict, type Locale } from "@/lib/i18n";
 
-export function ShareButton({ locale = "pt" }: { locale?: Locale }) {
+export function ShareButton({ locale = "en" }: { locale?: Locale }) {
   const t = getDict(locale);
   const [copied, setCopied] = useState(false);
 

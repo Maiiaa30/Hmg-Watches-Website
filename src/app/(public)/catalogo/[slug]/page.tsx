@@ -231,7 +231,7 @@ export default async function WatchDetailPage({ params }: Props) {
           }}
         >
           {/* Gallery */}
-          <WatchGallery images={watch.images} alt={`${watch.brand} ${watch.model}`} />
+          <WatchGallery images={watch.images} alt={`${watch.brand} ${watch.model}`} locale={locale} />
 
           {/* Info */}
           <div style={{ position: "sticky", top: 100 }}>

@@ -3,6 +3,7 @@ import { Playfair_Display, DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 import { APP_URL } from "@/lib/app-url";
+import { getLocale } from "@/lib/i18n-server";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -58,14 +59,15 @@ const organizationLd = {
   logo: `${APP_URL}/uploads/logoFinal.png`,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
   return (
     <html
-      lang="pt"
+      lang={locale === "en" ? "en" : "pt"}
       className={`${playfairDisplay.variable} ${dmSans.variable} ${dmMono.variable}`}
     >
       <head>

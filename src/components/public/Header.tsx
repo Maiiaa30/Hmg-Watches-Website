@@ -171,7 +171,7 @@ export function Header({ locale = "en" }: { locale?: Locale }) {
         <button
           className="flex md:hidden"
           onClick={() => setMobileOpen((o) => !o)}
-          aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
+          aria-label={mobileOpen ? t.a11y.menuClose : t.a11y.menuOpen}
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
           style={{

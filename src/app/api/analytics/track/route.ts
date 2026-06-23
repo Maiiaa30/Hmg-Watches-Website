@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { pageViews } from "@/lib/db/schema";
 import { z } from "zod";
+import { analyticsRatelimit, getClientIp } from "@/lib/security/rate-limit";
 import type { ApiResponse } from "@/types";
 
 const trackSchema = z.object({
@@ -13,6 +14,14 @@ const trackSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Throttle the public beacon so it can't be used to flood page_views.
+  if (analyticsRatelimit) {
+    const { success } = await analyticsRatelimit.limit(getClientIp(request));
+    if (!success) {
+      return NextResponse.json<ApiResponse>({ success: true, data: { throttled: true } });
+    }
+  }
+
   let body: unknown;
   try {
     body = await request.json();
