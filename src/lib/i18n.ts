@@ -37,6 +37,25 @@ interface Dict {
   auctions: { overline: string; title: string; subtitle: string; emptyTitle: string; emptyText: string; viewAuction: string; today: string };
   blog: { overline: string; title: string; heroTitle: string; subtitle: string; empty: string; filterAll: string };
   watch: { back: string; viewExternal: string };
+  badge: { available: string; sold: string; archived: string; draft: string; pending: string; published: string };
+  card: { noImage: string; priceOnRequest: string };
+  specs: {
+    reference: string; year: string; movement: string; caseMaterial: string; diameter: string;
+    bracelet: string; condition: string; box: string; papers: string; included: string; notIncluded: string;
+    otherPieces: string; refShort: string; home: string; catalogue: string;
+  };
+  moversTable: { watch: string; trend: string; change: string; source: string; footnote: string };
+  lead: {
+    titleAvailable: string; titleSold: string; ctaAvailable: string; ctaSold: string;
+    defaultAvailable: string; defaultSold: string; name: string; email: string; phone: string; message: string;
+    namePlaceholder: string; submit: string; sending: string; success: string; errContact: string; close: string;
+  };
+  contactForm: {
+    name: string; email: string; subject: string; message: string; selectSubject: string;
+    submit: string; sending: string; success: string; subjects: string[];
+  };
+  share: { label: string; copied: string };
+  whatsapp: { prefilled: string; aria: string };
   notFound: { title: string; text: string; home: string; collection: string };
 }
 
@@ -91,6 +110,33 @@ const en: Dict = {
     empty: "New articles coming soon.", filterAll: "All",
   },
   watch: { back: "Back to catalogue", viewExternal: "View external listing" },
+  badge: { available: "Available", sold: "Sold", archived: "Archived", draft: "Draft", pending: "Pending", published: "Published" },
+  card: { noImage: "No image", priceOnRequest: "Price on request" },
+  specs: {
+    reference: "Reference", year: "Year", movement: "Movement", caseMaterial: "Case material", diameter: "Diameter",
+    bracelet: "Bracelet", condition: "Condition", box: "Original box", papers: "Papers", included: "Included", notIncluded: "Not included",
+    otherPieces: "Other pieces", refShort: "Ref.", home: "Home", catalogue: "Catalogue",
+  },
+  moversTable: {
+    watch: "Watch", trend: "Trend", change: "Change", source: "Source",
+    footnote: "Indicative AI-generated estimates, updated weekly — not investment advice.",
+  },
+  lead: {
+    titleAvailable: "Get in touch", titleSold: "Let me know when you have something similar",
+    ctaAvailable: "I'm interested in this watch", ctaSold: "I want something like this",
+    defaultAvailable: "Hello, I'm interested in this watch. Could you contact me?",
+    defaultSold: "Hello, I'd like to find something similar to this. Let me know if you have one available.",
+    name: "Name", email: "Email", phone: "Phone", message: "Message", namePlaceholder: "Your name (optional)",
+    submit: "Send message", sending: "Sending…", success: "Message sent! We'll be in touch soon.",
+    errContact: "Please provide an email or a phone number.", close: "Close",
+  },
+  contactForm: {
+    name: "Name", email: "Email", subject: "Subject", message: "Message", selectSubject: "Select a subject",
+    submit: "Send message", sending: "Sending…", success: "Message sent! We'll get back to you soon.",
+    subjects: ["Buy a watch", "Sell a watch", "Valuation", "Other"],
+  },
+  share: { label: "Share", copied: "Link copied" },
+  whatsapp: { prefilled: "Hello! I'm interested in a watch.", aria: "Contact us on WhatsApp" },
   notFound: {
     title: "Page not found", text: "The page you're looking for doesn't exist or has moved. You might find what you're after in our collection.",
     home: "Back home", collection: "View collection",
@@ -148,6 +194,33 @@ const pt: Dict = {
     empty: "Em breve, novos artigos.", filterAll: "Todos",
   },
   watch: { back: "Voltar ao catálogo", viewExternal: "Ver anúncio externo" },
+  badge: { available: "Disponível", sold: "Vendido", archived: "Arquivado", draft: "Rascunho", pending: "Pendente", published: "Publicado" },
+  card: { noImage: "Sem imagem", priceOnRequest: "Sob consulta" },
+  specs: {
+    reference: "Referência", year: "Ano", movement: "Movimento", caseMaterial: "Material da caixa", diameter: "Diâmetro",
+    bracelet: "Bracelete", condition: "Estado", box: "Caixa original", papers: "Papéis", included: "Incluído", notIncluded: "Não incluído",
+    otherPieces: "Outras peças", refShort: "Ref.", home: "Início", catalogue: "Catálogo",
+  },
+  moversTable: {
+    watch: "Relógio", trend: "Tendência", change: "Valorização", source: "Fonte",
+    footnote: "Estimativas indicativas geradas por IA, actualizadas semanalmente — não constituem aconselhamento de investimento.",
+  },
+  lead: {
+    titleAvailable: "Entrar em contacto", titleSold: "Avisem-me quando tiverem algo semelhante",
+    ctaAvailable: "Tenho interesse neste relógio", ctaSold: "Quero algo assim",
+    defaultAvailable: "Olá, tenho interesse neste relógio. Podem contactar-me?",
+    defaultSold: "Olá, gostaria de encontrar algo semelhante a este. Avisem-me se tiverem disponível.",
+    name: "Nome", email: "Email", phone: "Telemóvel", message: "Mensagem", namePlaceholder: "O seu nome (opcional)",
+    submit: "Enviar mensagem", sending: "A enviar…", success: "Mensagem enviada! Entraremos em contacto em breve.",
+    errContact: "Indique um email ou um telemóvel.", close: "Fechar",
+  },
+  contactForm: {
+    name: "Nome", email: "Email", subject: "Assunto", message: "Mensagem", selectSubject: "Escolha um assunto",
+    submit: "Enviar mensagem", sending: "A enviar…", success: "Mensagem enviada! Entraremos em contacto em breve.",
+    subjects: ["Comprar um relógio", "Vender um relógio", "Avaliação", "Outro"],
+  },
+  share: { label: "Partilhar", copied: "Link copiado" },
+  whatsapp: { prefilled: "Olá! Tenho interesse num relógio.", aria: "Contactar por WhatsApp" },
   notFound: {
     title: "Página não encontrada", text: "A página que procura não existe ou foi movida. Talvez encontre o que procura na nossa coleção.",
     home: "Voltar ao início", collection: "Ver coleção",
@@ -164,4 +237,20 @@ export function getDict(locale: Locale): Dict {
 export const BLOG_CATEGORY_I18N: Record<Locale, Record<string, string>> = {
   en: { novidades: "News", curiosidades: "Curiosities", guias: "Guides", mercado: "Market" },
   pt: { novidades: "Novidades", curiosidades: "Curiosidades", guias: "Guias", mercado: "Mercado" },
+};
+
+// Watch enum value labels per locale (watch detail specs).
+export const MOVEMENT_I18N: Record<Locale, Record<string, string>> = {
+  en: { automatic: "Automatic", manual: "Manual", quartz: "Quartz" },
+  pt: { automatic: "Automático", manual: "Manual", quartz: "Quartzo" },
+};
+export const CONDITION_I18N: Record<Locale, Record<string, string>> = {
+  en: { excellent: "Excellent", very_good: "Very good", good: "Good" },
+  pt: { excellent: "Excelente", very_good: "Muito bom", good: "Bom" },
+};
+
+// Status badge labels per locale (covers watch + blog statuses).
+export const STATUS_I18N: Record<Locale, Record<string, string>> = {
+  en: { available: "Available", sold: "Sold", archived: "Archived", draft: "Draft", pending_approval: "Pending", published: "Published" },
+  pt: { available: "Disponível", sold: "Vendido", archived: "Arquivado", draft: "Rascunho", pending_approval: "Pendente", published: "Publicado" },
 };

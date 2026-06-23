@@ -106,7 +106,7 @@ async function getMovers() {
 }
 
 export default async function MercadoPage() {
-  const { t } = await getT();
+  const { locale, t } = await getT();
   const [metalSeries, riserRows] = await Promise.all([getMetalSeries(), getMovers()]);
 
   const movers: MoverRow[] = riserRows.map((r) => ({
@@ -230,7 +230,7 @@ export default async function MercadoPage() {
               Top {movers.length} — {t.market.topN}
             </h2>
 
-            <MoversIndex rows={movers} />
+            <MoversIndex rows={movers} locale={locale} />
           </section>
         )}
       </div>

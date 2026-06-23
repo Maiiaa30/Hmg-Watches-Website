@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { getDict, type Locale } from "@/lib/i18n";
 
 export interface MoverRow {
   id: string;
@@ -80,24 +81,34 @@ function rankStyle(rank: number): CSSProperties {
   };
 }
 
-export function MoversIndex({ rows, period }: { rows: MoverRow[]; period?: string }) {
+export function MoversIndex({
+  rows,
+  period,
+  locale = "en",
+}: {
+  rows: MoverRow[];
+  period?: string;
+  locale?: Locale;
+}) {
+  const t = getDict(locale);
   return (
     <div role="list" className="hmg-movers">
       {/* Header row (desktop only) */}
       <div className="hmg-movers-head" aria-hidden="true">
         <span style={{ minWidth: 26, textAlign: "center" }}>#</span>
-        <span style={{ flex: 1 }}>Relógio</span>
-        <span className="hmg-movers-head-trend">Tendência</span>
-        <span style={{ minWidth: 96, textAlign: "right" }}>Valorização</span>
+        <span style={{ flex: 1 }}>{t.moversTable.watch}</span>
+        <span className="hmg-movers-head-trend">{t.moversTable.trend}</span>
+        <span style={{ minWidth: 96, textAlign: "right" }}>{t.moversTable.change}</span>
       </div>
 
       {rows.map((r, i) => {
         const pct = Number(r.appreciationPct);
         const up = pct >= 0;
         const rank = i + 1;
-        const pctLabel = `${up ? "+" : "−"}${Math.abs(pct).toLocaleString("pt-PT", {
-          maximumFractionDigits: 2,
-        })}%`;
+        const pctLabel = `${up ? "+" : "−"}${Math.abs(pct).toLocaleString(
+          locale === "pt" ? "pt-PT" : "en-GB",
+          { maximumFractionDigits: 2 }
+        )}%`;
         return (
           <div role="listitem" key={r.id} className="hmg-mover-row">
             <span style={rankStyle(rank)} aria-hidden="true">
@@ -119,7 +130,7 @@ export function MoversIndex({ rows, period }: { rows: MoverRow[]; period?: strin
                 {r.reference && <span className="hmg-mover-ref"> · Ref. {r.reference}</span>}
               </div>
               <div className="hmg-mover-model">{r.model}</div>
-              {r.source && <div className="hmg-mover-source">Fonte: {r.source}</div>}
+              {r.source && <div className="hmg-mover-source">{t.moversTable.source}: {r.source}</div>}
             </div>
 
             <div className="hmg-mover-spark">
@@ -139,11 +150,7 @@ export function MoversIndex({ rows, period }: { rows: MoverRow[]; period?: strin
         );
       })}
 
-      <p className="hmg-mover-footnote">
-        {period ? `Valorizações ${period} no mercado secundário. ` : ""}
-        Estimativas indicativas geradas por IA, actualizadas semanalmente — não constituem
-        aconselhamento de investimento.
-      </p>
+      <p className="hmg-mover-footnote">{t.moversTable.footnote}</p>
     </div>
   );
 }

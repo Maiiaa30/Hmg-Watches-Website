@@ -1,20 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { getDict, type Locale } from "@/lib/i18n";
 
-export function WhatsAppButton({ phone }: { phone: string }) {
+export function WhatsAppButton({ phone, locale = "en" }: { phone: string; locale?: Locale }) {
   const [hover, setHover] = useState(false);
+  const t = getDict(locale);
 
-  const href = `https://wa.me/${phone}?text=${encodeURIComponent(
-    "Olá! Tenho interesse num relógio."
-  )}`;
+  const href = `https://wa.me/${phone}?text=${encodeURIComponent(t.whatsapp.prefilled)}`;
 
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Contactar por WhatsApp"
+      aria-label={t.whatsapp.aria}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{

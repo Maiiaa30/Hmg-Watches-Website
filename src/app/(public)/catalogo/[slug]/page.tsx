@@ -13,10 +13,7 @@ import { DetailAnalytics } from "@/components/public/DetailAnalytics";
 import { RecentlyViewedRecorder } from "@/components/public/RecentlyViewedRecorder";
 import { APP_URL } from "@/lib/app-url";
 import { getT } from "@/lib/i18n-server";
-import {
-  MOVEMENT_TYPE_LABELS,
-  CONDITION_LABELS,
-} from "@/constants";
+import { MOVEMENT_I18N, CONDITION_I18N } from "@/lib/i18n";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -82,7 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function WatchDetailPage({ params }: Props) {
-  const { t } = await getT();
+  const { locale, t } = await getT();
   const { slug } = await params;
   const watch = await getWatch(slug);
 
@@ -152,22 +149,22 @@ export default async function WatchDetailPage({ params }: Props) {
     ],
   };
 
-  const priceFormatted = new Intl.NumberFormat("pt-PT", {
+  const priceFormatted = new Intl.NumberFormat(locale === "en" ? "en-GB" : "pt-PT", {
     style: "currency",
     currency: "EUR",
     maximumFractionDigits: 0,
   }).format(Number(watch.price));
 
   const specs = [
-    { label: "Referência", value: watch.reference },
-    { label: "Ano", value: watch.year?.toString() },
-    { label: "Movimento", value: watch.movementType ? MOVEMENT_TYPE_LABELS[watch.movementType] : null },
-    { label: "Material da caixa", value: watch.caseMaterial },
-    { label: "Diâmetro", value: watch.caseDiameterMm ? `${watch.caseDiameterMm} mm` : null },
-    { label: "Bracelete", value: watch.braceletMaterial },
-    { label: "Estado", value: watch.condition ? CONDITION_LABELS[watch.condition] : null },
-    { label: "Caixa original", value: watch.hasBox ? "Incluída" : "Não incluída" },
-    { label: "Papéis", value: watch.hasPapers ? "Incluídos" : "Não incluídos" },
+    { label: t.specs.reference, value: watch.reference },
+    { label: t.specs.year, value: watch.year?.toString() },
+    { label: t.specs.movement, value: watch.movementType ? MOVEMENT_I18N[locale][watch.movementType] : null },
+    { label: t.specs.caseMaterial, value: watch.caseMaterial },
+    { label: t.specs.diameter, value: watch.caseDiameterMm ? `${watch.caseDiameterMm} mm` : null },
+    { label: t.specs.bracelet, value: watch.braceletMaterial },
+    { label: t.specs.condition, value: watch.condition ? CONDITION_I18N[locale][watch.condition] : null },
+    { label: t.specs.box, value: watch.hasBox ? t.specs.included : t.specs.notIncluded },
+    { label: t.specs.papers, value: watch.hasPapers ? t.specs.included : t.specs.notIncluded },
   ].filter((s) => s.value);
 
   return (
@@ -212,11 +209,11 @@ export default async function WatchDetailPage({ params }: Props) {
           }}
         >
           <Link href="/" style={{ color: "var(--text-tertiary)" }}>
-            Início
+            {t.specs.home}
           </Link>
           <span>/</span>
           <Link href="/catalogo" style={{ color: "var(--text-tertiary)" }}>
-            Catálogo
+            {t.specs.catalogue}
           </Link>
           <span>/</span>
           <span style={{ color: "var(--text-secondary)" }}>
@@ -257,7 +254,7 @@ export default async function WatchDetailPage({ params }: Props) {
               >
                 {watch.brand}
               </span>
-              <Badge status={watch.status} />
+              <Badge status={watch.status} locale={locale} />
             </div>
             <h1
               style={{
@@ -278,7 +275,7 @@ export default async function WatchDetailPage({ params }: Props) {
                   fontFamily: "var(--font-mono)",
                 }}
               >
-                Ref. {watch.reference}
+                {t.specs.refShort} {watch.reference}
               </p>
             )}
             <div
@@ -350,6 +347,7 @@ export default async function WatchDetailPage({ params }: Props) {
               watchId={watch.id}
               watchStatus={watch.status}
               watchName={`${watch.brand} ${watch.model}`}
+              locale={locale}
             />
 
             {watch.externalLink && (
@@ -381,7 +379,7 @@ export default async function WatchDetailPage({ params }: Props) {
                 marginBottom: 40,
               }}
             >
-              <span className="hmg-overline">Outras peças</span>
+              <span className="hmg-overline">{t.specs.otherPieces}</span>
             </div>
             <div
               className="hmg-stack"
@@ -392,7 +390,7 @@ export default async function WatchDetailPage({ params }: Props) {
               }}
             >
               {related.map((w) => (
-                <WatchCard key={w.id} watch={w} />
+                <WatchCard key={w.id} watch={w} locale={locale} />
               ))}
             </div>
           </section>

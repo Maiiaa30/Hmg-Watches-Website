@@ -104,7 +104,7 @@ export function CatalogBrowser({
           />
           <Grid>
             {available.map((w) => (
-              <WatchCard key={w.id} watch={w} />
+              <WatchCard key={w.id} watch={w} locale={locale} />
             ))}
           </Grid>
         </section>
@@ -121,7 +121,7 @@ export function CatalogBrowser({
           />
           <Grid>
             {sold.map((w) => (
-              <WatchCard key={w.id} watch={w} />
+              <WatchCard key={w.id} watch={w} locale={locale} />
             ))}
           </Grid>
         </section>
