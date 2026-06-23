@@ -18,37 +18,46 @@ export const metadata: Metadata = {
 
 export const revalidate = 300; // 5 min ISR
 
+// All homepage data getters are best-effort: a DB hiccup degrades the section
+// to empty instead of 500-ing the whole homepage.
 async function getFeaturedWatches() {
-  return db
-    .select()
-    .from(watches)
-    .where(eq(watches.status, "available"))
-    .orderBy(desc(watches.createdAt))
-    .limit(4);
+  try {
+    return await db
+      .select()
+      .from(watches)
+      .where(eq(watches.status, "available"))
+      .orderBy(desc(watches.createdAt))
+      .limit(4);
+  } catch {
+    return [];
+  }
 }
 
 async function getLatestPosts() {
   const now = new Date();
-  return db
-    .select()
-    .from(blogPosts)
-    .where(
-      and(
-        eq(blogPosts.status, "published"),
-        lte(blogPosts.publishedAt, now)
-      )
-    )
-    .orderBy(desc(blogPosts.publishedAt))
-    .limit(3);
+  try {
+    return await db
+      .select()
+      .from(blogPosts)
+      .where(and(eq(blogPosts.status, "published"), lte(blogPosts.publishedAt, now)))
+      .orderBy(desc(blogPosts.publishedAt))
+      .limit(3);
+  } catch {
+    return [];
+  }
 }
 
 async function getHeroWatch() {
-  const [hero] = await db
-    .select()
-    .from(watches)
-    .where(and(eq(watches.status, "available"), eq(watches.featured, true)))
-    .limit(1);
-  return hero ?? null;
+  try {
+    const [hero] = await db
+      .select()
+      .from(watches)
+      .where(and(eq(watches.status, "available"), eq(watches.featured, true)))
+      .limit(1);
+    return hero ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export default async function HomePage() {
@@ -283,7 +292,7 @@ export default async function HomePage() {
                     flexShrink: 0,
                   }}
                 >
-                  Hoje
+                  {t.auctions.today}
                 </span>
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ fontFamily: "var(--font-display)", fontSize: 18 }}>

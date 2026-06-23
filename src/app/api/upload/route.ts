@@ -17,7 +17,11 @@ export async function POST(request: NextRequest) {
 
   const form = await request.formData();
   const file = form.get("file");
-  const watchId = form.get("watchId") as string | null;
+  // Folder prefix (a watch UUID or the literal "auctions"). Validate strictly so
+  // it can't contain path-traversal characters ("/", "..") in the storage key.
+  const watchIdRaw = form.get("watchId");
+  const watchId =
+    typeof watchIdRaw === "string" && /^[a-z0-9-]{1,64}$/i.test(watchIdRaw) ? watchIdRaw : null;
 
   if (!(file instanceof File)) {
     return NextResponse.json<ApiResponse>({ success: false, error: "Ficheiro em falta." }, { status: 400 });
