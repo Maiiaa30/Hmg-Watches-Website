@@ -9,21 +9,39 @@ import { ContactForm } from "@/components/public/ContactForm";
 import { TypingText } from "@/components/public/TypingText";
 import { getTodaysAuctions } from "@/lib/leiloes";
 import { getT } from "@/lib/i18n-server";
-import { SITE_NAME, SITE_DESCRIPTION, BLOG_CATEGORY_LABELS } from "@/constants";
+import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
+import { BLOG_CATEGORY_I18N } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: { absolute: `${SITE_NAME} — Relógios de Luxo` },
-  description: SITE_DESCRIPTION,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale } = await getT();
+  return {
+    title: {
+      absolute: `${SITE_NAME} — ${locale === "en" ? "Luxury Watches" : "Relógios de Luxo"}`,
+    },
+    description: SITE_DESCRIPTION,
+  };
+}
 
 export const revalidate = 300; // 5 min ISR
 
 // All homepage data getters are best-effort: a DB hiccup degrades the section
 // to empty instead of 500-ing the whole homepage.
+// Only the columns the cards need (no description / image_order).
+const cardCols = {
+  id: watches.id,
+  slug: watches.slug,
+  brand: watches.brand,
+  model: watches.model,
+  reference: watches.reference,
+  price: watches.price,
+  status: watches.status,
+  images: watches.images,
+} as const;
+
 async function getFeaturedWatches() {
   try {
     return await db
-      .select()
+      .select(cardCols)
       .from(watches)
       .where(eq(watches.status, "available"))
       .orderBy(desc(watches.createdAt))
@@ -36,8 +54,18 @@ async function getFeaturedWatches() {
 async function getLatestPosts() {
   const now = new Date();
   try {
+    // No `content` (full markdown body) — the teaser only needs these fields.
     return await db
-      .select()
+      .select({
+        id: blogPosts.id,
+        slug: blogPosts.slug,
+        title: blogPosts.title,
+        excerpt: blogPosts.excerpt,
+        coverImage: blogPosts.coverImage,
+        category: blogPosts.category,
+        readingTimeMinutes: blogPosts.readingTimeMinutes,
+        publishedAt: blogPosts.publishedAt,
+      })
       .from(blogPosts)
       .where(and(eq(blogPosts.status, "published"), lte(blogPosts.publishedAt, now)))
       .orderBy(desc(blogPosts.publishedAt))
@@ -50,7 +78,7 @@ async function getLatestPosts() {
 async function getHeroWatch() {
   try {
     const [hero] = await db
-      .select()
+      .select(cardCols)
       .from(watches)
       .where(and(eq(watches.status, "available"), eq(watches.featured, true)))
       .limit(1);
@@ -198,6 +226,7 @@ export default async function HomePage() {
                       src={heroWatch.images[0]}
                       alt={`${heroWatch.brand} ${heroWatch.model}`}
                       fill
+                      sizes="(max-width: 900px) 100vw, 400px"
                       style={{ objectFit: "cover", objectPosition: "center 42%" }}
                       priority
                     />
@@ -249,7 +278,7 @@ export default async function HomePage() {
                   }}
                 >
                   <span style={{ fontSize: 14, color: "var(--accent-press)" }}>
-                    {new Intl.NumberFormat("pt-PT", {
+                    {new Intl.NumberFormat(locale === "en" ? "en-GB" : "pt-PT", {
                       style: "currency",
                       currency: "EUR",
                       maximumFractionDigits: 0,
@@ -563,7 +592,7 @@ export default async function HomePage() {
                   />
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <span style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent-press)" }}>
-                      {BLOG_CATEGORY_LABELS[post.category]}
+                      {BLOG_CATEGORY_I18N[locale][post.category] ?? post.category}
                     </span>
                     <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--text-tertiary)" }} />
                     <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{post.readingTimeMinutes} {t.catalog.readingMins}</span>
@@ -574,7 +603,7 @@ export default async function HomePage() {
                   <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--text-secondary)" }}>{post.excerpt}</p>
                   {post.publishedAt && (
                     <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
-                      {new Intl.DateTimeFormat("pt-PT", { day: "numeric", month: "short", year: "numeric" }).format(post.publishedAt)}
+                      {new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "pt-PT", { day: "numeric", month: "short", year: "numeric" }).format(post.publishedAt)}
                     </span>
                   )}
                 </Link>

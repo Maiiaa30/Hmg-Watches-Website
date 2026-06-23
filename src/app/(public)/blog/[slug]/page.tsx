@@ -5,7 +5,9 @@ import { cache } from "react";
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, and, ne, desc, lte } from "drizzle-orm";
-import { BLOG_CATEGORY_LABELS, SITE_NAME } from "@/constants";
+import { SITE_NAME } from "@/constants";
+import { BLOG_CATEGORY_I18N } from "@/lib/i18n";
+import { getT } from "@/lib/i18n-server";
 import { APP_URL } from "@/lib/app-url";
 import { renderMarkdown } from "@/lib/markdown";
 import { ShareButton } from "@/components/public/ShareButton";
@@ -39,7 +41,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) return { title: "Não encontrado" };
+  if (!post) {
+    const { t } = await getT();
+    return { title: t.blog.notFound };
+  }
 
   const url = `${APP_URL}/blog/${slug}`;
   const images = post.coverImage ? [post.coverImage] : [];
@@ -67,11 +72,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const dateFmt = (d: Date) =>
-  new Intl.DateTimeFormat("pt-PT", { day: "numeric", month: "long", year: "numeric" }).format(d);
+const dateFmt = (d: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "pt-PT", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(d);
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params;
+  const { t, locale } = await getT();
   const post = await getPost(slug);
 
   if (!post || post.status !== "published") notFound();
@@ -163,13 +173,13 @@ export default async function BlogArticlePage({ params }: Props) {
                 textTransform: "uppercase",
               }}
             >
-              {BLOG_CATEGORY_LABELS[post.category]}
+              {BLOG_CATEGORY_I18N[locale][post.category] ?? post.category}
             </span>
             {post.publishedAt && (
-              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)" }}>{dateFmt(post.publishedAt)}</span>
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)" }}>{dateFmt(post.publishedAt, locale)}</span>
             )}
             <span style={{ width: 3, height: 3, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
-            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)" }}>{post.readingTimeMinutes} min de leitura</span>
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)" }}>{post.readingTimeMinutes} {t.catalog.readingMins}</span>
           </div>
           <h1
             style={{
@@ -216,12 +226,12 @@ export default async function BlogArticlePage({ params }: Props) {
             borderTop: "1px solid var(--border-subtle)",
           }}
         >
-          <ShareButton />
+          <ShareButton locale={locale} />
           <Link href="/blog" className="hmg-ghost-btn hmg-ghost-btn--gold">
             <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
-            Voltar ao Diário
+            {t.blog.backToJournal}
           </Link>
         </div>
       </article>
@@ -232,7 +242,7 @@ export default async function BlogArticlePage({ params }: Props) {
           className="hmg-container"
           style={{ padding: "80px var(--gutter) var(--section-y)", borderTop: "1px solid var(--border-subtle)", marginTop: 60 }}
         >
-          <h2 style={{ fontSize: "clamp(26px, 3vw, 30px)", marginBottom: 40 }}>Continuar a ler</h2>
+          <h2 style={{ fontSize: "clamp(26px, 3vw, 30px)", marginBottom: 40 }}>{t.blog.continueReading}</h2>
           <div className="hmg-stack" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28, rowGap: 48 }}>
             {related.map((r) => (
               <Link key={r.id} href={`/blog/${r.slug}`} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -250,10 +260,10 @@ export default async function BlogArticlePage({ params }: Props) {
                 />
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <span style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent-press)" }}>
-                    {BLOG_CATEGORY_LABELS[r.category]}
+                    {BLOG_CATEGORY_I18N[locale][r.category] ?? r.category}
                   </span>
                   <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--text-tertiary)" }} />
-                  <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{r.readingTimeMinutes} min</span>
+                  <span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{r.readingTimeMinutes} {t.catalog.readingMins}</span>
                 </div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: 22, lineHeight: 1.25 }}>{r.title}</h3>
                 <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--text-secondary)" }}>{r.excerpt}</p>

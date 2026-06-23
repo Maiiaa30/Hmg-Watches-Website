@@ -2,11 +2,6 @@ import type { Metadata } from "next";
 import { TypingText } from "@/components/public/TypingText";
 import { getT } from "@/lib/i18n-server";
 
-export const metadata: Metadata = {
-  title: "Sobre Nós",
-  description: "A história e os valores da HMG Watches.",
-};
-
 const CONTENT = {
   pt: {
     overline: "Sobre nós",
@@ -65,6 +60,14 @@ const CONTENT = {
     ],
   },
 } as const;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale, t } = await getT();
+  return {
+    title: t.nav.about,
+    description: CONTENT[locale].paragraphs[0],
+  };
+}
 
 export default async function SobreNosPage() {
   const { locale } = await getT();

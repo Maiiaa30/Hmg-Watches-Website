@@ -7,10 +7,13 @@ import { TypingText } from "@/components/public/TypingText";
 import { MoversIndex, type MoverRow } from "@/components/public/MoversIndex";
 import { getT } from "@/lib/i18n-server";
 
-export const metadata: Metadata = {
-  title: "Mercado",
-  description: "Preços de metais preciosos e relógios em valorização.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT();
+  return {
+    title: t.market.title,
+    description: t.market.subtitle,
+  };
+}
 
 export const revalidate = 3600; // ISR 1 hora
 

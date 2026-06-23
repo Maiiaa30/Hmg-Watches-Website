@@ -35,8 +35,10 @@ interface Dict {
   };
   market: { overline: string; title: string; subtitle: string; metals: string; metalsNote: string; risers: string; topN: string; metalsUnavailable: string };
   auctions: { overline: string; title: string; subtitle: string; emptyTitle: string; emptyText: string; viewAuction: string; today: string };
-  blog: { overline: string; title: string; heroTitle: string; subtitle: string; empty: string; filterAll: string };
+  blog: { overline: string; title: string; heroTitle: string; subtitle: string; empty: string; filterAll: string; backToJournal: string; continueReading: string; notFound: string };
   watch: { back: string; viewExternal: string };
+  gallery: { noImage: string; zoom: string; prev: string; next: string; close: string; viewImage: string; view: string };
+  a11y: { skip: string; menuOpen: string; menuClose: string; filterCatalog: string; contact: string };
   badge: { available: string; sold: string; archived: string; draft: string; pending: string; published: string };
   card: { noImage: string; priceOnRequest: string };
   specs: {
@@ -49,14 +51,15 @@ interface Dict {
     titleAvailable: string; titleSold: string; ctaAvailable: string; ctaSold: string;
     defaultAvailable: string; defaultSold: string; name: string; email: string; phone: string; message: string;
     namePlaceholder: string; submit: string; sending: string; success: string; errContact: string; close: string;
+    errSend: string; errNetwork: string;
   };
   contactForm: {
     name: string; email: string; subject: string; message: string; selectSubject: string;
-    submit: string; sending: string; success: string; subjects: string[];
+    submit: string; sending: string; success: string; subjects: string[]; errSend: string; errNetwork: string;
   };
   share: { label: string; copied: string };
   whatsapp: { prefilled: string; aria: string };
-  notFound: { title: string; text: string; home: string; collection: string };
+  notFound: { overline: string; title: string; text: string; home: string; collection: string };
 }
 
 const en: Dict = {
@@ -108,8 +111,11 @@ const en: Dict = {
     overline: "Journal", title: "Journal", heroTitle: "Watchmaking notes",
     subtitle: "Guides, market reads and curiosities — written by people who live the craft.",
     empty: "New articles coming soon.", filterAll: "All",
+    backToJournal: "Back to the journal", continueReading: "Keep reading", notFound: "Not found",
   },
   watch: { back: "Back to catalogue", viewExternal: "View external listing" },
+  gallery: { noImage: "No image", zoom: "Zoom", prev: "Previous photo", next: "Next photo", close: "Close", viewImage: "View image", view: "View" },
+  a11y: { skip: "Skip to content", menuOpen: "Open menu", menuClose: "Close menu", filterCatalog: "Filter catalogue", contact: "Contact" },
   badge: { available: "Available", sold: "Sold", archived: "Archived", draft: "Draft", pending: "Pending", published: "Published" },
   card: { noImage: "No image", priceOnRequest: "Price on request" },
   specs: {
@@ -129,15 +135,18 @@ const en: Dict = {
     name: "Name", email: "Email", phone: "Phone", message: "Message", namePlaceholder: "Your name (optional)",
     submit: "Send message", sending: "Sending…", success: "Message sent! We'll be in touch soon.",
     errContact: "Please provide an email or a phone number.", close: "Close",
+    errSend: "Couldn't send the message.", errNetwork: "Network error. Please try again.",
   },
   contactForm: {
     name: "Name", email: "Email", subject: "Subject", message: "Message", selectSubject: "Select a subject",
     submit: "Send message", sending: "Sending…", success: "Message sent! We'll get back to you soon.",
     subjects: ["Buy a watch", "Sell a watch", "Valuation", "Other"],
+    errSend: "Couldn't send the message.", errNetwork: "Network error. Please try again.",
   },
   share: { label: "Share", copied: "Link copied" },
   whatsapp: { prefilled: "Hello! I'm interested in a watch.", aria: "Contact us on WhatsApp" },
   notFound: {
+    overline: "Error 404",
     title: "Page not found", text: "The page you're looking for doesn't exist or has moved. You might find what you're after in our collection.",
     home: "Back home", collection: "View collection",
   },
@@ -192,8 +201,11 @@ const pt: Dict = {
     overline: "Diário de Bordo", title: "Diário de Bordo", heroTitle: "Notas de relojoaria",
     subtitle: "Guias, leituras de mercado e curiosidades — escrito por quem vive o ofício.",
     empty: "Em breve, novos artigos.", filterAll: "Todos",
+    backToJournal: "Voltar ao Diário de Bordo", continueReading: "Continuar a ler", notFound: "Não encontrado",
   },
   watch: { back: "Voltar ao catálogo", viewExternal: "Ver anúncio externo" },
+  gallery: { noImage: "Sem imagem", zoom: "Ampliar", prev: "Foto anterior", next: "Foto seguinte", close: "Fechar", viewImage: "Ver imagem", view: "Vista" },
+  a11y: { skip: "Saltar para o conteúdo", menuOpen: "Abrir menu", menuClose: "Fechar menu", filterCatalog: "Filtrar catálogo", contact: "Contacto" },
   badge: { available: "Disponível", sold: "Vendido", archived: "Arquivado", draft: "Rascunho", pending: "Pendente", published: "Publicado" },
   card: { noImage: "Sem imagem", priceOnRequest: "Sob consulta" },
   specs: {
@@ -213,15 +225,18 @@ const pt: Dict = {
     name: "Nome", email: "Email", phone: "Telemóvel", message: "Mensagem", namePlaceholder: "O seu nome (opcional)",
     submit: "Enviar mensagem", sending: "A enviar…", success: "Mensagem enviada! Entraremos em contacto em breve.",
     errContact: "Indique um email ou um telemóvel.", close: "Fechar",
+    errSend: "Não foi possível enviar a mensagem.", errNetwork: "Erro de rede. Tente novamente.",
   },
   contactForm: {
     name: "Nome", email: "Email", subject: "Assunto", message: "Mensagem", selectSubject: "Escolha um assunto",
     submit: "Enviar mensagem", sending: "A enviar…", success: "Mensagem enviada! Entraremos em contacto em breve.",
     subjects: ["Comprar um relógio", "Vender um relógio", "Avaliação", "Outro"],
+    errSend: "Não foi possível enviar a mensagem.", errNetwork: "Erro de rede. Tente novamente.",
   },
   share: { label: "Partilhar", copied: "Link copiado" },
   whatsapp: { prefilled: "Olá! Tenho interesse num relógio.", aria: "Contactar por WhatsApp" },
   notFound: {
+    overline: "Erro 404",
     title: "Página não encontrada", text: "A página que procura não existe ou foi movida. Talvez encontre o que procura na nossa coleção.",
     home: "Voltar ao início", collection: "Ver coleção",
   },

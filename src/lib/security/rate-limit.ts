@@ -48,10 +48,22 @@ export const blogGenerateRatelimit = redis
     })
   : null;
 
+// Analytics beacon: 60 per minute per IP (prevents page_views flooding)
+export const analyticsRatelimit = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(60, "1 m"),
+      prefix: "ratelimit:analytics",
+    })
+  : null;
+
 export function getClientIp(request: Request): string {
+  // Prefer x-real-ip (set by Vercel to the true client IP). The leftmost entry
+  // of x-forwarded-for is client-supplied and can be spoofed, so use it only as
+  // a fallback for non-Vercel/local environments.
   return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
+    request.headers.get("x-real-ip")?.trim() ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     "unknown"
   );
 }

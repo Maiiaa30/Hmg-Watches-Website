@@ -44,7 +44,7 @@ export function Footer({ instagramUrl, contactEmail, locale = "en" }: FooterProp
           maxWidth: "var(--container-max)",
           margin: "0 auto",
           display: "grid",
-          gridTemplateColumns: "1.7fr 1fr 1fr 1fr",
+          gridTemplateColumns: "1.7fr 1fr 1fr",
           gap: 48,
         }}
       >
@@ -131,7 +131,7 @@ export function Footer({ instagramUrl, contactEmail, locale = "en" }: FooterProp
             {/* WhatsApp */}
             <a
               href="/contacto"
-              aria-label="Contacto"
+              aria-label={t.a11y.contact}
               style={socialIconStyle}
               onMouseEnter={(e) => applyHover(e)}
               onMouseLeave={(e) => removeHover(e)}
