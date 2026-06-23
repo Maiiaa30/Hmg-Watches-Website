@@ -16,6 +16,7 @@ const ALLOWED_KEYS = [
   "blog_auto_day",
   "blog_auto_category",
   "movers_auto_enabled",
+  "maintenance_mode",
   "site_name",
   "site_contact_email",
   "instagram_url",

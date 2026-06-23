@@ -14,31 +14,36 @@ export async function middleware(request: NextRequest) {
   // Unset in local dev → admin stays at /admin as usual.
   const adminHost = process.env.ADMIN_HOST?.trim().toLowerCase();
 
-  // ---- Maintenance gate (public pages only) ----
-  // MAINTENANCE_MODE="true" hides the public site from everyone; unlock for
-  // yourself by visiting any page with ?preview=<MAINTENANCE_SECRET> once.
+  // ---- Owner preview unlock ----
+  // Visiting any page with ?preview=<MAINTENANCE_SECRET> arms the hmg_preview
+  // cookie. Works for BOTH the env-var maintenance (below) and the admin-toggled
+  // maintenance (checked in the public layout).
+  const maintSecret = process.env.MAINTENANCE_SECRET;
+  if (maintSecret && request.nextUrl.searchParams.get("preview") === maintSecret) {
+    const clean = request.nextUrl.clone();
+    clean.searchParams.delete("preview");
+    const res = NextResponse.redirect(clean);
+    res.cookies.set("hmg_preview", maintSecret, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+    return res;
+  }
+
+  // ---- Maintenance gate via env var (hard override, returns 503) ----
+  // MAINTENANCE_MODE="true" hides the public site from everyone except an
+  // unlocked preview. The admin-toggle equivalent is handled in the public
+  // layout (Edge middleware can't read the database).
   if (process.env.MAINTENANCE_MODE === "true") {
-    const secret = process.env.MAINTENANCE_SECRET;
     const isAdminArea =
       pathname.startsWith("/admin") ||
       pathname.startsWith("/api") ||
       (!!adminHost && host === adminHost);
 
-    if (!isAdminArea && secret) {
-      // Unlock via ?preview=SECRET → set cookie, then redirect to a clean URL
-      if (request.nextUrl.searchParams.get("preview") === secret) {
-        const clean = request.nextUrl.clone();
-        clean.searchParams.delete("preview");
-        const res = NextResponse.redirect(clean);
-        res.cookies.set("hmg_preview", secret, {
-          httpOnly: true,
-          sameSite: "lax",
-          path: "/",
-          maxAge: 60 * 60 * 24 * 30,
-        });
-        return res;
-      }
-      const unlocked = request.cookies.get("hmg_preview")?.value === secret;
+    if (!isAdminArea) {
+      const unlocked = !!maintSecret && request.cookies.get("hmg_preview")?.value === maintSecret;
       if (!unlocked) {
         return new NextResponse(maintenanceHtml(), {
           status: 503,

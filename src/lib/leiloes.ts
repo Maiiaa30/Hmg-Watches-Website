@@ -20,7 +20,13 @@ export interface Auction {
 const KEY = "auctions";
 
 export async function getAuctions(): Promise<Auction[]> {
-  const raw = await getSetting(KEY);
+  // Best-effort: a DB hiccup must not 500 the homepage / leilões page.
+  let raw: string | null;
+  try {
+    raw = await getSetting(KEY);
+  } catch {
+    return [];
+  }
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);

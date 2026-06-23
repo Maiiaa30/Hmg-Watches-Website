@@ -216,7 +216,7 @@ export function RelogiosTable({ watches }: { watches: WatchRow[] }) {
             <div className="hmg-watch-actions" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               <button
                 onClick={() => toggleFeatured(w)}
-                disabled={busy === w.id}
+                disabled={busy !== null}
                 title={feat ? "Remover destaque" : "Definir como destaque na homepage"}
                 style={miniBtn(feat ? "gold" : undefined)}
               >

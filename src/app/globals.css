@@ -196,7 +196,8 @@ button { font-family: inherit; }
   font-weight: var(--fw-medium);
   letter-spacing: var(--ls-wider);
   text-transform: uppercase;
-  color: var(--accent);
+  /* accent-press has a higher contrast ratio on ivory (WCAG AA for small text) */
+  color: var(--accent-press);
 }
 
 .hmg-container {
@@ -525,7 +526,22 @@ button { font-family: inherit; }
   text-overflow: ellipsis;
 }
 .hmg-mover-source { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
-.hmg-mover-spark { display: flex; align-items: center; }
+.hmg-mover-spark { display: flex; align-items: center; width: 88px; flex-shrink: 0; }
+/* Header column for the sparkline — matches the spark column width so the
+   desktop header labels line up with the rows. */
+.hmg-movers-head-trend { width: 88px; text-align: center; flex-shrink: 0; }
+
+/* Tablet (769–1024px): the hero stays 2-column but the floating label, which
+   sits at left:-120px on desktop, would overflow — flow it below the image. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hmg-hero-label {
+    position: static !important;
+    left: auto !important;
+    bottom: auto !important;
+    margin-top: 16px;
+    max-width: none !important;
+  }
+}
 .hmg-mover-change {
   display: flex;
   flex-direction: column;

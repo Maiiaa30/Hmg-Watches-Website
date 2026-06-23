@@ -11,6 +11,7 @@ interface SettingsState {
   blog_auto_day: string;
   blog_auto_category: string;
   movers_auto_enabled: string;
+  maintenance_mode: string;
   site_name: string;
   site_contact_email: string;
   instagram_url: string;
@@ -25,6 +26,7 @@ const DEFAULT_SETTINGS: SettingsState = {
   blog_auto_day: "random",
   blog_auto_category: "random",
   movers_auto_enabled: "false",
+  maintenance_mode: "false",
   site_name: "HMG Watches",
   site_contact_email: "",
   instagram_url: "",
@@ -66,6 +68,7 @@ export default function AdminDefinicoesPage() {
   const [generatingBlog, setGeneratingBlog] = useState(false);
   const [moversStatus, setMoversStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [generatingMovers, setGeneratingMovers] = useState(false);
+  const [maintMsg, setMaintMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Load current settings
   useEffect(() => {
@@ -147,6 +150,32 @@ export default function AdminDefinicoesPage() {
     }
   }
 
+  async function toggleMaintenance(on: boolean) {
+    // Apply immediately (this is a critical switch), optimistic state first.
+    setSettings((s) => ({ ...s, maintenance_mode: on ? "true" : "false" }));
+    setMaintMsg(null);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ maintenance_mode: on ? "true" : "false" }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setMaintMsg({ type: "error", text: data.error ?? "Falha ao guardar." });
+        setSettings((s) => ({ ...s, maintenance_mode: on ? "false" : "true" })); // revert
+      } else {
+        setMaintMsg({
+          type: "success",
+          text: on ? "Site em manutenção — visível apenas para si." : "Site novamente público.",
+        });
+      }
+    } catch {
+      setMaintMsg({ type: "error", text: "Erro de rede." });
+      setSettings((s) => ({ ...s, maintenance_mode: on ? "false" : "true" }));
+    }
+  }
+
   async function sendReportNow() {
     setSendingReport(true);
     setReportStatus(null);
@@ -166,6 +195,43 @@ export default function AdminDefinicoesPage() {
   return (
     <AdminShell title="Definições">
       <div className="hmg-settings-grid">
+        {/* Maintenance mode */}
+        <Card title="Modo de manutenção" wide>
+          <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 16 }}>
+            <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: 0 }}>
+              Quando ativo, o site público mostra uma página <em>“Em manutenção”</em> a todos os
+              visitantes. O painel de administração continua acessível. Para pré-visualizar o
+              site durante a manutenção, abra-o com <code style={codeStyle}>?preview=SEGREDO</code>{" "}
+              (o valor de <code style={codeStyle}>MAINTENANCE_SECRET</code>).
+            </p>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                fontSize: 15,
+                fontWeight: 500,
+                cursor: "pointer",
+                color: settings.maintenance_mode === "true" ? "var(--hmg-down)" : "var(--text-primary)",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={settings.maintenance_mode === "true"}
+                onChange={(e) => toggleMaintenance(e.target.checked)}
+              />
+              {settings.maintenance_mode === "true"
+                ? "Site em manutenção (oculto ao público)"
+                : "Colocar o site em manutenção"}
+            </label>
+            {maintMsg && (
+              <p style={{ color: maintMsg.type === "success" ? "var(--trend-up)" : "var(--hmg-down)", fontSize: 13, margin: 0 }}>
+                {maintMsg.text}
+              </p>
+            )}
+          </div>
+        </Card>
+
         {/* Change password */}
         <Card title="Alterar password">
           <form

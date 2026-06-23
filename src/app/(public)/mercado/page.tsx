@@ -89,18 +89,25 @@ async function getMetalSeries(): Promise<MetalSeries[] | null> {
   }
 }
 
-export default async function MercadoPage() {
-  const { t } = await getT();
-  const [metalSeries, riserRows] = await Promise.all([
-    getMetalSeries(),
-    db
+// Best-effort movers query — a DB hiccup must not 500 the page (the metals
+// fetch already degrades gracefully on its own).
+async function getMovers() {
+  try {
+    return await db
       .select()
       .from(watchMarketHighlights)
       .where(eq(watchMarketHighlights.active, true))
       // Top movers: rank by value gained (highest appreciation first).
       .orderBy(desc(watchMarketHighlights.appreciationPct))
-      .limit(10),
-  ]);
+      .limit(10);
+  } catch {
+    return [];
+  }
+}
+
+export default async function MercadoPage() {
+  const { t } = await getT();
+  const [metalSeries, riserRows] = await Promise.all([getMetalSeries(), getMovers()]);
 
   const movers: MoverRow[] = riserRows.map((r) => ({
     id: r.id,
