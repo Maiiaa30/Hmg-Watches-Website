@@ -69,6 +69,8 @@ export default function AdminDefinicoesPage() {
   const [moversStatus, setMoversStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [generatingMovers, setGeneratingMovers] = useState(false);
   const [maintMsg, setMaintMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [previewCode, setPreviewCode] = useState("");
+  const [copied, setCopied] = useState(false);
 
   // Load current settings
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function AdminDefinicoesPage() {
       .then((data) => {
         if (data.success && data.data) {
           setSettings((s) => ({ ...s, ...data.data }));
+          if (data.data.maintenance_preview_code) setPreviewCode(data.data.maintenance_preview_code);
         }
       })
       .catch(() => {});
@@ -227,6 +230,44 @@ export default function AdminDefinicoesPage() {
             {maintMsg && (
               <p style={{ color: maintMsg.type === "success" ? "var(--trend-up)" : "var(--hmg-down)", fontSize: 13, margin: 0 }}>
                 {maintMsg.text}
+              </p>
+            )}
+
+            {/* Preview link — so the owner never has to remember the code */}
+            {previewCode ? (
+              (() => {
+                const base = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/+$/, "");
+                const link = `${base || ""}/?preview=${previewCode}`;
+                return (
+                  <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
+                    <label style={labelStyle}>Link de pré-visualização (guarde este link)</label>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <input readOnly value={link} onFocus={(e) => e.currentTarget.select()} style={{ ...inputStyle, flex: 1, minWidth: 220, fontFamily: "var(--font-mono)", fontSize: 12 }} />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(link);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 1800);
+                          } catch {}
+                        }}
+                        style={ghostBtn}
+                      >
+                        {copied ? "Copiado ✓" : "Copiar"}
+                      </button>
+                    </div>
+                    <p style={{ fontSize: 12, color: "var(--text-tertiary)", margin: 0 }}>
+                      Abra este link no navegador para ver o site enquanto está em manutenção. O código é o
+                      seu <code style={codeStyle}>MAINTENANCE_SECRET</code>.
+                    </p>
+                  </div>
+                );
+              })()
+            ) : (
+              <p style={{ fontSize: 12, color: "var(--text-tertiary)", margin: 0 }}>
+                Defina <code style={codeStyle}>MAINTENANCE_SECRET</code> nas variáveis de ambiente para poder
+                pré-visualizar o site durante a manutenção.
               </p>
             )}
           </div>

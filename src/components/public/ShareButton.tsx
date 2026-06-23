@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { getDict, type Locale } from "@/lib/i18n";
 
-export function ShareButton() {
+export function ShareButton({ locale = "pt" }: { locale?: Locale }) {
+  const t = getDict(locale);
   const [copied, setCopied] = useState(false);
 
   async function share() {
@@ -27,7 +29,7 @@ export function ShareButton() {
           </>
         )}
       </svg>
-      {copied ? "Link copiado" : "Partilhar"}
+      {copied ? t.share.copied : t.share.label}
     </button>
   );
 }

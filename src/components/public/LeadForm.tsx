@@ -2,19 +2,20 @@
 
 import { useEffect, useId, useState } from "react";
 import type { WatchStatus } from "@/types";
+import { getDict, type Locale } from "@/lib/i18n";
 
 interface LeadFormProps {
   watchId: string;
   watchStatus: WatchStatus;
   watchName: string;
+  locale?: Locale;
 }
 
-const MESSAGES = {
-  available: "Olá, tenho interesse neste relógio. Podem contactar-me?",
-  sold: "Olá, gostaria de encontrar algo semelhante a este. Avisem-me se tiverem disponível.",
-};
+export function LeadForm({ watchId, watchStatus, watchName, locale = "en" }: LeadFormProps) {
+  const t = getDict(locale);
+  const defaultMessage =
+    watchStatus === "available" ? t.lead.defaultAvailable : t.lead.defaultSold;
 
-export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -23,18 +24,14 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
     name: "",
     email: "",
     phone: "",
-    message: MESSAGES[watchStatus as keyof typeof MESSAGES] ?? "",
+    message: defaultMessage,
     website: "", // honeypot
   });
 
   const btnLabel =
-    watchStatus === "available"
-      ? "Tenho interesse neste relógio"
-      : "Quero algo assim";
+    watchStatus === "available" ? t.lead.ctaAvailable : t.lead.ctaSold;
   const title =
-    watchStatus === "available"
-      ? "Entrar em contacto"
-      : "Avisem-me quando tiverem algo semelhante";
+    watchStatus === "available" ? t.lead.titleAvailable : t.lead.titleSold;
 
   const titleId = useId();
   const nameId = useId();
@@ -116,7 +113,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
           >
             <button
               onClick={() => setOpen(false)}
-              aria-label="Fechar"
+              aria-label={t.lead.close}
               style={{
                 position: "absolute",
                 top: 16,
@@ -152,11 +149,8 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                     marginBottom: 12,
                   }}
                 >
-                  Mensagem enviada!
+                  {t.lead.success}
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: 15 }}>
-                  Entraremos em contacto em breve.
-                </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate>
@@ -193,10 +187,11 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   autoComplete="off"
                 />
 
-                <Field label="Nome (opcional)" id={nameId}>
+                <Field label={t.lead.name} id={nameId}>
                   <input
                     id={nameId}
                     type="text"
+                    placeholder={t.lead.namePlaceholder}
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     style={inputStyle}
@@ -204,7 +199,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   />
                 </Field>
 
-                <Field label="Email" id={emailId}>
+                <Field label={t.lead.email} id={emailId}>
                   <input
                     id={emailId}
                     type="email"
@@ -215,7 +210,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   />
                 </Field>
 
-                <Field label="Telemóvel" id={phoneId}>
+                <Field label={t.lead.phone} id={phoneId}>
                   <input
                     id={phoneId}
                     type="tel"
@@ -226,7 +221,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   />
                 </Field>
 
-                <Field label="Mensagem *" id={messageId}>
+                <Field label={`${t.lead.message} *`} id={messageId}>
                   <textarea
                     id={messageId}
                     value={form.message}
@@ -238,7 +233,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                 </Field>
 
                 <p style={{ fontSize: 11, color: "var(--text-tertiary)", marginBottom: 24 }}>
-                  * Indique pelo menos email ou telemóvel para que possamos responder.
+                  * {t.lead.errContact}
                 </p>
 
                 {error && (
@@ -260,7 +255,7 @@ export function LeadForm({ watchId, watchStatus, watchName }: LeadFormProps) {
                   className="hmg-ghost-btn hmg-ghost-btn--gold"
                   style={{ width: "100%" }}
                 >
-                  {loading ? "A enviar…" : "Enviar mensagem"}
+                  {loading ? t.lead.sending : t.lead.submit}
                 </button>
               </form>
             )}

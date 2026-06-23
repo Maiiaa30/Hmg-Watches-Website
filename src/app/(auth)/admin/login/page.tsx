@@ -13,28 +13,33 @@ export default function AdminLoginPage() {
     setError(null);
     setLoading(true);
 
-    const { createBrowserClient } = await import("@supabase/ssr");
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    try {
+      // Server-side login: rate-limited by IP + audit-logged.
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      if (!data.success) {
+        setError(
+          res.status === 429
+            ? "Demasiadas tentativas. Tente novamente dentro de alguns minutos."
+            : "Credenciais inválidas."
+        );
+        setLoading(false);
+        return;
+      }
 
-    if (signInError) {
-      // Generic message — never reveal whether the email exists (OWASP A07)
-      setError("Credenciais inválidas.");
+      // Full navigation so middleware + layout pick up the new session cookie
+      const redirectTo =
+        new URLSearchParams(window.location.search).get("redirect") ?? "/admin";
+      window.location.href = redirectTo;
+    } catch {
+      setError("Erro de rede. Tente novamente.");
       setLoading(false);
-      return;
     }
-
-    // Full navigation so middleware + layout pick up the new session cookie
-    const redirectTo =
-      new URLSearchParams(window.location.search).get("redirect") ?? "/admin";
-    window.location.href = redirectTo;
   }
 
   return (

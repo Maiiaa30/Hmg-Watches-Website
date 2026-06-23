@@ -1,8 +1,10 @@
 import type { WatchStatus, BlogStatus } from "@/types";
+import { STATUS_I18N, type Locale } from "@/lib/i18n";
 
 interface BadgeProps {
   status: WatchStatus | BlogStatus | "archived";
   children?: React.ReactNode;
+  locale?: Locale;
 }
 
 const statusStyles: Record<string, React.CSSProperties> = {
@@ -32,16 +34,7 @@ const statusStyles: Record<string, React.CSSProperties> = {
   },
 };
 
-const statusLabels: Record<string, string> = {
-  available: "Disponível",
-  sold: "Vendido",
-  archived: "Arquivado",
-  draft: "Rascunho",
-  pending_approval: "Pendente",
-  published: "Publicado",
-};
-
-export function Badge({ status, children }: BadgeProps) {
+export function Badge({ status, children, locale = "pt" }: BadgeProps) {
   return (
     <span
       style={{
@@ -57,7 +50,7 @@ export function Badge({ status, children }: BadgeProps) {
         ...(statusStyles[status] ?? statusStyles.archived),
       }}
     >
-      {children ?? statusLabels[status] ?? status}
+      {children ?? STATUS_I18N[locale][status] ?? status}
     </span>
   );
 }

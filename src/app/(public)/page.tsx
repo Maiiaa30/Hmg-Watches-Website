@@ -61,7 +61,7 @@ async function getHeroWatch() {
 }
 
 export default async function HomePage() {
-  const { t } = await getT();
+  const { locale, t } = await getT();
   const [featured, posts, featuredHero, todaysAuctions] = await Promise.all([
     getFeaturedWatches(),
     getLatestPosts(),
@@ -412,7 +412,7 @@ export default async function HomePage() {
               }}
             >
               {featured.map((w) => (
-                <WatchCard key={w.id} watch={w} />
+                <WatchCard key={w.id} watch={w} locale={locale} />
               ))}
             </div>
           </div>
@@ -616,7 +616,7 @@ export default async function HomePage() {
           >
             {t.home.contactText}
           </p>
-          <ContactForm />
+          <ContactForm locale={locale} />
         </div>
       </section>
     </div>

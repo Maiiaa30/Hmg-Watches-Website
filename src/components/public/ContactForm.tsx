@@ -1,22 +1,17 @@
 "use client";
 
 import { useId, useState } from "react";
+import { getDict, type Locale } from "@/lib/i18n";
 
-const SUBJECTS = [
-  "Questão sobre um relógio",
-  "Proposta de venda",
-  "Informação geral",
-  "Outro",
-];
-
-export function ContactForm() {
+export function ContactForm({ locale = "en" }: { locale?: Locale }) {
+  const t = getDict(locale);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
-    subject: SUBJECTS[0] ?? "",
+    subject: "",
     message: "",
     website: "", // honeypot
   });
@@ -53,11 +48,8 @@ export function ContactForm() {
     return (
       <div role="status" aria-live="polite" style={{ textAlign: "center", padding: "60px 0" }}>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--fs-display-s)", marginBottom: 16 }}>
-          Mensagem recebida.
+          {t.contactForm.success}
         </h2>
-        <p style={{ color: "var(--text-secondary)", fontSize: 17 }}>
-          Entraremos em contacto em breve.
-        </p>
       </div>
     );
   }
@@ -76,30 +68,31 @@ export function ContactForm() {
         autoComplete="off"
       />
 
-      <FormField label="Nome *" id={nameId}>
+      <FormField label={`${t.contactForm.name} *`} id={nameId}>
         <input id={nameId} type="text" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} style={inputStyle} maxLength={200} />
       </FormField>
 
-      <FormField label="Email *" id={emailId}>
+      <FormField label={`${t.contactForm.email} *`} id={emailId}>
         <input id={emailId} type="email" required value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={inputStyle} maxLength={300} />
       </FormField>
 
-      <FormField label="Assunto" id={subjectId}>
-        <select id={subjectId} value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} style={inputStyle}>
-          {SUBJECTS.map((s) => (
-            <option key={s} value={s}>{s}</option>
+      <FormField label={t.contactForm.subject} id={subjectId}>
+        <select id={subjectId} required value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} style={inputStyle}>
+          <option value="" disabled>{t.contactForm.selectSubject}</option>
+          {t.contactForm.subjects.map((s, idx) => (
+            <option key={idx} value={s}>{s}</option>
           ))}
         </select>
       </FormField>
 
-      <FormField label="Mensagem *" id={messageId}>
+      <FormField label={`${t.contactForm.message} *`} id={messageId}>
         <textarea id={messageId} required value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} style={{ ...inputStyle, height: 140, resize: "vertical" }} maxLength={5000} />
       </FormField>
 
       {error && <p role="alert" style={{ color: "var(--hmg-down)", fontSize: 14 }}>{error}</p>}
 
       <button type="submit" disabled={loading} className="hmg-ghost-btn hmg-ghost-btn--gold">
-        {loading ? "A enviar…" : "Enviar mensagem"}
+        {loading ? t.contactForm.sending : t.contactForm.submit}
       </button>
     </form>
   );

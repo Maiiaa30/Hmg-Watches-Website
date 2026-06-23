@@ -61,7 +61,7 @@ export function RecentlyViewed({
         }}
       >
         {items.map((w) => (
-          <WatchCard key={w.slug} watch={w} />
+          <WatchCard key={w.slug} watch={w} locale={locale} />
         ))}
       </div>
     </section>

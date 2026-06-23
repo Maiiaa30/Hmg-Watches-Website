@@ -58,7 +58,7 @@ export default async function PublicLayout({
       <Header locale={locale} />
       <main id="main" tabIndex={-1}>{children}</main>
       <Footer instagramUrl={settings.instagram} contactEmail={settings.contactEmail} locale={locale} />
-      {settings.whatsapp && <WhatsAppButton phone={settings.whatsapp} />}
+      {settings.whatsapp && <WhatsAppButton phone={settings.whatsapp} locale={locale} />}
     </>
   );
 }

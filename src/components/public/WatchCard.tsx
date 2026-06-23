@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
+import { getDict, type Locale } from "@/lib/i18n";
 import type { Watch } from "@/types";
 
 interface WatchCardProps {
@@ -8,21 +9,24 @@ interface WatchCardProps {
     Watch,
     "slug" | "brand" | "model" | "reference" | "price" | "status" | "images"
   >;
+  locale?: Locale;
 }
 
-export function WatchCard({ watch }: WatchCardProps) {
+export function WatchCard({ watch, locale = "en" }: WatchCardProps) {
+  const t = getDict(locale);
+  const numberLocale = locale === "en" ? "en-GB" : "pt-PT";
   const image = watch.images[0];
   // High-end pieces are often listed without a public price ("price on
   // request") — render that elegantly instead of "€0".
   const priceNum = Number(watch.price);
   const priceFormatted =
     priceNum > 0
-      ? new Intl.NumberFormat("pt-PT", {
+      ? new Intl.NumberFormat(numberLocale, {
           style: "currency",
           currency: "EUR",
           maximumFractionDigits: 0,
         }).format(priceNum)
-      : "Sob consulta";
+      : t.card.priceOnRequest;
 
   return (
     <Link
@@ -61,7 +65,7 @@ export function WatchCard({ watch }: WatchCardProps) {
                 fontStyle: "italic",
               }}
             >
-              Sem imagem
+              {t.card.noImage}
             </div>
           )}
           {watch.status === "sold" && (
@@ -74,7 +78,7 @@ export function WatchCard({ watch }: WatchCardProps) {
             />
           )}
           <div style={{ position: "absolute", top: 14, right: 14 }}>
-            <Badge status={watch.status} />
+            <Badge status={watch.status} locale={locale} />
           </div>
         </div>
 

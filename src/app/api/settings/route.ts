@@ -43,6 +43,11 @@ export async function GET() {
     if (isAllowedKey(row.key)) map[row.key] = row.value;
   }
 
+  // Expose the maintenance preview code (the MAINTENANCE_SECRET env value) so the
+  // owner can find it in the admin instead of memorising it. Admin-only endpoint.
+  // Read-only: it's not in ALLOWED_KEYS, so PUT ignores it.
+  map["maintenance_preview_code"] = process.env.MAINTENANCE_SECRET ?? "";
+
   return NextResponse.json<ApiResponse>({ success: true, data: map });
 }
 

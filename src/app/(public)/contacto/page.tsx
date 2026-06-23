@@ -66,7 +66,7 @@ export default async function ContactoPage() {
 
         {/* Form */}
         <div>
-          <ContactForm />
+          <ContactForm locale={locale} />
         </div>
       </div>
     </div>
