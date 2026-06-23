@@ -4,23 +4,24 @@ import { Footer } from "@/components/public/Footer";
 import { AnalyticsTracker } from "@/components/public/AnalyticsTracker";
 import { WhatsAppButton } from "@/components/public/WhatsAppButton";
 import { MaintenanceScreen } from "@/components/public/MaintenanceScreen";
-import { getSetting } from "@/lib/db/settings";
+import { getSettings } from "@/lib/db/settings";
 import { getLocale } from "@/lib/i18n-server";
 
-// Read the public-facing site settings (best-effort — never crash the layout).
+// Read the public-facing site settings in ONE query (best-effort — never crash
+// the layout).
 async function getPublicSettings() {
   try {
-    const [whatsapp, instagram, contactEmail, maintenance] = await Promise.all([
-      getSetting("whatsapp_number"),
-      getSetting("instagram_url"),
-      getSetting("site_contact_email"),
-      getSetting("maintenance_mode"),
+    const map = await getSettings([
+      "whatsapp_number",
+      "instagram_url",
+      "site_contact_email",
+      "maintenance_mode",
     ]);
     return {
-      whatsapp: whatsapp?.trim() || "",
-      instagram: instagram?.trim() || "",
-      contactEmail: contactEmail?.trim() || "",
-      maintenance: maintenance === "true",
+      whatsapp: map.whatsapp_number?.trim() || "",
+      instagram: map.instagram_url?.trim() || "",
+      contactEmail: map.site_contact_email?.trim() || "",
+      maintenance: map.maintenance_mode === "true",
     };
   } catch {
     return { whatsapp: "", instagram: "", contactEmail: "", maintenance: false };
